@@ -1,6 +1,7 @@
 import type { ResearchInsight } from '@/lib/types'
 
 export const mockInsights: ResearchInsight[] = [
+  // ── Onboarding ─────────────────────────────────────────────────────
   {
     id: 'insight-1',
     theme: 'Onboarding Confusion',
@@ -39,42 +40,70 @@ export const mockInsights: ResearchInsight[] = [
     frequency: 11,
     linkedFeatures: ['feat-1'],
   },
+  // ── Payments & Billing ─────────────────────────────────────────────
   {
     id: 'insight-4',
-    theme: 'Collaboration is the Unlock',
-    summary: 'Users who invited at least one teammate within their first session had 4× higher 30-day retention than solo users. However, the invite flow is buried — only 3 of 20 participants found it without prompting. When shown, 16 said they would have used it immediately.',
+    theme: 'Plan Comparison Paralysis',
+    summary: 'Users couldn\'t determine which plan was right for their team. Feature comparison tables were too long and filled with jargon, causing 34% to abandon the upgrade flow before selecting a plan.',
     quotes: [
-      "Oh, you can invite people? I had no idea. I would have done that on day one.",
-      "The whole point is to use it with my team. Working alone in here feels pointless.",
-      "I tried to find a share button and gave up. Turns out it was in settings, which I never open.",
-      "Once my team was in here with me, I used it every day. Before that, barely at all.",
+      "I genuinely couldn't figure out what 'advanced analytics' meant versus 'basic analytics'.",
+      "I went back and forth between Pro and Business for 10 minutes and then just gave up.",
+      "Just tell me which plan is for a team of 8 people who need integrations. Why is this so hard?",
+      "I ended up picking the cheaper one and hoping for the best.",
     ],
-    frequency: 16,
-    linkedFeatures: ['feat-1', 'feat-7'],
+    frequency: 11,
+    linkedFeatures: ['feat-9'],
   },
   {
     id: 'insight-5',
-    theme: 'Progress Visibility Drives Completion',
-    summary: 'Users with a visible progress indicator completed onboarding at a 2.4× higher rate than those without. Even a simple "3 of 7 steps complete" label was enough to trigger completion behaviour. Users described incomplete progress indicators as a motivational trigger they couldn\'t ignore.',
+    theme: 'Invoice Accessibility Blocks Finance Teams',
+    summary: 'Finance and ops teams cannot process HTML email receipts through standard expense systems. This generates a disproportionate support burden — billing tickets represent 38% of all inbound volume.',
     quotes: [
-      "I'm the kind of person who needs to finish things. Seeing 4 of 7 done made me want to finish.",
-      "The progress bar made it feel achievable. Without it, it just looked like an endless list.",
-      "I actually went back specifically to get to 100%. That's embarrassing but true.",
+      "My finance team won't accept a screenshot of an email as an invoice.",
+      "I had to contact support 3 times just to get a proper invoice for Q1.",
+      "We're a 200-person company. I can't manually forward emails to accounts payable every month.",
+      "A PDF with our company name and VAT number is literally all I need. How is this not a thing yet?",
     ],
-    frequency: 12,
-    linkedFeatures: ['feat-7'],
+    frequency: 9,
+    linkedFeatures: ['feat-10'],
   },
   {
     id: 'insight-6',
-    theme: 'Power Users Want Keyboard-First',
-    summary: 'Among users who stayed past day 14, 78% reported wanting keyboard shortcuts for core actions. They described mouse-heavy workflows as "slow" and "not built for people who live in their keyboard". This segment also had the highest NPS scores (+67) — suggesting keyboard support is a key driver of advocacy.',
+    theme: 'Silent Churn from Failed Payments',
+    summary: 'Users who experienced a failed payment received no clear in-app guidance. Several churned silently after losing access without a warning. The lack of a recovery flow is directly costing MRR.',
     quotes: [
-      "I live in my keyboard. Every time I have to reach for the mouse I lose flow.",
-      "Cmd+K for everything is table stakes for any serious tool in 2025.",
-      "I'd recommend this to my whole team if it had proper keyboard nav. Right now I keep it to myself.",
-      "The lack of shortcuts is the one thing stopping me from switching from Notion.",
+      "I woke up one morning and the tool just wasn't working. No email, nothing.",
+      "I assumed it was a bug, not that my card had expired. I just stopped using it.",
+      "By the time I realised what happened I'd already moved to another tool.",
+    ],
+    frequency: 7,
+    linkedFeatures: ['feat-11'],
+  },
+  // ── API & Integrations ─────────────────────────────────────────────
+  {
+    id: 'insight-7',
+    theme: 'API Discovery Gap',
+    summary: 'Developers building integrations reported spending the majority of their integration time reading source code or contacting support rather than using documentation. The absence of interactive docs is the single biggest barrier to API adoption.',
+    quotes: [
+      "I spent 2 days figuring out the auth flow. Interactive docs would have cut that to 20 minutes.",
+      "Your API is actually really clean — I just couldn't figure that out from the static docs.",
+      "I ended up reading your GitHub issues to understand the pagination model. That's not how it should work.",
+      "Every other tool I integrate with has a 'Try it' button. Why doesn't this?",
+    ],
+    frequency: 13,
+    linkedFeatures: ['feat-14', 'feat-13'],
+  },
+  {
+    id: 'insight-8',
+    theme: 'Webhook Demand from Automation-Heavy Teams',
+    summary: 'Enterprise customers with automation workflows are blocked by the absence of webhooks. They are currently polling the API every 60 seconds — inefficient, expensive, and approaching rate limits. Three enterprise deals explicitly list webhooks as a contract requirement.',
+    quotes: [
+      "We poll your API every minute to keep our internal tools in sync. That's not sustainable.",
+      "Webhooks are table stakes for any B2B SaaS in 2026. We're surprised this isn't there yet.",
+      "Our legal team flagged this as a blocker. Without webhooks we can't sign.",
+      "We'd double our API spend if you had webhooks — right now we have to over-poll just to stay current.",
     ],
     frequency: 8,
-    linkedFeatures: ['feat-2'],
+    linkedFeatures: ['feat-13'],
   },
 ]
