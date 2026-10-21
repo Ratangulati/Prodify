@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import {
   Sparkles, ChevronDown, ChevronRight,
-  Circle, User, Sun, Moon, Keyboard,
+  Circle, User, Sun, Moon, Keyboard, Github,
 } from 'lucide-react'
 import type { Theme, FeatureStatus } from '@/lib/types'
 import { useWorkspaceStore } from '@/lib/store'
@@ -18,10 +18,11 @@ const STATUS_COLORS: Record<FeatureStatus, string> = {
 
 interface LeftSidebarProps {
   onToggleTheme: () => void
+  onOpenGitHub: () => void
   theme: Theme
 }
 
-export default function LeftSidebar({ onToggleTheme, theme }: LeftSidebarProps) {
+export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: LeftSidebarProps) {
   const { features } = useWorkspaceStore()
   const [featuresOpen, setFeaturesOpen] = useState(true)
 
@@ -100,6 +101,15 @@ export default function LeftSidebar({ onToggleTheme, theme }: LeftSidebarProps) 
         <p className="text-[11px] font-medium truncate flex-1" style={{ color: '#ddd' }}>
           Product Manager
         </p>
+        <button
+          onClick={onOpenGitHub}
+          className="p-1.5 rounded transition-colors hover:bg-white/10 flex-shrink-0"
+          style={{ color: '#555' }}
+          title="GitHub settings"
+          aria-label="GitHub settings"
+        >
+          <Github size={13} />
+        </button>
         <button
           onClick={onToggleTheme}
           className="p-1.5 rounded transition-colors hover:bg-white/10 flex-shrink-0"

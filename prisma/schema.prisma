@@ -72,6 +72,8 @@ model Workspace {
   nextTaskNumber Int      @default(1)
   createdAt      DateTime @default(now())
   tasks          Task[]
+  github         GitHubConnection?
+  githubRepos    GitHubRepo[]
 }
 
 model Task {
@@ -91,4 +93,32 @@ model Task {
 
   @@unique([workspaceId, number])
   @@index([docId])
+}
+
+/// A GitHub App installation connected to a workspace. No tokens are stored:
+/// the server signs a short-lived JWT with the app's private key and swaps it
+/// for a one-hour installation token whenever it needs to call GitHub.
+model GitHubConnection {
+  id             String    @id @default(uuid())
+  workspaceId    String    @unique
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  installationId Int       @unique
+  /// The GitHub user or organisation the app is installed on
+  accountLogin   String
+  createdAt      DateTime  @default(now())
+}
+
+/// A repository whose pull requests this workspace tracks. githubId is
+/// unique, so a repo can belong to only one workspace: a webhook for it can
+/// never touch another workspace's tasks.
+model GitHubRepo {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  githubId    Int       @unique
+  /// owner/name, e.g. acme/web
+  fullName    String
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId])
 }

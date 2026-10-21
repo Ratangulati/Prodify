@@ -9,6 +9,8 @@ import RightPanel from './sidebar/RightPanel'
 import ToastContainer from './ui/Toast'
 import CommandPalette from './modals/CommandPalette'
 import KeyboardShortcuts from './modals/KeyboardShortcuts'
+import GitHubSettings from './modals/GitHubSettings'
+import { toast } from '@/lib/toast'
 import WelcomeScreen from './onboarding/WelcomeScreen'
 
 export default function AppShell() {
@@ -22,6 +24,22 @@ export default function AppShell() {
 
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false)
   const [shortcutsOpen,  setShortcutsOpen]  = useState(false)
+  const [githubOpen,     setGithubOpen]     = useState(false)
+
+  /* ── Coming back from GitHub's install page (?github=…) ─────────── */
+  useEffect(() => {
+    const result = new URLSearchParams(window.location.search).get('github')
+    if (!result) return
+    window.history.replaceState(null, '', window.location.pathname)
+    const messages: Record<string, () => void> = {
+      'connected':      () => toast.success('GitHub connected. Pick the repositories to track.'),
+      'taken':          () => toast.error('That GitHub installation is already linked to another workspace.'),
+      'rate-limited':   () => toast.error('GitHub is rate limiting requests. Try connecting again in a few minutes.'),
+      'not-configured': () => toast.error('The GitHub App is not configured on the server.'),
+    }
+    ;(messages[result] ?? (() => toast.error('Could not connect GitHub. Please try again.')))()
+    setGithubOpen(true)
+  }, [])
 
   /* ── Apply theme class to <html> ─────────────────────────────── */
   useEffect(() => {
@@ -75,6 +93,7 @@ export default function AppShell() {
       if (e.key === 'Escape') {
         setCmdPaletteOpen(false)
         setShortcutsOpen(false)
+        setGithubOpen(false)
       }
     }
 
@@ -104,7 +123,11 @@ export default function AppShell() {
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left sidebar */}
           <Panel defaultSize={18} minSize={12} maxSize={30}>
-            <LeftSidebar onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} theme={theme} />
+            <LeftSidebar
+              onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onOpenGitHub={() => setGithubOpen(true)}
+              theme={theme}
+            />
           </Panel>
 
           <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: '#2a2a2a' }}>
@@ -132,6 +155,7 @@ export default function AppShell() {
       {/* Overlays */}
       <CommandPalette    open={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
       <KeyboardShortcuts open={shortcutsOpen}  onClose={() => setShortcutsOpen(false)} />
+      <GitHubSettings    open={githubOpen}     onClose={() => setGithubOpen(false)} />
       <ToastContainer />
     </>
   )
