@@ -8,6 +8,66 @@
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
+/* ── Design tokens ──────────────────────────────────────────────────
+   App palette as RGB channels so both inline styles and Tailwind
+   alpha modifiers work: rgb(var(--n3)) / rgb(var(--brand) / 0.15).
+   Neutral ramp, darkest → lightest:
+     n0  canvas            n1  sunken bars       n2  raised bar
+     n3  panels & cards    n4  menus, chips      n5  hover, hairline
+     n6  borders           n7  strong borders    n8  tertiary text
+     n9  secondary text    n10 body-muted text   n11 body text
+     n12 headings                                                     */
+@layer base {
+  :root {
+    --n0:  14 14 16;
+    --n1:  18 18 20;
+    --n2:  22 22 24;
+    --n3:  25 25 28;
+    --n4:  31 31 34;
+    --n5:  38 38 42;
+    --n6:  44 44 48;
+    --n7:  58 58 64;
+    --n8:  116 116 126;
+    --n9:  142 142 152;
+    --n10: 168 168 178;
+    --n11: 208 208 214;
+    --n12: 236 236 240;
+    --white: 255 255 255;
+    --black: 0 0 0;
+
+    --brand:        99 102 241;
+    --brand-fg:     129 140 248;
+    --brand-soft:   165 180 252;
+    --brand-strong: 79 70 229;
+    --violet:       139 92 246;
+    --violet-fg:    167 139 250;
+
+    --green:      34 197 94;
+    --green-fg:   74 222 128;
+    --green-soft: 134 239 172;
+    --green-deep: 22 101 52;
+    --red:        239 68 68;
+    --red-fg:     248 113 113;
+    --red-soft:   252 165 165;
+    --red-deep:   127 29 29;
+    --amber:      245 158 11;
+    --amber-fg:   251 191 36;
+    --amber-soft: 252 211 77;
+    --yellow:     234 179 8;
+    --yellow-fg:  250 204 21;
+    --orange:     249 115 22;
+    --orange-fg:  251 146 60;
+    --blue:       59 130 246;
+    --blue-fg:    96 165 250;
+    --blue-soft:  147 197 253;
+    --emerald:      16 185 129;
+    --emerald-fg:   52 211 153;
+    --emerald-soft: 110 231 183;
+    --cyan: 6 182 212;
+    --pink: 236 72 153;
+  }
+}
+
 /* ── Global keyframe animations ─────────────────────────────────── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -22,7 +82,7 @@
   100% { background-position:  400px 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
+  background: linear-gradient(90deg, rgb(var(--n4)) 25%, rgb(var(--n6)) 50%, rgb(var(--n4)) 75%);
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite linear;
   border-radius: 4px;
@@ -89,8 +149,10 @@
 .editor-prose {
   outline: none;
   min-height: 60vh;
-  caret-color: #818cf8;
+  caret-color: rgb(var(--brand-fg));
   font-family: var(--font-geist-sans, system-ui, sans-serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
 }
 
 /* Placeholder */
@@ -98,7 +160,7 @@
 .editor-prose .is-empty::before {
   content: attr(data-placeholder);
   float: left;
-  color: #404040;
+  color: rgb(var(--n7));
   pointer-events: none;
   height: 0;
 }
@@ -107,9 +169,10 @@
 .editor-prose h1 {
   font-size: 2.25rem;    /* 36px */
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: #f2f2f2;
+  line-height: 1.12;     /* tight leading for display sizes */
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  color: rgb(var(--n12));
   margin: 2rem 0 0.5rem;
   padding-bottom: 0;
 }
@@ -117,69 +180,80 @@
 .editor-prose h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  color: #ebebeb;
+  line-height: 1.25;
+  letter-spacing: -0.017em;
+  text-wrap: balance;
+  color: rgb(var(--n12));
   margin: 1.75rem 0 0.4rem;
 }
 .editor-prose h3 {
-  font-size: 1.125rem;
+  font-size: 1.1875rem;
   font-weight: 600;
-  color: #e0e0e0;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: rgb(var(--n11));
   margin: 1.25rem 0 0.3rem;
 }
 
 /* Body text */
 .editor-prose p {
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: #d4d4d4;
-  margin: 0 0 0.6rem;
+  font-size: 1rem;       /* 16px body — comfortable at reading distance */
+  line-height: 1.7;
+  color: rgb(var(--n11));
+  margin: 0 0 0.75rem;
+  text-wrap: pretty;
 }
 
 /* Lists */
 .editor-prose ul,
 .editor-prose ol {
   padding-left: 1.5rem;
+}
+/* Tailwind's preflight strips list markers; documents need them back */
+.editor-prose ul { list-style: disc; }
+.editor-prose ol { list-style: decimal; }
+.editor-prose li::marker { color: rgb(var(--n8)); }
+.editor-prose ul,
+.editor-prose ol {
   margin: 0.25rem 0 0.75rem;
 }
 .editor-prose li {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.7;
-  color: #d4d4d4;
-  margin-bottom: 0.2rem;
+  color: rgb(var(--n11));
+  margin-bottom: 0.25rem;
 }
 .editor-prose li p { margin: 0; }
 
 /* Blockquote */
 .editor-prose blockquote {
-  border-left: 3px solid #6366f1;
+  border-left: 3px solid rgb(var(--brand));
   margin: 1rem 0;
   padding: 0.5rem 1.25rem;
-  background: rgba(99, 102, 241, 0.06);
+  background: rgb(var(--brand) / 0.06);
   border-radius: 0 6px 6px 0;
 }
 .editor-prose blockquote p {
-  color: #a1a1aa;
+  color: rgb(var(--n10));
   font-style: italic;
   margin: 0;
 }
 
 /* Inline code */
 .editor-prose code {
-  background: #27272a;
-  border: 1px solid #3f3f46;
+  background: rgb(var(--n5));
+  border: 1px solid rgb(var(--n7));
   border-radius: 4px;
   padding: 0.1em 0.4em;
   font-size: 0.85em;
-  color: #a78bfa;
+  color: rgb(var(--violet-fg));
   font-family: var(--font-geist-mono, monospace);
 }
 
 /* Code block */
 .editor-prose pre {
-  background: #09090b;
-  border: 1px solid #27272a;
+  background: rgb(var(--n0));
+  border: 1px solid rgb(var(--n5));
   border-radius: 10px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -190,54 +264,210 @@
   border: none;
   padding: 0;
   font-size: 0.875em;
-  color: #a1a1aa;
+  color: rgb(var(--n10));
 }
 
 /* Horizontal rule */
 .editor-prose hr {
   border: none;
-  border-top: 1px solid #27272a;
+  border-top: 1px solid rgb(var(--n5));
   margin: 2rem 0;
 }
 
 /* Highlight mark */
 .editor-prose mark {
-  background-color: rgba(99, 102, 241, 0.2);
+  background-color: rgb(var(--brand) / 0.2);
   color: inherit;
   border-radius: 3px;
   padding: 0.05em 0.2em;
 }
 
 /* Bold / Italic / Underline */
-.editor-prose strong { color: #f4f4f5; font-weight: 600; }
-.editor-prose em     { color: #d4d4d8; }
+.editor-prose strong { color: rgb(var(--n12)); font-weight: 600; }
+.editor-prose em     { color: rgb(var(--n11)); }
 .editor-prose u      { text-underline-offset: 3px; }
-.editor-prose a      { color: #818cf8; text-decoration: underline; text-underline-offset: 3px; }
+.editor-prose a      { color: rgb(var(--brand-fg)); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── Tables ──────────────────────────────────────────────────────── */
 .editor-table { border-collapse: collapse; width: 100%; margin: 1.25rem 0; }
 .editor-table th,
 .editor-table td {
-  border: 1px solid #27272a;
+  border: 1px solid rgb(var(--n5));
   padding: 0.5rem 0.875rem;
   font-size: 0.875rem;
   text-align: left;
-  color: #d4d4d4;
+  color: rgb(var(--n11));
   vertical-align: top;
 }
 .editor-table th {
-  background: #18181b;
-  color: #a1a1aa;
+  background: rgb(var(--n3));
+  color: rgb(var(--n10));
   font-weight: 600;
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.editor-table tr:hover td { background: rgba(255,255,255,0.02); }
-.editor-table .selectedCell { background: rgba(99,102,241,0.1) !important; }
+.editor-table tr:hover td { background: rgb(var(--white) / 0.02); }
+.editor-table .selectedCell { background: rgb(var(--brand) / 0.1) !important; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #444; }
+::-webkit-scrollbar-thumb { background: rgb(var(--n7)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--n8)); }
+
+/* ── Motion tokens ──────────────────────────────────────────────────
+   Critically damped spring (damping 1.0, response 0.3s) sampled from
+   x(t) = 1 − (1 + ωt)·e^(−ωt), ω = 2π / 0.3. Settles in ~440ms.      */
+:root {
+  --spring: linear(0, 0.114, 0.321, 0.517, 0.671, 0.783, 0.860, 0.911, 0.945, 0.966, 0.979, 0.987, 0.992, 0.995, 0.997, 0.998, 1);
+  --spring-duration: 440ms;
+}
+
+/* ── Press feedback ─────────────────────────────────────────────────
+   Responds on pointer-down (:active), not on click. Uses the
+   independent `scale` property so it composes with any transform a
+   component already sets (drag offsets, rotated chevrons). The
+   :is()/:not() pair lifts specificity above Tailwind's transition-*
+   utilities so the scale always has a transition.
+   .press-tint — full-width rows get a tint instead of shrinking.
+   .no-press   — opt out entirely.                                    */
+:is(button, [role="button"], [role="tab"], .pressable, .press-tint):not(.no-press) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition-property: color, background-color, border-color, opacity, box-shadow, scale;
+  transition-duration: 150ms, 150ms, 150ms, 150ms, 150ms, var(--spring-duration);
+  transition-timing-function: ease-out, ease-out, ease-out, ease-out, ease-out, var(--spring);
+}
+:is(button, [role="button"], [role="tab"], .pressable):not(.no-press, .press-tint, :disabled, [aria-disabled="true"]):active {
+  scale: 0.97;
+  transition-duration: 100ms;
+  transition-timing-function: ease-out;
+}
+.press-tint:not(.no-press, :disabled):active {
+  box-shadow: inset 0 0 0 100vmax rgb(var(--white) / 0.05);
+  transition-duration: 0ms;
+}
+
+/* ── Modal scrim ── dims to focus; the panel itself carries the material */
+.overlay-scrim { background: rgb(var(--black) / 0.5); }
+
+/* ── Materials ──────────────────────────────────────────────────────
+   One translucent layer at a time: never stack glass on glass.
+   material-bar   — chrome the content scrolls under (editor title bar)
+   material-panel — floating modal panels; thicker blur, deeper shadow */
+.material-bar {
+  background: rgb(var(--n0) / 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  /* Faint hairline instead of a hard divider; light catching the edge */
+  box-shadow: inset 0 -1px 0 rgb(var(--white) / 0.06);
+}
+.material-panel {
+  background: rgb(var(--n2) / 0.78);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgb(var(--white) / 0.08);
+  box-shadow:
+    inset 0 1px 0 rgb(var(--white) / 0.06),
+    0 24px 64px rgb(var(--black) / 0.55);
+}
+
+/* ── Streaming indicators ───────────────────────────────────────────
+   One calm family: a softly breathing dot and caret. Opacity only, so
+   nothing reflows while text streams in.                            */
+@keyframes breathe {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+.writing-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgb(var(--brand-fg));
+  box-shadow: 0 0 0 3px rgb(var(--brand) / 0.18);
+  animation: breathe 1.4s ease-in-out infinite;
+}
+.writing-dot-sm { width: 6px; height: 6px; box-shadow: none; }
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(var(--brand-fg));
+  animation: breathe 1.2s ease-in-out infinite;
+}
+/* Caret sits on the end of the last line of text instead of on a line of its own */
+.streaming-caret > :last-child:not(ul, ol, table, pre)::after,
+.streaming-caret > :is(ul, ol):last-child > li:last-child::after,
+.streaming-caret:empty::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  border-radius: 1px;
+  background: rgb(var(--brand-fg));
+  animation: breathe 1.1s ease-in-out infinite;
+}
+/* Blank lines render as empty paragraphs; give them the line box Tiptap gives them */
+.editor-preview p:empty { min-height: 1.7em; }
+
+/* ── Focus ───────────────────────────────────────────────────────────
+   Visible ring for keyboard users only (:focus-visible), above any
+   outline-none utility. Full-width rows draw it inset so scroll
+   containers don't clip it.                                          */
+:is(button, a[href], summary, [role="button"], [role="tab"], [role="treeitem"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid rgb(var(--brand-fg));
+  outline-offset: 2px;
+}
+:is(.press-tint, [role="treeitem"]):focus-visible { outline-offset: -2px; }
+
+/* ── Reduce Motion ───────────────────────────────────────────────────
+   Motion (MotionConfig reducedMotion="user") already turns slides and
+   scales into opacity fades. Here: no press shrink, no looping pulses
+   (indicators stay visible, just still), no animated progress.        */
+@media (prefers-reduced-motion: reduce) {
+  :is(button, [role="button"], [role="tab"], .pressable):active { scale: none !important; }
+  .writing-dot, .typing-dot, .animate-spin, .skeleton,
+  .streaming-caret > :last-child::after,
+  .streaming-caret > :is(ul, ol):last-child > li:last-child::after,
+  .streaming-caret:empty::after { animation: none !important; }
+  .typing-dot { opacity: 0.7; }
+  * { scroll-behavior: auto !important; }
+  [style*="--spring"] { transition: none !important; }
+}
+
+/* ── Reduce Transparency ─────────────────────────────────────────────
+   Glass becomes solid; the scrim gets heavier to keep separation.     */
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar {
+    background: rgb(var(--n1));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .material-panel {
+    background: rgb(var(--n2));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .overlay-scrim { background: rgb(var(--black) / 0.7); }
+}
+
+/* ── Increase Contrast ─────────────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --n6: 72 72 80;
+    --n7: 96 96 106;
+    --n8: 160 160 170;
+    --n9: 180 180 190;
+  }
+  .material-bar, .material-panel {
+    background: rgb(var(--n1));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: rgb(var(--n7));
+  }
+  .material-bar { box-shadow: inset 0 -1px 0 rgb(var(--n7)); }
+}

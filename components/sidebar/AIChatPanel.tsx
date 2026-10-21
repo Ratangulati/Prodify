@@ -1,9 +1,10 @@
 'use client'
 
 import {
-  useState, useRef, useEffect, useCallback, useMemo,
+  Fragment, useState, useRef, useEffect, useCallback, useMemo,
 } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { AnimatePresence, m } from 'motion/react'
 import remarkGfm from 'remark-gfm'
 import {
   Send, Copy, Check, Trash2, FileText, BookOpen,
@@ -13,6 +14,8 @@ import {
 import { useWorkspaceStore } from '@/lib/store'
 import { AIError, STREAM_ERROR_MARKER, errorFromResponse, toAIError } from '@/lib/ai-client'
 import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
+import { springs } from '@/lib/motion'
+import { clearStreamingPreview, publishStreamingPreview } from '@/lib/streaming-preview'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
 const WORKFLOWS: {
@@ -164,38 +167,38 @@ const STARTERS: Record<AIWorkflow, { label: string; prompt: string }[]> = {
 /* ── Markdown renderer ──────────────────────────────────────────── */
 const MarkdownComponents = {
   p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="mb-2.5 last:mb-0 leading-relaxed" style={{ color: '#d4d4d8', fontSize: '0.875rem' }}>
+    <p className="mb-2.5 last:mb-0 leading-relaxed" style={{ color: 'rgb(var(--n11))', fontSize: '0.875rem' }}>
       {children}
     </p>
   ),
   h1: ({ children }: { children?: React.ReactNode }) => (
-    <h1 className="text-base font-bold mt-4 mb-2" style={{ color: '#f4f4f5' }}>{children}</h1>
+    <h1 className="text-base font-bold leading-snug tracking-[-0.012em] mt-4 mb-2" style={{ color: 'rgb(var(--n12))' }}>{children}</h1>
   ),
   h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="text-sm font-bold mt-3.5 mb-1.5" style={{ color: '#f4f4f5' }}>{children}</h2>
+    <h2 className="text-sm font-semibold leading-snug tracking-[-0.006em] mt-3.5 mb-1.5" style={{ color: 'rgb(var(--n12))' }}>{children}</h2>
   ),
   h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3 className="text-sm font-semibold mt-3 mb-1" style={{ color: '#e4e4e7' }}>{children}</h3>
+    <h3 className="text-[13px] font-semibold leading-snug mt-3 mb-1" style={{ color: 'rgb(var(--n12))' }}>{children}</h3>
   ),
   ul: ({ children }: { children?: React.ReactNode }) => (
-    <ul className="pl-4 mb-2.5 space-y-0.5" style={{ listStyleType: 'disc', color: '#d4d4d8' }}>{children}</ul>
+    <ul className="pl-4 mb-2.5 space-y-0.5" style={{ listStyleType: 'disc', color: 'rgb(var(--n11))' }}>{children}</ul>
   ),
   ol: ({ children }: { children?: React.ReactNode }) => (
-    <ol className="pl-4 mb-2.5 space-y-0.5" style={{ listStyleType: 'decimal', color: '#d4d4d8' }}>{children}</ol>
+    <ol className="pl-4 mb-2.5 space-y-0.5" style={{ listStyleType: 'decimal', color: 'rgb(var(--n11))' }}>{children}</ol>
   ),
   li: ({ children }: { children?: React.ReactNode }) => (
-    <li className="leading-relaxed" style={{ fontSize: '0.875rem', color: '#d4d4d8' }}>{children}</li>
+    <li className="leading-relaxed" style={{ fontSize: '0.875rem', color: 'rgb(var(--n11))' }}>{children}</li>
   ),
   strong: ({ children }: { children?: React.ReactNode }) => (
-    <strong style={{ color: '#f4f4f5', fontWeight: 600 }}>{children}</strong>
+    <strong style={{ color: 'rgb(var(--n12))', fontWeight: 600 }}>{children}</strong>
   ),
   em: ({ children }: { children?: React.ReactNode }) => (
-    <em style={{ color: '#a1a1aa' }}>{children}</em>
+    <em style={{ color: 'rgb(var(--n10))' }}>{children}</em>
   ),
   blockquote: ({ children }: { children?: React.ReactNode }) => (
     <blockquote
       className="pl-3 my-2.5 text-sm italic"
-      style={{ borderLeft: '2px solid #6366f1', color: '#a1a1aa', background: 'rgba(99,102,241,0.06)', padding: '0.5rem 0.75rem', borderRadius: '0 6px 6px 0' }}
+      style={{ borderLeft: '2px solid rgb(var(--brand))', color: 'rgb(var(--n10))', background: 'rgb(var(--brand) / 0.06)', padding: '0.5rem 0.75rem', borderRadius: '0 6px 6px 0' }}
     >
       {children}
     </blockquote>
@@ -204,7 +207,7 @@ const MarkdownComponents = {
     inline ? (
       <code
         className="px-1.5 py-0.5 rounded text-xs"
-        style={{ background: '#27272a', color: '#a78bfa', fontFamily: 'var(--font-geist-mono, monospace)', border: '1px solid #3f3f46' }}
+        style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--violet-fg))', fontFamily: 'var(--font-geist-mono, monospace)', border: '1px solid rgb(var(--n7))' }}
       >
         {children}
       </code>
@@ -214,29 +217,29 @@ const MarkdownComponents = {
   pre: ({ children }: { children?: React.ReactNode }) => (
     <pre
       className="rounded-lg p-3.5 my-2.5 overflow-x-auto text-xs"
-      style={{ background: '#09090b', border: '1px solid #27272a', color: '#a1a1aa', fontFamily: 'var(--font-geist-mono, monospace)', lineHeight: 1.6 }}
+      style={{ background: 'rgb(var(--n0))', border: '1px solid rgb(var(--n5))', color: 'rgb(var(--n10))', fontFamily: 'var(--font-geist-mono, monospace)', lineHeight: 1.6 }}
     >
       {children}
     </pre>
   ),
-  hr: () => <hr className="my-3" style={{ borderColor: '#27272a' }} />,
+  hr: () => <hr className="my-3" style={{ borderColor: 'rgb(var(--n5))' }} />,
   table: ({ children }: { children?: React.ReactNode }) => (
-    <div className="overflow-x-auto my-3 rounded-lg" style={{ border: '1px solid #27272a' }}>
+    <div className="overflow-x-auto my-3 rounded-lg" style={{ border: '1px solid rgb(var(--n5))' }}>
       <table className="w-full text-xs border-collapse">{children}</table>
     </div>
   ),
   thead: ({ children }: { children?: React.ReactNode }) => (
-    <thead style={{ background: '#18181b' }}>{children}</thead>
+    <thead style={{ background: 'rgb(var(--n3))' }}>{children}</thead>
   ),
   tbody: ({ children }: { children?: React.ReactNode }) => <tbody>{children}</tbody>,
   tr: ({ children }: { children?: React.ReactNode }) => (
-    <tr style={{ borderBottom: '1px solid #27272a' }}>{children}</tr>
+    <tr style={{ borderBottom: '1px solid rgb(var(--n5))' }}>{children}</tr>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider text-[10px]" style={{ color: '#71717a' }}>{children}</th>
+    <th className="px-3 py-2 text-left font-semibold uppercase tracking-wider text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{children}</th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="px-3 py-2" style={{ color: '#d4d4d8' }}>{children}</td>
+    <td className="px-3 py-2" style={{ color: 'rgb(var(--n11))' }}>{children}</td>
   ),
 }
 
@@ -384,10 +387,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={copy}
-      className="p-1 rounded transition-colors opacity-0 group-hover:opacity-100"
-      style={{ color: copied ? '#22c55e' : '#52525b' }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = copied ? '#22c55e' : '#a1a1aa' }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = copied ? '#22c55e' : '#52525b' }}
+      className={`p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 ${copied ? 'text-success' : 'text-n8 hover:text-n10'}`}
       title="Copy"
     >
       {copied ? <Check size={13} /> : <Copy size={13} />}
@@ -403,18 +403,18 @@ function DiffView({ before, after }: { before: string; after: string }) {
 
   if (added === 0 && removed === 0) {
     return (
-      <div className="px-3.5 py-3 text-xs text-center" style={{ color: '#52525b', background: '#111113' }}>
+      <div className="px-3.5 py-3 text-xs text-center" style={{ color: 'rgb(var(--n8))', background: 'rgb(var(--n1))' }}>
         No changes detected
       </div>
     )
   }
 
   return (
-    <div style={{ maxHeight: 260, overflowY: 'auto', background: '#0d0d0f' }}>
-      <div className="flex items-center gap-3 px-3.5 py-1.5 border-b" style={{ borderColor: '#1e1e22' }}>
-        <span className="text-[10px] font-mono font-medium" style={{ color: '#22c55e' }}>+{added}</span>
-        <span className="text-[10px] font-mono font-medium" style={{ color: '#ef4444' }}>−{removed}</span>
-        <span className="text-[10px]" style={{ color: '#3f3f46' }}>lines changed</span>
+    <div style={{ maxHeight: 260, overflowY: 'auto', background: 'rgb(var(--n0))' }}>
+      <div className="flex items-center gap-3 px-3.5 py-1.5 border-b" style={{ borderColor: 'rgb(var(--n4))' }}>
+        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--green))' }}>+{added}</span>
+        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--red))' }}>−{removed}</span>
+        <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>lines changed</span>
       </div>
       <div>
         {diff.map((line, idx) => {
@@ -424,19 +424,19 @@ function DiffView({ before, after }: { before: string; after: string }) {
               key={idx}
               className="flex items-start gap-2 px-3 py-px"
               style={{
-                background: line.type === 'added' ? 'rgba(34,197,94,0.07)' : 'rgba(239,68,68,0.07)',
-                borderLeft: `2px solid ${line.type === 'added' ? '#166534' : '#7f1d1d'}`,
+                background: line.type === 'added' ? 'rgb(var(--green) / 0.07)' : 'rgb(var(--red) / 0.07)',
+                borderLeft: `2px solid ${line.type === 'added' ? 'rgb(var(--green-deep))' : 'rgb(var(--red-deep))'}`,
               }}
             >
               <span
                 className="flex-shrink-0 text-[11px] font-bold select-none"
-                style={{ color: line.type === 'added' ? '#22c55e' : '#ef4444', width: 10, textAlign: 'center' }}
+                style={{ color: line.type === 'added' ? 'rgb(var(--green))' : 'rgb(var(--red))', width: 10, textAlign: 'center' }}
               >
                 {line.type === 'added' ? '+' : '−'}
               </span>
               <span
                 className="text-[11px] break-all leading-relaxed"
-                style={{ color: line.type === 'added' ? '#86efac' : '#fca5a5', fontFamily: 'var(--font-geist-mono, monospace)' }}
+                style={{ color: line.type === 'added' ? 'rgb(var(--green-soft))' : 'rgb(var(--red-soft))', fontFamily: 'var(--font-geist-mono, monospace)' }}
               >
                 {line.text}
               </span>
@@ -446,6 +446,15 @@ function DiffView({ before, after }: { before: string; after: string }) {
       </div>
     </div>
   )
+}
+
+function wordCount(text: string) {
+  return text.split(/\s+/).filter(Boolean).length
+}
+
+/** The live editor preview is raw innerHTML, so neutralise any markup in the AI text */
+function escapeForPreview(md: string) {
+  return md.replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
 /* ── Message bubble ──────────────────────────────────────────────── */
@@ -468,11 +477,11 @@ function MessageBubble({
         <div className="max-w-[88%]">
           <div
             className="px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm leading-relaxed"
-            style={{ background: '#6366f1', color: '#fff' }}
+            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--white))' }}
           >
             {msg.content}
           </div>
-          <p className="text-right mt-1 text-[10px]" style={{ color: '#3f3f46' }}>{timeStr}</p>
+          <p className="text-right mt-1 text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{timeStr}</p>
         </div>
       </div>
     )
@@ -482,15 +491,15 @@ function MessageBubble({
     <div className="flex gap-2.5 mb-5 group">
       <div
         className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5"
-        style={{ width: 24, height: 24, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+        style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
       >
         <Wand2 size={11} className="text-white" />
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1.5">
-          <span className="text-xs font-semibold" style={{ color: '#818cf8' }}>AI</span>
-          <span className="text-[10px]" style={{ color: '#3f3f46' }}>{timeStr}</span>
+          <span className="text-xs font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>AI</span>
+          <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{timeStr}</span>
           <div className="ml-auto">
             <CopyButton text={msg.content} />
           </div>
@@ -500,39 +509,41 @@ function MessageBubble({
         {isStreaming && writingToDoc ? (
           <div
             className="rounded-2xl rounded-tl-sm px-3.5 py-3 flex items-center gap-2.5"
-            style={{ background: '#18181b', border: '1px solid rgba(99,102,241,0.3)' }}
+            style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--brand) / 0.3)' }}
           >
-            <span className="animate-spin inline-block flex-shrink-0">
-              <Wand2 size={13} style={{ color: '#6366f1' }} />
-            </span>
-            <div>
-              <p className="text-xs font-medium" style={{ color: '#a5b4fc' }}>Writing to editor…</p>
-              <p className="text-[11px] mt-0.5 truncate max-w-[200px]" style={{ color: '#52525b' }}>{writingToDoc}</p>
+            <span className="writing-dot flex-shrink-0" aria-hidden />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium" style={{ color: 'rgb(var(--brand-soft))' }}>Writing to editor…</p>
+              <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgb(var(--n8))' }}>{writingToDoc}</p>
             </div>
+            <span className="text-[11px] tabular-nums flex-shrink-0" style={{ color: 'rgb(var(--n8))' }}>
+              {wordCount(msg.content).toLocaleString()} words
+            </span>
           </div>
         ) : appliedDocTitle ? (
           /* After apply: show compact action card */
           <div
-            className="rounded-2xl rounded-tl-sm overflow-hidden"
-            style={{ border: '1px solid #27272a' }}
+            className="relative rounded-2xl rounded-tl-sm overflow-hidden"
+            style={{ border: '1px solid rgb(var(--n5))' }}
           >
             {/* Header */}
             <div
               className="flex items-center gap-2 px-3.5 py-2.5"
-              style={{ background: '#18181b', borderBottom: '1px solid #27272a' }}
+              style={{ background: 'rgb(var(--n3))', borderBottom: '1px solid rgb(var(--n5))' }}
             >
-              <Check size={13} style={{ color: '#22c55e' }} />
+              <Check size={13} style={{ color: 'rgb(var(--green))' }} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold" style={{ color: '#22c55e' }}>Applied to editor</p>
-                <p className="text-[11px] truncate" style={{ color: '#52525b' }}>{appliedDocTitle}</p>
+                <p className="text-xs font-semibold" style={{ color: 'rgb(var(--green))' }}>Applied to editor</p>
+                <p className="text-[11px] truncate" style={{ color: 'rgb(var(--n8))' }}>{appliedDocTitle}</p>
               </div>
               <button
                 onClick={() => setShowDiff((v) => !v)}
+                aria-pressed={showDiff}
                 className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors flex-shrink-0"
                 style={{
-                  background: showDiff ? 'rgba(99,102,241,0.15)' : '#27272a',
-                  color: showDiff ? '#a5b4fc' : '#52525b',
-                  border: `1px solid ${showDiff ? 'rgba(99,102,241,0.4)' : '#3f3f46'}`,
+                  background: showDiff ? 'rgb(var(--brand) / 0.15)' : 'rgb(var(--n5))',
+                  color: showDiff ? 'rgb(var(--brand-soft))' : 'rgb(var(--n8))',
+                  border: `1px solid ${showDiff ? 'rgb(var(--brand) / 0.4)' : 'rgb(var(--n7))'}`,
                 }}
                 title="Toggle diff view"
               >
@@ -540,26 +551,43 @@ function MessageBubble({
                 <span>Diff</span>
               </button>
             </div>
-            {/* Sections list OR diff view */}
-            {!showDiff && extractSections(msg.content).length > 0 && (
-              <div className="px-3.5 py-2" style={{ background: '#111113' }}>
-                {extractSections(msg.content).map((s, i) => (
-                  <div key={i} className="flex items-center gap-2 py-0.5">
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#3f3f46', display: 'inline-block', flexShrink: 0 }} />
-                    <span className="text-[11px] truncate" style={{ color: '#71717a' }}>{s}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {showDiff && appliedDoc && (
-              <DiffView before={appliedDoc.before} after={appliedDoc.after} />
-            )}
+            {/* Sections list OR diff view — cross-fade; the outgoing view pops out of flow */}
+            <AnimatePresence initial={false} mode="popLayout">
+              {showDiff && appliedDoc ? (
+                <m.div
+                  key="diff"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={springs.snappy}
+                >
+                  <DiffView before={appliedDoc.before} after={appliedDoc.after} />
+                </m.div>
+              ) : extractSections(msg.content).length > 0 ? (
+                <m.div
+                  key="sections"
+                  className="px-3.5 py-2"
+                  style={{ background: 'rgb(var(--n1))' }}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={springs.snappy}
+                >
+                  {extractSections(msg.content).map((s, i) => (
+                    <div key={i} className="flex items-center gap-2 py-0.5">
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgb(var(--n7))', display: 'inline-block', flexShrink: 0 }} />
+                      <span className="text-[11px] truncate" style={{ color: 'rgb(var(--n8))' }}>{s}</span>
+                    </div>
+                  ))}
+                </m.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         ) : (
           /* No active doc: show response normally in chat */
           <div
-            className="rounded-2xl rounded-tl-sm px-3.5 py-3"
-            style={{ background: '#18181b', border: '1px solid #27272a' }}
+            className={`rounded-2xl rounded-tl-sm px-3.5 py-3 ${isStreaming ? 'streaming-caret' : ''}`}
+            style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -567,9 +595,6 @@ function MessageBubble({
             >
               {msg.content}
             </ReactMarkdown>
-            {isStreaming && (
-              <span className="inline-block w-0.5 h-3.5 ml-0.5 rounded-full align-middle" style={{ background: '#818cf8', animation: 'blink 0.9s step-end infinite' }} />
-            )}
           </div>
         )}
       </div>
@@ -595,21 +620,21 @@ function EmptyState({
         style={{
           width: 44, height: 44,
           background: wf?.id === 'general'
-            ? 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.15))'
-            : 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2))',
-          border: wf?.id === 'general' ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(99,102,241,0.3)',
+            ? 'linear-gradient(135deg, rgb(var(--emerald) / 0.15), rgb(var(--cyan) / 0.15))'
+            : 'linear-gradient(135deg, rgb(var(--brand) / 0.2), rgb(var(--violet) / 0.2))',
+          border: wf?.id === 'general' ? '1px solid rgb(var(--emerald) / 0.3)' : '1px solid rgb(var(--brand) / 0.3)',
         }}
       >
         {wf?.id === 'general'
-          ? <MessageSquare size={20} style={{ color: '#34d399' }} />
+          ? <MessageSquare size={20} style={{ color: 'rgb(var(--emerald-fg))' }} />
           : <span className="text-xl">{wf?.emoji}</span>
         }
       </div>
       <div className="text-center">
-        <p className="text-sm font-semibold mb-1" style={{ color: '#e4e4e7' }}>
+        <p className="text-sm font-semibold mb-1" style={{ color: 'rgb(var(--n12))' }}>
           {wf?.id === 'general' ? 'Free Chat' : `${wf?.label} Assistant`}
         </p>
-        <p className="text-xs leading-relaxed" style={{ color: '#52525b' }}>
+        <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
           {wf?.id === 'general'
             ? 'No document mode — ask anything. Strategy, trade-offs, frameworks, tough decisions.'
             : `Your AI co-pilot for ${wf?.label.toLowerCase()} work. Try a starter below or type your own.`
@@ -622,25 +647,12 @@ function EmptyState({
           <button
             key={s.label}
             onClick={() => onPrompt(s.prompt)}
-            className="flex items-center gap-2.5 w-full text-left px-3.5 py-2.5 rounded-xl text-xs transition-all group"
-            style={{ background: '#18181b', border: '1px solid #27272a', color: '#a1a1aa' }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.background = '#1e1e21'
-              el.style.borderColor = '#3f3f46'
-              el.style.color = '#e4e4e7'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.background = '#18181b'
-              el.style.borderColor = '#27272a'
-              el.style.color = '#a1a1aa'
-            }}
+            className="flex items-center gap-2.5 w-full text-left px-3.5 py-2.5 rounded-xl text-xs transition-colors group border bg-n3 border-n5 text-n10 hover:bg-n4 hover:border-n7 hover:text-n12"
           >
             <ChevronRight
               size={12}
               className="flex-shrink-0"
-              style={{ color: workflow === 'general' ? '#34d399' : '#6366f1' }}
+              style={{ color: workflow === 'general' ? 'rgb(var(--emerald-fg))' : 'rgb(var(--brand))' }}
             />
             <span>{s.label}</span>
           </button>
@@ -701,10 +713,23 @@ export default function AIChatPanel() {
     }, 50)
   }, [pendingAICommand, clearPendingAICommand])
 
-  // Scroll to bottom when messages change or streaming updates
+  // Follow new content only while the reader is at the bottom. Streaming chunks
+  // pin instantly (restarting a smooth scroll per chunk judders); new messages glide.
+  const messagesRef = useRef<HTMLDivElement>(null)
+  const stickToBottom = useRef(true)
+  const handleMessagesScroll = () => {
+    const el = messagesRef.current
+    if (el) stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+  }
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [workflowMessages.length, streamingContent])
+    stickToBottom.current = true
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    messagesEndRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' })
+  }, [workflowMessages.length])
+  useEffect(() => {
+    const el = messagesRef.current
+    if (el && stickToBottom.current) el.scrollTop = el.scrollHeight
+  }, [streamingContent])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -812,6 +837,7 @@ export default function AIChatPanel() {
         const markerAt = full.indexOf(STREAM_ERROR_MARKER)
         if (markerAt !== -1) throw new AIError(full.slice(markerAt + STREAM_ERROR_MARKER.length))
         setStreamingContent(full)
+        if (targetDocId) publishStreamingPreview(targetDocId, markdownToHtml(escapeForPreview(full)))
       }
 
       // Don't overwrite the document with an empty answer
@@ -835,6 +861,7 @@ export default function AIChatPanel() {
         })
       }
     } finally {
+      clearStreamingPreview()
       setIsStreaming(false)
       setStreamingContent(null)
       setStreamingTargetTitle(null)
@@ -874,38 +901,35 @@ export default function AIChatPanel() {
     : null
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#111113' }}>
+    <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n1))' }}>
 
       {/* ── Workflow tabs ───────────────────────────────────────── */}
       <div
         className="flex-shrink-0 border-b overflow-x-auto scrollbar-hide"
-        style={{ borderColor: '#1e1e22', background: '#0d0d0f' }}
+        style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}
       >
         <div className="flex min-w-max items-stretch">
           {WORKFLOWS.map((wf) => {
             const active = workflow === wf.id
             const isChat = wf.isGeneral
             return (
-              <>
+              <Fragment key={wf.id}>
                 {/* Separator before the Chat tab */}
                 {isChat && (
                   <div
                     key="sep"
                     className="flex-shrink-0 self-center mx-0.5"
-                    style={{ width: 1, height: 16, background: '#2a2a2a' }}
+                    style={{ width: 1, height: 16, background: 'rgb(var(--n6))' }}
                   />
                 )}
                 <button
                   key={wf.id}
                   onClick={() => setWorkflow(wf.id)}
-                  className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors relative whitespace-nowrap flex-shrink-0"
-                  style={{
-                    color: active
-                      ? (isChat ? '#34d399' : '#a5b4fc')
-                      : '#52525b',
-                  }}
-                  onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLButtonElement).style.color = isChat ? '#6ee7b7' : '#71717a' }}
-                  onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLButtonElement).style.color = '#52525b' }}
+                  className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors relative whitespace-nowrap flex-shrink-0 ${
+                    active
+                      ? (isChat ? 'text-mint-fg' : 'text-brand-soft')
+                      : (isChat ? 'text-n8 hover:text-mint-soft' : 'text-n8 hover:text-n10')
+                  }`}
                   title={isChat ? 'Free chat — no document mode' : undefined}
                 >
                   {isChat ? <MessageSquare size={12} /> : <span>{wf.emoji}</span>}
@@ -913,60 +937,81 @@ export default function AIChatPanel() {
                   {active && (
                     <span
                       className="absolute bottom-0 left-0 right-0 h-0.5"
-                      style={{ background: isChat ? '#10b981' : '#6366f1', borderRadius: '2px 2px 0 0' }}
+                      style={{ background: isChat ? 'rgb(var(--emerald))' : 'rgb(var(--brand))', borderRadius: '2px 2px 0 0' }}
                     />
                   )}
                 </button>
-              </>
+              </Fragment>
             )
           })}
         </div>
       </div>
 
       {/* ── Messages area ───────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div ref={messagesRef} onScroll={handleMessagesScroll} className="flex-1 overflow-y-auto px-4 py-4">
         {showEmpty ? (
           <EmptyState workflow={workflow} onPrompt={(p) => { setInput(p); textareaRef.current?.focus() }} />
         ) : (
           <>
-            {workflowMessages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                msg={msg}
-                appliedDoc={appliedDocs[msg.id]}
-              />
-            ))}
-            {streamingMsg && (
-              <MessageBubble
-                msg={streamingMsg}
-                isStreaming
-                writingToDoc={streamingTargetTitle ?? undefined}
-              />
+            {/* Keyed by workflow so switching tabs shows history without replaying entrances.
+                Finished assistant replies don't animate: they replace the streaming bubble in place. */}
+            <AnimatePresence key={workflow} initial={false}>
+              {workflowMessages.map((msg) => (
+                <m.div
+                  key={msg.id}
+                  style={{ transformOrigin: msg.role === 'user' ? 'bottom right' : 'top left' }}
+                  initial={msg.role === 'user' ? { opacity: 0, y: 8, scale: 0.98 } : false}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={springs.snappy}
+                >
+                  <MessageBubble
+                    msg={msg}
+                    appliedDoc={appliedDocs[msg.id]}
+                  />
+                </m.div>
+              ))}
+            </AnimatePresence>
+            {streamingMsg && (streamingMsg.content || streamingTargetTitle) && (
+              <m.div
+                style={{ transformOrigin: 'top left' }}
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={springs.snappy}
+              >
+                <MessageBubble
+                  msg={streamingMsg}
+                  isStreaming
+                  writingToDoc={streamingTargetTitle ?? undefined}
+                />
+              </m.div>
             )}
-            {isStreaming && !streamingContent && (
-              <div className="flex gap-2.5 mb-4">
+            {isStreaming && !streamingContent && !streamingTargetTitle && (
+              <m.div
+                className="flex gap-2.5 mb-4"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={springs.snappy}
+              >
                 <div
                   className="flex-shrink-0 flex items-center justify-center rounded-full"
-                  style={{ width: 24, height: 24, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                  style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
                 >
                   <Wand2 size={11} className="text-white" />
                 </div>
                 <div
                   className="flex items-center gap-1 px-4 py-3 rounded-2xl rounded-tl-sm"
-                  style={{ background: '#18181b', border: '1px solid #27272a' }}
+                  style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
                 >
                   {[0, 1, 2].map((i) => (
                     <span
                       key={i}
-                      className="rounded-full"
-                      style={{
-                        width: 6, height: 6, background: '#6366f1',
-                        animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-                      }}
+                      className="typing-dot"
+                      style={{ animationDelay: `${i * 0.16}s` }}
                     />
                   ))}
                 </div>
-              </div>
+              </m.div>
             )}
             <div ref={messagesEndRef} />
           </>
@@ -976,28 +1021,13 @@ export default function AIChatPanel() {
       {/* ── Bottom controls ─────────────────────────────────────── */}
       <div
         className="flex-shrink-0 border-t px-3 pt-2.5 pb-3 space-y-2.5"
-        style={{ borderColor: '#1e1e22', background: '#0d0d0f' }}
+        style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}
       >
         {/* Free chat pill — shown when on a document workflow */}
         {workflow !== 'general' && (
           <button
             onClick={() => setWorkflow('general')}
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium transition-all"
-            style={{
-              background: 'rgba(16,185,129,0.06)',
-              border: '1px solid rgba(16,185,129,0.2)',
-              color: '#6ee7b7',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.background = 'rgba(16,185,129,0.12)'
-              el.style.borderColor = 'rgba(16,185,129,0.4)'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLButtonElement
-              el.style.background = 'rgba(16,185,129,0.06)'
-              el.style.borderColor = 'rgba(16,185,129,0.2)'
-            }}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors border bg-mint/[0.06] border-mint/20 text-mint-soft hover:bg-mint/[0.12] hover:border-mint/40"
           >
             <MessageSquare size={13} style={{ flexShrink: 0 }} />
             <span>Switch to free chat</span>
@@ -1011,10 +1041,10 @@ export default function AIChatPanel() {
             <button
               onClick={() => setUseDocContext((v) => !v)}
               className="flex items-center gap-2 text-xs transition-colors"
-              style={{ color: useDocContext ? '#818cf8' : '#3f3f46' }}
+              style={{ color: useDocContext ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
             >
               {useDocContext
-                ? <ToggleRight size={16} style={{ color: '#6366f1' }} />
+                ? <ToggleRight size={16} style={{ color: 'rgb(var(--brand))' }} />
                 : <ToggleLeft size={16} />
               }
               <span>Use document context</span>
@@ -1023,7 +1053,7 @@ export default function AIChatPanel() {
                 return d ? (
                   <span
                     className="truncate max-w-[100px] text-[10px] px-1.5 py-0.5 rounded"
-                    style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
+                    style={{ background: 'rgb(var(--brand) / 0.12)', color: 'rgb(var(--brand-fg))' }}
                     title={d.title}
                   >
                     {d.title}
@@ -1036,11 +1066,11 @@ export default function AIChatPanel() {
             <div className="flex items-center gap-2">
               <span
                 className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium"
-                style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}
+                style={{ background: 'rgb(var(--emerald) / 0.1)', color: 'rgb(var(--emerald-fg))', border: '1px solid rgb(var(--emerald) / 0.2)' }}
               >
                 <span
                   className="rounded-full"
-                  style={{ width: 5, height: 5, background: '#10b981', display: 'inline-block' }}
+                  style={{ width: 5, height: 5, background: 'rgb(var(--emerald))', display: 'inline-block' }}
                 />
                 Free chat mode
               </span>
@@ -1050,10 +1080,7 @@ export default function AIChatPanel() {
           {workflowMessages.length > 0 && (
             <button
               onClick={handleClear}
-              className="flex items-center gap-1 text-[11px] px-2 py-1 rounded transition-colors"
-              style={{ color: '#3f3f46' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#ef4444' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#3f3f46' }}
+              className="flex items-center gap-1 text-[11px] px-2 py-1 rounded transition-colors text-n8 hover:text-danger"
               title="Clear conversation"
             >
               <Trash2 size={12} />
@@ -1065,7 +1092,7 @@ export default function AIChatPanel() {
         {/* Input area */}
         <div
           className="flex flex-col gap-2 rounded-xl p-2.5"
-          style={{ background: '#18181b', border: `1px solid ${isStreaming ? (workflow === 'general' ? 'rgba(16,185,129,0.4)' : 'rgba(99,102,241,0.4)') : '#2e2e32'}` }}
+          style={{ background: 'rgb(var(--n3))', border: `1px solid ${isStreaming ? (workflow === 'general' ? 'rgb(var(--emerald) / 0.4)' : 'rgb(var(--brand) / 0.4)') : 'rgb(var(--n6))'}` }}
         >
           <textarea
             ref={textareaRef}
@@ -1077,18 +1104,18 @@ export default function AIChatPanel() {
             disabled={isStreaming}
             className="w-full bg-transparent resize-none outline-none text-sm leading-relaxed disabled:opacity-50"
             style={{
-              color: '#e4e4e7',
-              caretColor: '#818cf8',
+              color: 'rgb(var(--n12))',
+              caretColor: 'rgb(var(--brand-fg))',
               minHeight: 36,
               maxHeight: 140,
             }}
           />
 
           <div className="flex items-center justify-between">
-            <span className="text-[10px]" style={{ color: '#3f3f46' }}>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
               <kbd
-                className="px-1 py-0.5 rounded text-[9px]"
-                style={{ background: '#27272a', border: '1px solid #3f3f46', color: '#52525b' }}
+                className="px-1 py-0.5 rounded text-[10px]"
+                style={{ background: 'rgb(var(--n5))', border: '1px solid rgb(var(--n7))', color: 'rgb(var(--n8))' }}
               >
                 ⌘↵
               </kbd>
@@ -1100,13 +1127,13 @@ export default function AIChatPanel() {
               disabled={!input.trim() || isStreaming}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               style={{
-                background: input.trim() && !isStreaming ? '#6366f1' : '#27272a',
-                color: input.trim() && !isStreaming ? '#fff' : '#52525b',
+                background: input.trim() && !isStreaming ? 'rgb(var(--brand))' : 'rgb(var(--n5))',
+                color: input.trim() && !isStreaming ? 'rgb(var(--white))' : 'rgb(var(--n8))',
               }}
             >
               {isStreaming ? (
                 <>
-                  <span className="animate-spin inline-block"><Wand2 size={12} /></span>
+                  <span className="writing-dot writing-dot-sm" aria-hidden />
                   <span>Thinking…</span>
                 </>
               ) : (

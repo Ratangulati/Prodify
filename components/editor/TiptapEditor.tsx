@@ -134,13 +134,13 @@ export default function TiptapEditor({ docId }: { docId: string }) {
           style={{
             top: bubble.top,
             left: bubble.left,
-            background: '#1e1e1e',
-            borderColor: '#333',
+            background: 'rgb(var(--n4))',
+            borderColor: 'rgb(var(--n7))',
             pointerEvents: aiLoading ? 'none' : 'auto',
           }}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <span className="flex items-center gap-1 px-2 text-[10px] font-medium border-r mr-1" style={{ color: '#6366f1', borderColor: '#2a2a2a' }}>
+          <span className="flex items-center gap-1 px-2 text-[10px] font-medium border-r mr-1" style={{ color: 'rgb(var(--brand))', borderColor: 'rgb(var(--n6))' }}>
             <Wand2 size={10} />
             AI
           </span>
@@ -148,10 +148,7 @@ export default function TiptapEditor({ docId }: { docId: string }) {
             <button
               key={a.value}
               onClick={() => handleInlineAI(a.value)}
-              className="flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-colors"
-              style={{ color: aiLoading === a.value ? '#6366f1' : '#ccc' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#2a2a2a' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-colors hover:bg-n6 ${aiLoading === a.value ? 'text-brand' : 'text-n11'}`}
             >
               {aiLoading === a.value
                 ? <span className="animate-spin inline-block"><Wand2 size={11} /></span>

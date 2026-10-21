@@ -8,9 +8,9 @@ import type { DocumentType } from '@/lib/types'
 const CARDS = [
   {
     icon: <FileText size={22} />,
-    color: '#6366f1',
-    bg: 'rgba(99,102,241,0.1)',
-    border: 'rgba(99,102,241,0.2)',
+    color: 'rgb(var(--brand))',
+    bg: 'rgb(var(--brand) / 0.1)',
+    border: 'rgb(var(--brand) / 0.2)',
     title: 'Write your first PRD',
     description: 'AI helps you write a complete Product Requirements Document from a single prompt.',
     type: 'prd' as DocumentType,
@@ -19,9 +19,9 @@ const CARDS = [
   },
   {
     icon: <Map size={22} />,
-    color: '#3b82f6',
-    bg: 'rgba(59,130,246,0.1)',
-    border: 'rgba(59,130,246,0.2)',
+    color: 'rgb(var(--blue))',
+    bg: 'rgb(var(--blue) / 0.1)',
+    border: 'rgb(var(--blue) / 0.2)',
     title: 'Plan your roadmap',
     description: 'Drag features across Now / Next / Later to build a visual product roadmap.',
     type: 'roadmap' as DocumentType,
@@ -30,9 +30,9 @@ const CARDS = [
   },
   {
     icon: <FlaskConical size={22} />,
-    color: '#f59e0b',
-    bg: 'rgba(245,158,11,0.1)',
-    border: 'rgba(245,158,11,0.2)',
+    color: 'rgb(var(--amber))',
+    bg: 'rgb(var(--amber) / 0.1)',
+    border: 'rgb(var(--amber) / 0.2)',
     title: 'Analyze user research',
     description: 'Paste interview notes and let AI surface themes, quotes, and opportunities.',
     type: 'research' as DocumentType,
@@ -54,20 +54,20 @@ export default function WelcomeScreen() {
   return (
     <div
       className="flex-1 flex flex-col items-center justify-center px-8 py-16"
-      style={{ background: '#0f0f0f', minHeight: 0 }}
+      style={{ background: 'rgb(var(--n0))', minHeight: 0 }}
     >
       {/* Logo & headline */}
       <div className="flex flex-col items-center gap-4 mb-12 text-center">
         <div
           className="flex items-center justify-center rounded-2xl mb-2"
-          style={{ width: 56, height: 56, background: '#6366f1' }}
+          style={{ width: 56, height: 56, background: 'rgb(var(--brand))' }}
         >
           <Sparkles size={24} className="text-white" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#f0f0f0' }}>
+        <h1 className="text-3xl font-bold leading-[1.1] tracking-[-0.022em] text-balance" style={{ color: 'rgb(var(--n12))' }}>
           Welcome to Prodify-AI
         </h1>
-        <p className="text-sm max-w-sm leading-relaxed" style={{ color: '#666' }}>
+        <p className="text-sm max-w-sm leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
           Your AI-powered product management workspace. Get started by picking one of the quick starts below.
         </p>
       </div>
@@ -91,8 +91,8 @@ export default function WelcomeScreen() {
               {card.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold mb-0.5" style={{ color: '#e0e0e0' }}>{card.title}</p>
-              <p className="text-xs leading-relaxed" style={{ color: '#888' }}>{card.description}</p>
+              <p className="text-sm font-semibold mb-0.5" style={{ color: 'rgb(var(--n11))' }}>{card.title}</p>
+              <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n9))' }}>{card.description}</p>
             </div>
             <ArrowRight
               size={16}
@@ -103,8 +103,8 @@ export default function WelcomeScreen() {
         ))}
       </div>
 
-      <p className="mt-8 text-[11px]" style={{ color: '#444' }}>
-        Or use <kbd className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: '#1e1e1e', color: '#666' }}>⌘K</kbd> to open the command palette
+      <p className="mt-8 text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
+        Or use <kbd className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>⌘K</kbd> to open the command palette
       </p>
     </div>
   )
