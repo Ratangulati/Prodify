@@ -215,8 +215,9 @@ repositories to track. Optionally turn on **Move tasks automatically**.
 - Every delivery's `X-Hub-Signature-256` is checked against the raw body
   with the webhook secret (constant-time compare); anything else gets a 401.
 - Each delivery id is stored in the same transaction as its changes: a
-  repeated delivery is skipped, and a failed one rolls back so GitHub's retry
-  works. Events older than the stored PR data are ignored.
+  repeated delivery is skipped, and a failed one rolls back so redelivering
+  it (the app's **Advanced** tab) works. GitHub doesn't retry failed
+  deliveries on its own. Events older than the stored PR data are ignored.
 - A repository can be tracked by only one workspace, and the repository
   decides which workspace's tasks a webhook may touch.
 

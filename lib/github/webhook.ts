@@ -26,7 +26,7 @@ interface PullRequestEvent {
  * same transaction as the changes it causes:
  *  - the same delivery arriving twice fails on the unique id → "duplicate"
  *  - if handling throws, everything rolls back (including the id), so
- *    GitHub's retry is processed normally
+ *    redelivering it from the GitHub App's Advanced tab works normally
  */
 export async function processWebhook(
   db: PrismaClient,
@@ -40,12 +40,17 @@ export async function processWebhook(
       if (seen) return { status: 'duplicate', detail: 'Already processed this delivery.' }
       await tx.webhookDelivery.create({ data: { id: delivery.deliveryId, event: delivery.event } })
       return handleEvent(tx, delivery.event, delivery.payload)
-    })
+    }, TRANSACTION_LIMITS)
   } catch (err) {
     if (isUniqueViolation(err)) return { status: 'duplicate', detail: 'Already processed this delivery.' }
     throw err
   }
 }
+
+// One delivery runs up to ~10 queries. Prisma's defaults (2s to start, 5s to
+// finish) are too tight when the database is far away, e.g. a laptop in one
+// region talking to Neon in another; these leave room for that.
+const TRANSACTION_LIMITS = { maxWait: 10_000, timeout: 20_000 }
 
 function isUniqueViolation(err: unknown) {
   return typeof err === 'object' && err !== null && (err as { code?: string }).code === 'P2002'

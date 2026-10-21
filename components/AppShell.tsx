@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { useWorkspaceStore } from '@/lib/store'
 import LeftSidebar from './sidebar/LeftSidebar'
@@ -25,12 +26,14 @@ export default function AppShell() {
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false)
   const [shortcutsOpen,  setShortcutsOpen]  = useState(false)
   const [githubOpen,     setGithubOpen]     = useState(false)
+  const router = useRouter()
 
   /* ── Coming back from GitHub's install page (?github=…) ─────────── */
   useEffect(() => {
     const result = new URLSearchParams(window.location.search).get('github')
     if (!result) return
-    window.history.replaceState(null, '', window.location.pathname)
+    // Through Next's router: a plain history.replaceState gets overwritten by it
+    router.replace(window.location.pathname, { scroll: false })
     const messages: Record<string, () => void> = {
       'connected':      () => toast.success('GitHub connected. Pick the repositories to track.'),
       'taken':          () => toast.error('That GitHub installation is already linked to another workspace.'),
@@ -39,7 +42,7 @@ export default function AppShell() {
     }
     ;(messages[result] ?? (() => toast.error('Could not connect GitHub. Please try again.')))()
     setGithubOpen(true)
-  }, [])
+  }, [router])
 
   /* ── Apply theme class to <html> ─────────────────────────────── */
   useEffect(() => {
