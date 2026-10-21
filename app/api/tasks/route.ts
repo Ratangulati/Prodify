@@ -11,6 +11,7 @@ export async function GET() {
   const tasks = await prisma.task.findMany({
     where:   { workspaceId: workspace.id },
     orderBy: { number: 'desc' },
+    include: { pullRequests: { orderBy: { prUpdatedAt: 'desc' } } },
   })
   return NextResponse.json(tasks.map((t) => toTaskDto(t, workspace.taskKeyPrefix)))
 }

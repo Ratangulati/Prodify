@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { getDefaultWorkspace, isTaskStatus } from '@/lib/tasks'
 import { toTaskDto } from '@/lib/task-dto'
 
+export const dynamic = 'force-dynamic'
+
 type Params = { params: { id: string } }
 
 /** Loads a task only if it belongs to the current workspace */
@@ -10,6 +12,23 @@ async function findTask(id: string) {
   const workspace = await getDefaultWorkspace(prisma)
   const task = await prisma.task.findFirst({ where: { id, workspaceId: workspace.id } })
   return { workspace, task }
+}
+
+// GET /api/tasks/:id — one task with its PRs and recent activity
+export async function GET(_: NextRequest, { params }: Params) {
+  const workspace = await getDefaultWorkspace(prisma)
+  const task = await prisma.task.findFirst({
+    where:   { id: params.id, workspaceId: workspace.id },
+    include: {
+      pullRequests: { orderBy: { prUpdatedAt: 'desc' } },
+      activity:     { orderBy: { createdAt: 'desc' }, take: 20 },
+    },
+  })
+  if (!task) return NextResponse.json({ error: 'Task not found.' }, { status: 404 })
+  return NextResponse.json({
+    task:     toTaskDto(task, workspace.taskKeyPrefix),
+    activity: task.activity.map((a) => ({ id: a.id, message: a.message, createdAt: a.createdAt.toISOString() })),
+  })
 }
 
 // PATCH /api/tasks/:id { title?, status?, description?, docId? }
@@ -27,7 +46,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     data.status = body.status
   }
 
-  const updated = await prisma.task.update({ where: { id: task.id }, data })
+  const updated = await prisma.task.update({
+    where: { id: task.id }, data, include: { pullRequests: { orderBy: { prUpdatedAt: 'desc' } } },
+  })
   return NextResponse.json(toTaskDto(updated, workspace.taskKeyPrefix))
 }
 

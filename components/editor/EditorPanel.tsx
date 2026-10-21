@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { ChevronDown, Copy, Download } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import Editor from './Editor'
+import DeliverySection from './DeliverySection'
 import type { DocumentType } from '@/lib/types'
 
 /* ── Export helpers ─────────────────────────────────────────────── */
@@ -260,6 +261,8 @@ export default function EditorPanel() {
           )}
         </div>
       </div>
+
+      {doc.type === 'prd' && <DeliverySection docId={doc.id} />}
 
       {/* Editor area */}
       <div className="flex-1 overflow-hidden flex flex-col">
