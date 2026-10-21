@@ -5,7 +5,9 @@ import {
   MessageSquare, Map, BarChart3, FlaskConical, TrendingUp,
   PanelRightClose, PanelRightOpen,
 } from 'lucide-react'
+import { m } from 'motion/react'
 import { useWorkspaceStore } from '@/lib/store'
+import { springs } from '@/lib/motion'
 import AIChatPanel from './AIChatPanel'
 import RoadmapBoard from '@/components/roadmap/RoadmapBoard'
 import PrioritizationPanel from '@/components/prioritization/PrioritizationPanel'
@@ -128,14 +130,20 @@ export default function RightPanel() {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      <m.div
+        key={activeTab}
+        className="flex-1 overflow-hidden flex flex-col"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={springs.ui}
+      >
         {activeTab === 'chat'       ? <AIChatPanel />          :
          activeTab === 'roadmap'    ? <RoadmapBoard />          :
          activeTab === 'prioritize' ? <PrioritizationPanel />   :
          activeTab === 'research'   ? <ResearchPanel />         :
          activeTab === 'data'       ? <DataPanel />             :
          <TabPlaceholder tab={activeTab} />}
-      </div>
+      </m.div>
     </aside>
   )
 }

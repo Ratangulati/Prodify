@@ -21,6 +21,8 @@ import {
   FileText, BookOpen, BarChart3, LayoutGrid, FlaskConical,
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
+import { AnimatePresence, m } from 'motion/react'
+import { springs } from '@/lib/motion'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 interface BubblePos { top: number; left: number; fromViewport?: boolean }
@@ -462,9 +464,14 @@ export default function Editor({ docId }: { docId: string }) {
     <div ref={containerRef} className="relative flex-1 flex flex-col overflow-hidden">
 
       {/* ── Floating formatting toolbar ──────────────────────────── */}
+      <AnimatePresence>
       {toolbar && (
-        <div
-          className="absolute z-40 flex items-center rounded-xl border shadow-2xl px-1.5 py-1.5 gap-0.5"
+        <m.div
+          initial={{ opacity: 0, scale: 0.96, y: 4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 4 }}
+          transition={springs.ui}
+          className="absolute z-40 flex items-center rounded-xl border shadow-2xl px-1.5 py-1.5 gap-0.5 origin-bottom"
           style={{
             top: toolbar.top,
             left: toolbar.left,
@@ -517,13 +524,19 @@ export default function Editor({ docId }: { docId: string }) {
               <span className="hidden lg:inline">{a.label}</span>
             </button>
           ))}
-        </div>
+        </m.div>
       )}
+      </AnimatePresence>
 
       {/* ── Slash command menu ───────────────────────────────────── */}
+      <AnimatePresence>
       {slashOpen && filteredSlash.length > 0 && (
-        <div
-          className="absolute z-50 rounded-xl border shadow-2xl overflow-hidden"
+        <m.div
+          initial={{ opacity: 0, scale: 0.96, y: -4 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: -4 }}
+          transition={springs.ui}
+          className="absolute z-50 rounded-xl border shadow-2xl overflow-hidden origin-top-left"
           style={{
             top: slashPos.top,
             left: slashPos.left,
@@ -585,8 +598,9 @@ export default function Editor({ docId }: { docId: string }) {
             <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>↵ insert</span>
             <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>Esc dismiss</span>
           </div>
-        </div>
+        </m.div>
       )}
+      </AnimatePresence>
 
       {/* ── Editor scroll area ───────────────────────────────────── */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">

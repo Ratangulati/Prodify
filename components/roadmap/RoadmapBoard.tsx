@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { format, parseISO, isValid, getQuarter, getYear } from 'date-fns'
 import { useWorkspaceStore } from '@/lib/store'
+import { SPRING_EASING } from '@/lib/motion'
 import { toast } from '@/lib/toast'
 import type { Feature, FeatureStatus, FeaturePriority } from '@/lib/types'
 
@@ -137,9 +138,8 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
         boxShadow: isDragOverlay
           ? '0 16px 48px rgb(var(--black) / 0.7), 0 0 0 1px rgb(var(--brand) / 0.4)'
           : 'none',
-        transform: isDragOverlay && transform
-          ? `translate3d(${transform.x}px, ${transform.y}px, 0) rotate(1.5deg)`
-          : style?.transform,
+        // The overlay is positioned by DragOverlay itself, so it only needs the "lifted" tilt
+        transform: isDragOverlay ? 'rotate(1.5deg) scale(1.02)' : style?.transform,
       }}
       {...attributes}
       {...listeners}
@@ -562,8 +562,12 @@ function TimelineView({ features }: { features: Feature[] }) {
                 {/* Progress bar */}
                 <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgb(var(--n5))' }}>
                   <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${pct}%`, background: 'rgb(var(--green))' }}
+                    className="h-full w-full rounded-full origin-left"
+                    style={{
+                      transform: `scaleX(${pct / 100})`,
+                      transition: `transform var(--spring-duration) var(--spring)`,
+                      background: 'rgb(var(--green))',
+                    }}
                   />
                 </div>
                 <p className="text-[9px] mt-1" style={{ color: 'rgb(var(--n8))' }}>{pct}% done</p>
@@ -744,7 +748,7 @@ export default function RoadmapBoard() {
               </div>
             </div>
 
-            <DragOverlay dropAnimation={{ duration: 150, easing: 'ease' }}>
+            <DragOverlay dropAnimation={{ duration: 300, easing: SPRING_EASING }}>
               {activeFeature && (
                 <FeatureCard feature={activeFeature} isDragOverlay />
               )}

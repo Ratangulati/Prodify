@@ -4,6 +4,7 @@ import {
   Fragment, useState, useRef, useEffect, useCallback, useMemo,
 } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { AnimatePresence, m } from 'motion/react'
 import remarkGfm from 'remark-gfm'
 import {
   Send, Copy, Check, Trash2, FileText, BookOpen,
@@ -13,6 +14,7 @@ import {
 import { useWorkspaceStore } from '@/lib/store'
 import { AIError, STREAM_ERROR_MARKER, errorFromResponse, toAIError } from '@/lib/ai-client'
 import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
+import { springs } from '@/lib/motion'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
 const WORKFLOWS: {
@@ -510,7 +512,7 @@ function MessageBubble({
         ) : appliedDocTitle ? (
           /* After apply: show compact action card */
           <div
-            className="rounded-2xl rounded-tl-sm overflow-hidden"
+            className="relative rounded-2xl rounded-tl-sm overflow-hidden"
             style={{ border: '1px solid rgb(var(--n5))' }}
           >
             {/* Header */}
@@ -525,6 +527,7 @@ function MessageBubble({
               </div>
               <button
                 onClick={() => setShowDiff((v) => !v)}
+                aria-pressed={showDiff}
                 className="flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium transition-colors flex-shrink-0"
                 style={{
                   background: showDiff ? 'rgb(var(--brand) / 0.15)' : 'rgb(var(--n5))',
@@ -537,20 +540,37 @@ function MessageBubble({
                 <span>Diff</span>
               </button>
             </div>
-            {/* Sections list OR diff view */}
-            {!showDiff && extractSections(msg.content).length > 0 && (
-              <div className="px-3.5 py-2" style={{ background: 'rgb(var(--n1))' }}>
-                {extractSections(msg.content).map((s, i) => (
-                  <div key={i} className="flex items-center gap-2 py-0.5">
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgb(var(--n7))', display: 'inline-block', flexShrink: 0 }} />
-                    <span className="text-[11px] truncate" style={{ color: 'rgb(var(--n8))' }}>{s}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {showDiff && appliedDoc && (
-              <DiffView before={appliedDoc.before} after={appliedDoc.after} />
-            )}
+            {/* Sections list OR diff view — cross-fade; the outgoing view pops out of flow */}
+            <AnimatePresence initial={false} mode="popLayout">
+              {showDiff && appliedDoc ? (
+                <m.div
+                  key="diff"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={springs.snappy}
+                >
+                  <DiffView before={appliedDoc.before} after={appliedDoc.after} />
+                </m.div>
+              ) : extractSections(msg.content).length > 0 ? (
+                <m.div
+                  key="sections"
+                  className="px-3.5 py-2"
+                  style={{ background: 'rgb(var(--n1))' }}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={springs.snappy}
+                >
+                  {extractSections(msg.content).map((s, i) => (
+                    <div key={i} className="flex items-center gap-2 py-0.5">
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgb(var(--n7))', display: 'inline-block', flexShrink: 0 }} />
+                      <span className="text-[11px] truncate" style={{ color: 'rgb(var(--n8))' }}>{s}</span>
+                    </div>
+                  ))}
+                </m.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         ) : (
           /* No active doc: show response normally in chat */
@@ -910,19 +930,38 @@ export default function AIChatPanel() {
           <EmptyState workflow={workflow} onPrompt={(p) => { setInput(p); textareaRef.current?.focus() }} />
         ) : (
           <>
-            {workflowMessages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                msg={msg}
-                appliedDoc={appliedDocs[msg.id]}
-              />
-            ))}
+            {/* Keyed by workflow so switching tabs shows history without replaying entrances.
+                Finished assistant replies don't animate: they replace the streaming bubble in place. */}
+            <AnimatePresence key={workflow} initial={false}>
+              {workflowMessages.map((msg) => (
+                <m.div
+                  key={msg.id}
+                  style={{ transformOrigin: msg.role === 'user' ? 'bottom right' : 'top left' }}
+                  initial={msg.role === 'user' ? { opacity: 0, y: 8, scale: 0.98 } : false}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={springs.snappy}
+                >
+                  <MessageBubble
+                    msg={msg}
+                    appliedDoc={appliedDocs[msg.id]}
+                  />
+                </m.div>
+              ))}
+            </AnimatePresence>
             {streamingMsg && (
-              <MessageBubble
-                msg={streamingMsg}
-                isStreaming
-                writingToDoc={streamingTargetTitle ?? undefined}
-              />
+              <m.div
+                style={{ transformOrigin: 'top left' }}
+                initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={springs.snappy}
+              >
+                <MessageBubble
+                  msg={streamingMsg}
+                  isStreaming
+                  writingToDoc={streamingTargetTitle ?? undefined}
+                />
+              </m.div>
             )}
             {isStreaming && !streamingContent && (
               <div className="flex gap-2.5 mb-4">

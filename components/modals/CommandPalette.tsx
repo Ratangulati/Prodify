@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import { toast } from '@/lib/toast'
+import Overlay from '@/components/ui/Overlay'
 import type { DocumentType, AIWorkflow } from '@/lib/types'
 
 const WORKFLOW_DEFAULT_PROMPTS: Record<AIWorkflow, string> = {
@@ -112,103 +113,99 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
     }
   }
 
-  if (!open) return null
-
   return (
-    <div
-      className="fixed inset-0 z-[1000] flex items-start justify-center pt-[15vh]"
-      style={{ background: 'rgb(var(--black) / 0.7)', backdropFilter: 'blur(4px)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    <Overlay
+      open={open}
+      onClose={onClose}
+      className="items-start pt-[15vh]"
+      origin="top center"
+      panelClassName="w-full rounded-xl shadow-2xl overflow-hidden"
+      panelStyle={{
+        maxWidth: 560,
+        background: 'rgb(var(--n2))',
+        border: '1px solid rgb(var(--n6))',
+      }}
     >
-      <div
-        className="w-full rounded-xl shadow-2xl overflow-hidden"
-        style={{
-          maxWidth: 560,
-          background: 'rgb(var(--n2))',
-          border: '1px solid rgb(var(--n6))',
-        }}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
-          <Sparkles size={15} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder={mode === 'ai' ? 'Ask AI or choose a workflow…' : 'Create a new document…'}
-            className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: 'rgb(var(--n12))' }}
-          />
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgb(var(--n6))', color: 'rgb(var(--n8))' }}>ESC</kbd>
-        </div>
-
-        {/* Mode tabs */}
-        <div className="flex gap-1 px-3 pt-2.5 pb-1">
-          {(['ai', 'nav'] as const).map(m => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className="px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              style={{
-                background: mode === m ? 'rgb(var(--brand) / 0.15)' : 'transparent',
-                color: mode === m ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))',
-              }}
-            >
-              {m === 'ai' ? '✦ AI Workflows' : '+ New Document'}
-            </button>
-          ))}
-          <span className="ml-auto text-[10px] self-center" style={{ color: 'rgb(var(--n8))' }}>Tab to switch</span>
-        </div>
-
-        {/* Results */}
-        <div className="pb-2 max-h-72 overflow-y-auto">
-          {filtered.length === 0 ? (
-            <p className="px-4 py-6 text-xs text-center" style={{ color: 'rgb(var(--n8))' }}>No results</p>
-          ) : (
-            filtered.map((item, i) => {
-              const isAI = mode === 'ai'
-              const w = item as typeof WORKFLOWS[number]
-              const d = item as typeof NEW_DOC_OPTIONS[number]
-              return (
-                <button
-                  key={isAI ? w.id : d.type}
-                  onClick={() => handleSelect(i)}
-                  onMouseEnter={() => setSelected(i)}
-                  className="press-tint flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left"
-                  style={{ background: selected === i ? 'rgb(var(--brand) / 0.1)' : 'transparent' }}
-                >
-                  <span style={{ color: selected === i ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}>
-                    {isAI ? w.icon : d.icon}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium" style={{ color: selected === i ? 'rgb(var(--n11))' : 'rgb(var(--n10))' }}>
-                      {isAI ? w.label : d.label}
-                    </p>
-                    {isAI && (
-                      <p className="text-[10px] truncate mt-0.5" style={{ color: 'rgb(var(--n8))' }}>{w.description}</p>
-                    )}
-                  </div>
-                  {selected === i && <ArrowRight size={12} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />}
-                </button>
-              )
-            })
-          )}
-        </div>
-
-        {/* Footer */}
-        <div
-          className="flex gap-4 px-4 py-2 border-t"
-          style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n1))' }}
-        >
-          {[['↑↓', 'Navigate'], ['↵', 'Select'], ['Esc', 'Close']].map(([key, label]) => (
-            <div key={key} className="flex items-center gap-1.5">
-              <kbd className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>{key}</kbd>
-              <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{label}</span>
-            </div>
-          ))}
-        </div>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
+        <Sparkles size={15} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder={mode === 'ai' ? 'Ask AI or choose a workflow…' : 'Create a new document…'}
+          className="flex-1 bg-transparent text-sm outline-none"
+          style={{ color: 'rgb(var(--n12))' }}
+        />
+        <kbd className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgb(var(--n6))', color: 'rgb(var(--n8))' }}>ESC</kbd>
       </div>
-    </div>
+
+      {/* Mode tabs */}
+      <div className="flex gap-1 px-3 pt-2.5 pb-1">
+        {(['ai', 'nav'] as const).map(m => (
+          <button
+            key={m}
+            onClick={() => setMode(m)}
+            className="px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
+            style={{
+              background: mode === m ? 'rgb(var(--brand) / 0.15)' : 'transparent',
+              color: mode === m ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))',
+            }}
+          >
+            {m === 'ai' ? '✦ AI Workflows' : '+ New Document'}
+          </button>
+        ))}
+        <span className="ml-auto text-[10px] self-center" style={{ color: 'rgb(var(--n8))' }}>Tab to switch</span>
+      </div>
+
+      {/* Results */}
+      <div className="pb-2 max-h-72 overflow-y-auto">
+        {filtered.length === 0 ? (
+          <p className="px-4 py-6 text-xs text-center" style={{ color: 'rgb(var(--n8))' }}>No results</p>
+        ) : (
+          filtered.map((item, i) => {
+            const isAI = mode === 'ai'
+            const w = item as typeof WORKFLOWS[number]
+            const d = item as typeof NEW_DOC_OPTIONS[number]
+            return (
+              <button
+                key={isAI ? w.id : d.type}
+                onClick={() => handleSelect(i)}
+                onMouseEnter={() => setSelected(i)}
+                className="press-tint flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left"
+                style={{ background: selected === i ? 'rgb(var(--brand) / 0.1)' : 'transparent' }}
+              >
+                <span style={{ color: selected === i ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}>
+                  {isAI ? w.icon : d.icon}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium" style={{ color: selected === i ? 'rgb(var(--n11))' : 'rgb(var(--n10))' }}>
+                    {isAI ? w.label : d.label}
+                  </p>
+                  {isAI && (
+                    <p className="text-[10px] truncate mt-0.5" style={{ color: 'rgb(var(--n8))' }}>{w.description}</p>
+                  )}
+                </div>
+                {selected === i && <ArrowRight size={12} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />}
+              </button>
+            )
+          })
+        )}
+      </div>
+
+      {/* Footer */}
+      <div
+        className="flex gap-4 px-4 py-2 border-t"
+        style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n1))' }}
+      >
+        {[['↑↓', 'Navigate'], ['↵', 'Select'], ['Esc', 'Close']].map(([key, label]) => (
+          <div key={key} className="flex items-center gap-1.5">
+            <kbd className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>{key}</kbd>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{label}</span>
+          </div>
+        ))}
+      </div>
+    </Overlay>
   )
 }

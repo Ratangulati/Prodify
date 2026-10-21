@@ -4,7 +4,9 @@ import { useState, useRef, useEffect } from 'react'
 
 import { format } from 'date-fns'
 import { ChevronDown, Copy, Download } from 'lucide-react'
+import { AnimatePresence, m } from 'motion/react'
 import { useWorkspaceStore } from '@/lib/store'
+import { springs } from '@/lib/motion'
 import Editor from './Editor'
 import type { DocumentType } from '@/lib/types'
 
@@ -198,9 +200,14 @@ export default function EditorPanel() {
             <ChevronDown size={11} className={`transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
           </button>
 
+          <AnimatePresence>
           {exportOpen && (
-            <div
-              className="absolute right-0 top-full mt-1 w-48 rounded-lg py-1 z-50"
+            <m.div
+              initial={{ opacity: 0, scale: 0.96, y: -4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -4 }}
+              transition={springs.ui}
+              className="absolute right-0 top-full mt-1 w-48 rounded-lg py-1 z-50 origin-top-right"
               style={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n6))', boxShadow: '0 8px 24px rgb(var(--black) / 0.5)' }}
             >
               <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Copy</p>
@@ -241,8 +248,9 @@ export default function EditorPanel() {
                 <Download size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Download .txt
               </button>
-            </div>
+            </m.div>
           )}
+          </AnimatePresence>
         </div>
       </div>
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { LazyMotion, MotionConfig, domAnimation } from 'motion/react'
+import { springs } from '@/lib/motion'
 import { useWorkspaceStore } from '@/lib/store'
 import LeftSidebar from './sidebar/LeftSidebar'
 import EditorPanel from './editor/EditorPanel'
@@ -96,7 +98,9 @@ export default function AppShell() {
   }
 
   return (
-    <>
+    // reducedMotion="user": with Reduce Motion on, transforms are skipped and only opacity animates
+    <LazyMotion features={domAnimation} strict>
+    <MotionConfig reducedMotion="user" transition={springs.ui}>
       <div
         className="h-screen overflow-hidden"
         style={{ background: theme === 'dark' ? 'rgb(var(--n0))' : 'rgb(var(--n12))', minWidth: 1024 }}
@@ -133,6 +137,7 @@ export default function AppShell() {
       <CommandPalette    open={cmdPaletteOpen} onClose={() => setCmdPaletteOpen(false)} />
       <KeyboardShortcuts open={shortcutsOpen}  onClose={() => setShortcutsOpen(false)} />
       <ToastContainer />
-    </>
+    </MotionConfig>
+    </LazyMotion>
   )
 }

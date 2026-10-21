@@ -14,6 +14,7 @@ import {
   Sparkles, Check,
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
+import { SPRING_EASING } from '@/lib/motion'
 import { toast } from '@/lib/toast'
 import type { Feature, FeaturePriority, MoscowType } from '@/lib/types'
 
@@ -638,7 +639,7 @@ function MoSCoWView() {
             {scopeSummary.map(q => (
               <div
                 key={q.id}
-                style={{ width: `${q.pct}%`, background: q.color, transition: 'width 0.3s', minWidth: q.count > 0 ? 3 : 0 }}
+                style={{ width: `${q.pct}%`, background: q.color, minWidth: q.count > 0 ? 3 : 0 }}
                 title={`${q.label}: ${q.count} (${q.pct}%)`}
               />
             ))}
@@ -668,7 +669,7 @@ function MoSCoWView() {
         </div>
       </div>
 
-      <DragOverlay dropAnimation={{ duration: 120, easing: 'ease' }}>
+      <DragOverlay dropAnimation={{ duration: 300, easing: SPRING_EASING }}>
         {activeFeature && <MosCowChip feature={activeFeature} isDragOverlay />}
       </DragOverlay>
     </DndContext>
