@@ -54,7 +54,7 @@ export default function AutoPlanSummary({ result, onClose }: { result: AutoPlanR
           <div className="px-5 pt-5 pb-3">
             <div className="flex items-center gap-2 mb-1">
               <ListChecks size={16} className="text-brand-fg" aria-hidden />
-              <h2 className="font-serif text-xl font-semibold text-n12">
+              <h2 className="text-[17px] font-semibold tracking-[-0.01em] text-n12">
                 {summary.created.length
                   ? `Planned ${summary.created.length} task${summary.created.length === 1 ? '' : 's'}`
                   : 'Nothing new to plan'}
