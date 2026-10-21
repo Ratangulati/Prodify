@@ -411,8 +411,8 @@ function DiffView({ before, after }: { before: string; after: string }) {
   return (
     <div style={{ maxHeight: 260, overflowY: 'auto', background: 'rgb(var(--n0))' }}>
       <div className="flex items-center gap-3 px-3.5 py-1.5 border-b" style={{ borderColor: 'rgb(var(--n4))' }}>
-        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--green))' }}>+{added}</span>
-        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--red))' }}>−{removed}</span>
+        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--green-fg))' }}>+{added}</span>
+        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgb(var(--red-fg))' }}>−{removed}</span>
         <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>lines changed</span>
       </div>
       <div>
@@ -532,7 +532,7 @@ function MessageBubble({
             >
               <Check size={13} style={{ color: 'rgb(var(--green))' }} />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold" style={{ color: 'rgb(var(--green))' }}>Applied to editor</p>
+                <p className="text-xs font-semibold" style={{ color: 'rgb(var(--green-fg))' }}>Applied to editor</p>
                 <p className="text-[11px] truncate" style={{ color: 'rgb(var(--n8))' }}>{appliedDocTitle}</p>
               </div>
               <button

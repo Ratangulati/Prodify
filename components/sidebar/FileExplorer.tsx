@@ -293,7 +293,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
           {children.length === 0 && !showPicker && tree.creating?.parentId !== node.id && (
             <p
               className="text-[11px] italic"
-              style={{ paddingLeft: (depth + 1) * 14 + 22, paddingTop: 3, paddingBottom: 3, color: 'rgb(var(--n7))' }}
+              style={{ paddingLeft: (depth + 1) * 14 + 22, paddingTop: 3, paddingBottom: 3, color: 'rgb(var(--n8))' }}
             >
               Empty folder
             </p>

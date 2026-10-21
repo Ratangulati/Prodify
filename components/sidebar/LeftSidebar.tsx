@@ -78,7 +78,7 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
                   <Circle size={5} stroke="none" style={{ fill: STATUS_COLORS[s] }} />
                   <span className="text-[11px]" style={{ color: 'rgb(var(--n9))' }}>{s}</span>
                 </div>
-                <span className="text-[11px] font-semibold tabular-nums" style={{ color: STATUS_COLORS[s] }}>
+                <span className="text-[11px] font-semibold tabular-nums" style={{ color: 'rgb(var(--n11))' }}>
                   {counts[s] || 0}
                 </span>
               </div>

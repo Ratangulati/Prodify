@@ -537,7 +537,7 @@ export default function Editor({ docId, header }: { docId: string; header?: Reac
 
           {/* AI section divider */}
           <div className="w-px h-4 mx-1" style={{ background: 'rgb(var(--n6))' }} />
-          <span className="flex items-center gap-1 px-1.5 text-[10px] font-semibold" style={{ color: 'rgb(var(--brand))' }}>
+          <span className="flex items-center gap-1 px-1.5 text-[10px] font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>
             <Wand2 size={10} /> AI
           </span>
 

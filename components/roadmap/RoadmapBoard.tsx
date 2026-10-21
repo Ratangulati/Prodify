@@ -21,13 +21,13 @@ import type { Feature, FeatureStatus, FeaturePriority } from '@/lib/types'
 
 /* ── Constants ───────────────────────────────────────────────────── */
 const COLUMNS: {
-  id: FeatureStatus; label: string; emoji: string
+  id: FeatureStatus; label: string
   accent: string; accentBg: string
 }[] = [
-  { id: 'Now',   label: 'Now',   emoji: '🟢', accent: 'rgb(var(--green))', accentBg: 'rgb(var(--green) / 0.08)'   },
-  { id: 'Next',  label: 'Next',  emoji: '🔵', accent: 'rgb(var(--brand))', accentBg: 'rgb(var(--brand) / 0.08)'  },
-  { id: 'Later', label: 'Later', emoji: '🟡', accent: 'rgb(var(--amber))', accentBg: 'rgb(var(--amber) / 0.08)'  },
-  { id: 'Done',  label: 'Done',  emoji: '⬛', accent: 'rgb(var(--n8))', accentBg: 'rgb(var(--n8) / 0.08)' },
+  { id: 'Now',   label: 'Now',   accent: 'rgb(var(--green))', accentBg: 'rgb(var(--green) / 0.08)'   },
+  { id: 'Next',  label: 'Next',  accent: 'rgb(var(--brand))', accentBg: 'rgb(var(--brand) / 0.08)'  },
+  { id: 'Later', label: 'Later', accent: 'rgb(var(--amber))', accentBg: 'rgb(var(--amber) / 0.08)'  },
+  { id: 'Done',  label: 'Done',  accent: 'rgb(var(--n8))', accentBg: 'rgb(var(--n8) / 0.08)' },
 ]
 
 const PRIORITY: Record<FeaturePriority, { bg: string; text: string; ring: string; label: string }> = {
@@ -329,7 +329,7 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
         style={{ borderBottom: '1px solid rgb(var(--n4))' }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm">{col.emoji}</span>
+          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: col.accent }} aria-hidden />
           <span className="text-xs font-semibold" style={{ color: 'rgb(var(--n12))' }}>{col.label}</span>
           <span
             className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
@@ -340,7 +340,7 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
         </div>
         <div className="flex items-center gap-1.5">
           {totalRice > 0 && (
-            <span className="text-[10px] font-mono" style={{ color: col.accent }} title="Total RICE">
+            <span className="text-[10px] font-mono" style={{ color: 'rgb(var(--n9))' }} title="Total RICE">
               {totalRice.toLocaleString()}
             </span>
           )}
@@ -530,7 +530,7 @@ function TimelineView({ features }: { features: Feature[] }) {
           Add features to any column to start building your roadmap.
         </p>
         <p className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
-          Click the <strong style={{ color: 'rgb(var(--brand))' }}>+</strong> button in any column to add your first feature.
+          Click the <strong style={{ color: 'rgb(var(--brand-fg))' }}>+</strong> button in any column to add your first feature.
         </p>
       </div>
     )
@@ -589,7 +589,7 @@ function TimelineView({ features }: { features: Feature[] }) {
                         className="flex items-start gap-1.5 rounded-lg px-2 py-1.5"
                         style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
                       >
-                        <span className="text-[10px] mt-0.5 flex-shrink-0">{col.emoji}</span>
+                        <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: col.accent }} aria-hidden />
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-medium leading-snug truncate" style={{ color: 'rgb(var(--n12))' }}>
                             {f.title}
@@ -719,8 +719,8 @@ export default function RoadmapBoard() {
           if (!n) return null
           return (
             <span key={c.id} className="flex items-center gap-1">
-              <span>{c.emoji}</span>
-              <span style={{ color: c.accent }}>{n}</span>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.accent }} aria-hidden />
+              <span style={{ color: 'rgb(var(--n10))' }}>{n}</span>
             </span>
           )
         })}

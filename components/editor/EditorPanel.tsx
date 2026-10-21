@@ -154,7 +154,7 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
         {folderName && (
           <>
             <span className="text-[13px] truncate max-w-[160px] flex-shrink-0" style={{ color: 'rgb(var(--n8))' }}>{folderName}</span>
-            <ChevronRight size={13} className="flex-shrink-0 -mx-1.5" style={{ color: 'rgb(var(--n7))' }} aria-hidden />
+            <ChevronRight size={13} className="flex-shrink-0 -mx-1.5" style={{ color: 'rgb(var(--n8))' }} aria-hidden />
           </>
         )}
 

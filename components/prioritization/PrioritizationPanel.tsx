@@ -29,7 +29,7 @@ const MOSCOW_CFG: {
 }[] = [
   { id: 'Must',   label: 'Must Have',   short: 'M', color: 'rgb(var(--red-fg))', bg: 'rgb(var(--red) / 0.07)',  ring: 'rgb(var(--red) / 0.25)',  desc: 'Non-negotiable for launch'     },
   { id: 'Should', label: 'Should Have', short: 'S', color: 'rgb(var(--orange-fg))', bg: 'rgb(var(--orange) / 0.07)', ring: 'rgb(var(--orange) / 0.25)', desc: 'High value, include if possible' },
-  { id: 'Could',  label: 'Could Have',  short: 'C', color: 'rgb(var(--brand-fg))', bg: 'rgb(var(--brand) / 0.07)', ring: 'rgb(var(--brand) / 0.25)', desc: 'Nice to have, defer if needed'   },
+  { id: 'Could',  label: 'Could Have',  short: 'C', color: 'rgb(var(--blue-fg))', bg: 'rgb(var(--blue) / 0.07)', ring: 'rgb(var(--blue) / 0.25)', desc: 'Nice to have, defer if needed'   },
   { id: 'Wont',   label: "Won't Have",  short: 'W', color: 'rgb(var(--n8))', bg: 'rgb(var(--n8) / 0.07)',ring: 'rgb(var(--n8) / 0.25)', desc: 'Out of scope this cycle'         },
 ]
 
@@ -476,8 +476,8 @@ ${featureList}`
           { k: 'C', v: 'Confidence%' },
           { k: 'E', v: 'Effort wks' },
         ].map(({ k, v }) => (
-          <span key={k} className="text-[10px]" style={{ color: 'rgb(var(--n5))' }} title={v}>
-            <span style={{ color: 'rgb(var(--n8))' }}>{k}</span>=<span>{v}</span>
+          <span key={k} className="text-[10px]" style={{ color: 'rgb(var(--n8))' }} title={v}>
+            <span className="font-semibold" style={{ color: 'rgb(var(--n10))' }}>{k}</span>=<span>{v}</span>
           </span>
         ))}
       </div>
@@ -501,12 +501,14 @@ function MosCowChip({ feature, isDragOverlay }: { feature: Feature; isDragOverla
         ...style,
         opacity: isDragging ? 0.3 : 1,
         cursor: isDragging ? 'grabbing' : 'grab',
-        boxShadow: isDragOverlay ? '0 8px 24px rgb(var(--shadow) / 0.6)' : 'none',
+        background: 'rgb(var(--n3))',
+        borderColor: 'rgb(var(--n5))',
+        boxShadow: isDragOverlay ? 'var(--elev-md)' : 'none',
       }}
       className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border select-none mb-1.5"
       {...(isDragOverlay ? {} : { ...attributes, ...listeners })}
     >
-      <span className="text-[11px] font-medium truncate flex-1" style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n5))', color: 'rgb(var(--n11))' }}>
+      <span className="text-[11px] font-medium truncate flex-1" style={{ color: 'rgb(var(--n11))' }}>
         {feature.title}
       </span>
       <span className="text-[10px] font-bold flex-shrink-0" style={{ color: PRIORITY_COLOR[feature.priority] }}>
@@ -570,7 +572,7 @@ function MosCowQuadrant({
         {features.length === 0 && (
           <div
             className="flex items-center justify-center h-10 rounded-lg border border-dashed text-[10px]"
-            style={{ borderColor: 'rgb(var(--n5))', color: 'rgb(var(--n6))' }}
+            style={{ borderColor: 'rgb(var(--n7))', color: 'rgb(var(--n8))' }}
           >
             Drop here
           </div>
