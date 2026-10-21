@@ -58,7 +58,10 @@ export async function createTask(title: string, docId: string | null): Promise<T
   return task
 }
 
-export async function updateTask(id: string, changes: { title?: string; status?: TaskStatus; docId?: string | null }) {
+export async function updateTask(id: string, changes: {
+  title?: string; status?: TaskStatus; docId?: string | null
+  estimate?: number; assigneeId?: string | null; sprintId?: string | null
+}) {
   putTask(await send(`/api/tasks/${id}`, 'PATCH', changes))
 }
 

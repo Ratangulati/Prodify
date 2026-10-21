@@ -7,6 +7,7 @@ import { useWorkspaceStore } from '@/lib/store'
 import { toast } from '@/lib/toast'
 import { linkPullRequest, loadTaskDetail, unlinkPullRequest, updateTask } from '@/lib/use-tasks'
 import { TASK_STATUSES, type TaskStatus } from '@/lib/tasks'
+import { usePlanning } from '@/lib/use-planning'
 import type { TaskDto } from '@/lib/task-dto'
 import { PR_STATE_STYLE } from './PullRequestBadge'
 import { CopyBranchButton, STATUS_LABELS } from './shared'
@@ -19,6 +20,7 @@ const ago = (iso: string) => formatDistanceToNow(new Date(iso), { addSuffix: tru
 export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: () => void }) {
   const { documents } = useWorkspaceStore()
   const prds = documents.filter((d) => d.type === 'prd')
+  const { state: planning } = usePlanning()
 
   const [activity, setActivity] = useState<Activity[] | null>(null) // null while loading
   const [url, setUrl]           = useState('')
@@ -35,7 +37,9 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
 
   useEffect(() => { reload() }, [reload])
 
-  async function change(changes: { status?: TaskStatus; docId?: string | null }) {
+  async function change(changes: {
+    status?: TaskStatus; docId?: string | null; estimate?: number; assigneeId?: string | null; sprintId?: string | null
+  }) {
     try {
       await updateTask(task.id, changes)
     } catch (err) {
@@ -108,6 +112,46 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
               <option value="">None</option>
               {prds.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
             </select>
+          </label>
+        </div>
+
+        {/* Owner, sprint and points */}
+        <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
+          <label className="space-y-1">
+            <span className="block text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Assignee</span>
+            <select
+              value={task.assigneeId ?? ''}
+              onChange={(e) => change({ assigneeId: e.target.value || null })}
+              className="w-full text-xs rounded-lg px-2 py-1.5 outline-none border bg-n3 border-n7 text-n12"
+            >
+              <option value="">Unassigned</option>
+              {planning?.members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="block text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Sprint</span>
+            <select
+              value={task.sprintId ?? ''}
+              onChange={(e) => change({ sprintId: e.target.value || null })}
+              className="w-full text-xs rounded-lg px-2 py-1.5 outline-none border bg-n3 border-n7 text-n12"
+            >
+              <option value="">Backlog</option>
+              {planning?.activeSprint && <option value={planning.activeSprint.id}>{planning.activeSprint.name}</option>}
+              {/* A finished sprint the task is still in */}
+              {task.sprintId && task.sprintId !== planning?.activeSprint?.id && (
+                <option value={task.sprintId}>{task.sprintName ?? 'Past sprint'}</option>
+              )}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="block text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Points</span>
+            <input
+              type="number" min={0} max={100}
+              defaultValue={task.estimate}
+              key={task.estimate}
+              onBlur={(e) => { const n = Number(e.target.value); if (n !== task.estimate) change({ estimate: n }) }}
+              className="w-16 text-xs rounded-lg px-2 py-1.5 outline-none border bg-n3 border-n7 text-n12 tabular-nums"
+            />
           </label>
         </div>
 

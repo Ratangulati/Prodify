@@ -3,12 +3,15 @@
 import { useState, useRef, useEffect } from 'react'
 
 import { format } from 'date-fns'
-import { ChevronDown, Copy, Download, ChevronRight, Search, FileText, Plus } from 'lucide-react'
+import { ChevronDown, Copy, Download, ChevronRight, Search, FileText, Plus, CheckCircle2 } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useWorkspaceStore } from '@/lib/store'
 import { springs } from '@/lib/motion'
 import Editor from './Editor'
 import DeliverySection from './DeliverySection'
+import AutoPlanSummary, { type AutoPlanResult } from './AutoPlanSummary'
+import { toast } from '@/lib/toast'
+import { apiError, refreshTasks } from '@/lib/use-tasks'
 import type { DocumentType } from '@/lib/types'
 
 /* ── Export helpers ─────────────────────────────────────────────── */
@@ -98,6 +101,8 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
   const [titleValue,   setTitleValue]   = useState('')
   const [exportOpen,   setExportOpen]   = useState(false)
   const [copyDone,     setCopyDone]     = useState('')
+  const [statusBusy,   setStatusBusy]   = useState(false)
+  const [planResult,   setPlanResult]   = useState<AutoPlanResult | null>(null)
   const titleRef  = useRef<HTMLInputElement>(null)
   const exportRef = useRef<HTMLDivElement>(null)
 
@@ -157,6 +162,31 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
 
   const typeStyle = TYPE_COLORS[doc.type]
   const savedAt   = format(new Date(doc.updatedAt), 'h:mm a')
+  const isFinal   = doc.status === 'final'
+
+  /* Draft ⇄ Final. Becoming final runs auto-plan on the server when it's on. */
+  async function toggleFinal() {
+    if (!doc) return
+    const status = isFinal ? 'draft' : 'final'
+    setStatusBusy(true)
+    try {
+      const res = await fetch(`/api/documents/${doc.id}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) throw new Error(await apiError(res))
+      const data = await res.json() as { autoPlan: AutoPlanResult | null; error?: string }
+      updateDocument(doc.id, { status })
+      if (data.error) toast.error(data.error)
+      else if (data.autoPlan) { await refreshTasks(); setPlanResult(data.autoPlan) }
+      else toast.success(status === 'final' ? 'Marked final' : 'Back to draft')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not change the status')
+    } finally {
+      setStatusBusy(false)
+    }
+  }
 
   return (
     <div className="relative flex-1 flex flex-col overflow-hidden" style={{ background: 'rgb(var(--n0))' }}>
@@ -200,6 +230,22 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
         >
           {TYPE_LABELS[doc.type]}
         </span>
+
+        {/* Draft / Final (PRDs only); marking final can run auto-plan */}
+        {doc.type === 'prd' && (
+          <button
+            onClick={toggleFinal}
+            disabled={statusBusy}
+            aria-pressed={isFinal}
+            title={isFinal ? 'Final. Click to move back to draft' : 'Mark this PRD as final'}
+            className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 disabled:opacity-50 ${
+              isFinal ? 'bg-success/15 text-success-fg hover:bg-success/25' : 'border border-n7 text-n9 hover:text-n12 hover:bg-overlay/5'
+            }`}
+          >
+            {isFinal && <CheckCircle2 size={12} aria-hidden />}
+            {statusBusy ? (isFinal ? 'Reopening…' : 'Planning…') : isFinal ? 'Final' : 'Mark final'}
+          </button>
+        )}
 
         {/* Save indicator */}
         <div className="flex items-center gap-1 flex-shrink-0 min-w-[80px]">
@@ -290,6 +336,7 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
       {/* Editor area */}
       <div className="flex-1 overflow-hidden flex flex-col">
         <Editor docId={doc.id} header={doc.type === 'prd' ? <DeliverySection docId={doc.id} /> : null} />
+        <AutoPlanSummary result={planResult} onClose={() => setPlanResult(null)} />
       </div>
     </div>
   )

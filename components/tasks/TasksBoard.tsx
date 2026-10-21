@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Plus, X } from 'lucide-react'
+import { Plus, Users, X } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import { createTask, updateTask, useTasks } from '@/lib/use-tasks'
 import { toast } from '@/lib/toast'
@@ -9,6 +9,7 @@ import { TASK_STATUSES, type TaskStatus } from '@/lib/tasks'
 import { hasOpenPullRequest, type TaskDto } from '@/lib/task-dto'
 import PullRequestBadge from './PullRequestBadge'
 import TaskDetail from './TaskDetail'
+import PlanningSettings from './PlanningSettings'
 import { CopyBranchButton, STATUS_COLORS, STATUS_LABELS } from './shared'
 import Tip from '@/components/ui/Tip'
 
@@ -41,6 +42,21 @@ function TaskCard({
       </div>
 
       <p className="text-xs font-medium leading-snug mb-2" style={{ color: 'rgb(var(--n12))' }}>{task.title}</p>
+
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 text-[10px]" style={{ color: 'rgb(var(--n9))' }}>
+        <span className="inline-flex items-center gap-1">
+          <span
+            className="inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-semibold"
+            style={{ background: task.assigneeName ? 'rgb(var(--brand) / 0.15)' : 'rgb(var(--n5))', color: task.assigneeName ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
+            aria-hidden
+          >
+            {task.assigneeName ? task.assigneeName.slice(0, 1).toUpperCase() : '?'}
+          </span>
+          {task.assigneeName ?? 'Unassigned'}
+        </span>
+        <span className="tabular-nums">{task.estimate} pt{task.estimate === 1 ? '' : 's'}</span>
+        <span>{task.sprintName ?? 'Backlog'}</span>
+      </div>
 
       {shown.length > 0 && (
         <div className="flex flex-wrap items-center gap-1 mb-2">
@@ -77,6 +93,8 @@ export default function TasksBoard() {
   const [title, setTitle]           = useState('')
   const [saving, setSaving]         = useState(false)
   const [openOnly, setOpenOnly]     = useState(false)
+  const [scope, setScope]           = useState<'all' | 'sprint' | 'backlog'>('all')
+  const [planningOpen, setPlanningOpen] = useState(false)
   const [openTaskId, setOpenTaskId] = useState<string | null>(null)
   const titleRef = useRef<HTMLInputElement>(null)
 
@@ -90,7 +108,9 @@ export default function TasksBoard() {
   const openTask  = tasks.find((t) => t.id === openTaskId)
   if (openTask) return <TaskDetail task={openTask} onBack={() => setOpenTaskId(null)} />
 
-  const visible = openOnly ? tasks.filter(hasOpenPullRequest) : tasks
+  const visible = tasks
+    .filter((t) => !openOnly || hasOpenPullRequest(t))
+    .filter((t) => scope === 'all' || (scope === 'backlog' ? t.sprintId === null : t.sprintId !== null))
 
   async function handleAdd() {
     if (!title.trim() || saving) return
@@ -147,11 +167,30 @@ export default function TasksBoard() {
             </Tip>
           </p>
         )}
-        <label className="flex items-center gap-1.5 text-[11px] cursor-pointer w-fit" style={{ color: 'rgb(var(--n10))' }}>
-          <input type="checkbox" checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} />
-          Has open PR
-        </label>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-1.5 text-[11px] cursor-pointer" style={{ color: 'rgb(var(--n10))' }}>
+            <input type="checkbox" checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} />
+            Has open PR
+          </label>
+          <select
+            value={scope}
+            onChange={(e) => setScope(e.target.value as typeof scope)}
+            aria-label="Show tasks from"
+            className="text-[11px] rounded-md px-1.5 py-0.5 outline-none border bg-n3 border-n7 text-n10"
+          >
+            <option value="all">All tasks</option>
+            <option value="sprint">In a sprint</option>
+            <option value="backlog">Backlog</option>
+          </select>
+          <button
+            onClick={() => setPlanningOpen(true)}
+            className="ml-auto flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md text-n9 hover:text-n12 hover:bg-overlay/5 transition-colors"
+          >
+            <Users size={12} aria-hidden /> Team &amp; sprints
+          </button>
+        </div>
       </div>
+      <PlanningSettings open={planningOpen} onClose={() => setPlanningOpen(false)} />
 
       {/* Columns, stacked: the panel is too narrow for side-by-side */}
       <div className="flex-1 overflow-y-auto px-3 py-3">
@@ -171,11 +210,11 @@ export default function TasksBoard() {
             </button>
           </div>
         ) : visible.length === 0 ? (
-          <p className="text-xs text-center py-8" style={{ color: 'rgb(var(--n8))' }}>No tasks have an open pull request.</p>
+          <p className="text-xs text-center py-8" style={{ color: 'rgb(var(--n8))' }}>No tasks match these filters.</p>
         ) : (
           TASK_STATUSES.map((status) => {
             const column = visible.filter((t) => t.status === status)
-            if (openOnly && column.length === 0) return null
+            if ((openOnly || scope !== 'all') && column.length === 0) return null
             return (
               <section key={status} className="mb-4">
                 <div className="flex items-center gap-1.5 mb-2">
