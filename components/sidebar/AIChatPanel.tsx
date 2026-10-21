@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  useState, useRef, useEffect, useCallback, useMemo,
+  Fragment, useState, useRef, useEffect, useCallback, useMemo,
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -870,7 +870,7 @@ export default function AIChatPanel() {
             const active = workflow === wf.id
             const isChat = wf.isGeneral
             return (
-              <>
+              <Fragment key={wf.id}>
                 {/* Separator before the Chat tab */}
                 {isChat && (
                   <div
@@ -898,7 +898,7 @@ export default function AIChatPanel() {
                     />
                   )}
                 </button>
-              </>
+              </Fragment>
             )
           })}
         </div>

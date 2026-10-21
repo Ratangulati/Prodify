@@ -10,8 +10,7 @@ interface KeyboardShortcutsProps {
 const SHORTCUTS = [
   { keys: ['⌘', 'K'],    label: 'Open AI command palette' },
   { keys: ['⌘', 'N'],    label: 'New document' },
-  { keys: ['⌘', 'S'],    label: 'Save document' },
-  { keys: ['⌘', '/'],    label: 'Toggle AI sidebar' },
+  { keys: ['⌘', '/'],    label: 'Next AI panel tab' },
   { keys: ['?'],          label: 'Show keyboard shortcuts' },
   { keys: ['Esc'],        label: 'Close modals / cancel' },
 ]

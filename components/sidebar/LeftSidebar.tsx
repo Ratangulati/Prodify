@@ -16,6 +16,8 @@ const STATUS_COLORS: Record<FeatureStatus, string> = {
   Done: 'rgb(var(--n8))',
 }
 
+const LIGHT_THEME_READY = false
+
 interface LeftSidebarProps {
   onToggleTheme: () => void
   theme: Theme
@@ -100,14 +102,15 @@ export default function LeftSidebar({ onToggleTheme, theme }: LeftSidebarProps) 
         <p className="text-[11px] font-medium truncate flex-1" style={{ color: 'rgb(var(--n11))' }}>
           Product Manager
         </p>
-        <button
+        {/* Every surface is still dark-only, so the toggle stays hidden until light tokens exist */}
+        {LIGHT_THEME_READY && <button
           onClick={onToggleTheme}
           className="p-1.5 rounded transition-colors hover:bg-white/10 flex-shrink-0"
           style={{ color: 'rgb(var(--n8))' }}
           title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
         >
           {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
-        </button>
+        </button>}
         <span className="flex-shrink-0" style={{ color: 'rgb(var(--n8))' }} title="Press ? for shortcuts">
           <Keyboard size={13} />
         </span>
