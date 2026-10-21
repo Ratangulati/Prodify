@@ -340,7 +340,7 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
         </div>
         <div className="flex items-center gap-1.5">
           {totalRice > 0 && (
-            <span className="text-[9px] font-mono" style={{ color: col.accent }} title="Total RICE">
+            <span className="text-[10px] font-mono" style={{ color: col.accent }} title="Total RICE">
               {totalRice.toLocaleString()}
             </span>
           )}
@@ -570,7 +570,7 @@ function TimelineView({ features }: { features: Feature[] }) {
                     }}
                   />
                 </div>
-                <p className="text-[9px] mt-1" style={{ color: 'rgb(var(--n8))' }}>{pct}% done</p>
+                <p className="text-[10px] mt-1" style={{ color: 'rgb(var(--n8))' }}>{pct}% done</p>
               </div>
 
               {/* Features */}
@@ -589,20 +589,20 @@ function TimelineView({ features }: { features: Feature[] }) {
                         className="flex items-start gap-1.5 rounded-lg px-2 py-1.5"
                         style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
                       >
-                        <span className="text-[9px] mt-0.5 flex-shrink-0">{col.emoji}</span>
+                        <span className="text-[10px] mt-0.5 flex-shrink-0">{col.emoji}</span>
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-medium leading-snug truncate" style={{ color: 'rgb(var(--n12))' }}>
                             {f.title}
                           </p>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span
-                              className="text-[9px] font-bold px-1 py-0.5 rounded"
+                              className="text-[10px] font-bold px-1 py-0.5 rounded"
                               style={{ background: pcfg.bg, color: pcfg.text }}
                             >
                               {f.priority}
                             </span>
                             {f.dueDate && (
-                              <span className="text-[9px]" style={{ color: 'rgb(var(--n8))' }}>
+                              <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
                                 {fmtDate(f.dueDate)}
                               </span>
                             )}

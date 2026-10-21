@@ -64,7 +64,7 @@ export default function WelcomeScreen() {
         >
           <Sparkles size={24} className="text-white" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'rgb(var(--n12))' }}>
+        <h1 className="text-3xl font-bold leading-[1.1] tracking-[-0.022em] text-balance" style={{ color: 'rgb(var(--n12))' }}>
           Welcome to Prodify-AI
         </h1>
         <p className="text-sm max-w-sm leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>

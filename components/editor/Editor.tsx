@@ -606,7 +606,7 @@ export default function Editor({ docId }: { docId: string }) {
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         {/* Centered notion-like content area */}
         {/* Top padding clears the floating glass title bar in EditorPanel */}
-        <div className="mx-auto px-8 pt-24 pb-12" style={{ maxWidth: 800 }}>
+        <div className="mx-auto px-8 pt-24 pb-12" style={{ maxWidth: 760 }}>
           <EditorContent editor={editor} />
         </div>
       </div>

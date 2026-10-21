@@ -197,7 +197,7 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
       >
         {[['↑↓', 'Navigate'], ['↵', 'Select'], ['Esc', 'Close']].map(([key, label]) => (
           <div key={key} className="flex items-center gap-1.5">
-            <kbd className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>{key}</kbd>
+            <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>{key}</kbd>
             <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{label}</span>
           </div>
         ))}

@@ -54,7 +54,7 @@ function TypePicker({
         className="rounded-md p-2"
         style={{ background: 'rgb(var(--n1))', border: `1px solid ${BORDER}` }}
       >
-        <p className="text-[9px] uppercase tracking-widest mb-2" style={{ color: MUTED }}>
+        <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: MUTED }}>
           Select type
         </p>
         <div className="grid grid-cols-2 gap-1">

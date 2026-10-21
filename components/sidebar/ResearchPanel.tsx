@@ -121,7 +121,7 @@ function ThemeCard({
           </h3>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <span
-              className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+              className="text-[10px] font-bold px-1.5 py-0.5 rounded"
               style={{ background: sev.bg, color: sev.color, border: `1px solid ${sev.ring}` }}
             >
               {theme.severity}

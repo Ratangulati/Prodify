@@ -171,13 +171,13 @@ const MarkdownComponents = {
     </p>
   ),
   h1: ({ children }: { children?: React.ReactNode }) => (
-    <h1 className="text-base font-bold mt-4 mb-2" style={{ color: 'rgb(var(--n12))' }}>{children}</h1>
+    <h1 className="text-base font-bold leading-snug tracking-[-0.012em] mt-4 mb-2" style={{ color: 'rgb(var(--n12))' }}>{children}</h1>
   ),
   h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="text-sm font-bold mt-3.5 mb-1.5" style={{ color: 'rgb(var(--n12))' }}>{children}</h2>
+    <h2 className="text-sm font-semibold leading-snug tracking-[-0.006em] mt-3.5 mb-1.5" style={{ color: 'rgb(var(--n12))' }}>{children}</h2>
   ),
   h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3 className="text-sm font-semibold mt-3 mb-1" style={{ color: 'rgb(var(--n12))' }}>{children}</h3>
+    <h3 className="text-[13px] font-semibold leading-snug mt-3 mb-1" style={{ color: 'rgb(var(--n12))' }}>{children}</h3>
   ),
   ul: ({ children }: { children?: React.ReactNode }) => (
     <ul className="pl-4 mb-2.5 space-y-0.5" style={{ listStyleType: 'disc', color: 'rgb(var(--n11))' }}>{children}</ul>
@@ -1089,7 +1089,7 @@ export default function AIChatPanel() {
           <div className="flex items-center justify-between">
             <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
               <kbd
-                className="px-1 py-0.5 rounded text-[9px]"
+                className="px-1 py-0.5 rounded text-[10px]"
                 style={{ background: 'rgb(var(--n5))', border: '1px solid rgb(var(--n7))', color: 'rgb(var(--n8))' }}
               >
                 ⌘↵

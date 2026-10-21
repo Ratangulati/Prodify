@@ -523,7 +523,7 @@ export default function DataPanel() {
                     onClick={() => setFilter(filter === t ? 'all' : t)}
                   >
                     <p className="text-base font-bold" style={{ color: filter === t ? 'rgb(var(--brand-fg))' : 'rgb(var(--n11))' }}>{count}</p>
-                    <p className="text-[9px] uppercase tracking-wide leading-tight" style={{ color: 'rgb(var(--n8))' }}>
+                    <p className="text-[10px] uppercase tracking-wide leading-tight" style={{ color: 'rgb(var(--n8))' }}>
                       {TYPE_LABELS[t].slice(0, 6)}
                     </p>
                   </div>

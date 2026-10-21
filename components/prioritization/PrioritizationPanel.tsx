@@ -146,7 +146,7 @@ function ReasoningPanel({ items, features, onApply, onClose }: {
                 </span>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {(['reach','impact','confidence','effort'] as const).map(k => (
-                    <span key={k} className="text-[9px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}>
+                    <span key={k} className="text-[10px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}>
                       {k[0].toUpperCase()}:{item[k]}
                     </span>
                   ))}
@@ -476,7 +476,7 @@ ${featureList}`
           { k: 'C', v: 'Confidence%' },
           { k: 'E', v: 'Effort wks' },
         ].map(({ k, v }) => (
-          <span key={k} className="text-[9px]" style={{ color: 'rgb(var(--n5))' }} title={v}>
+          <span key={k} className="text-[10px]" style={{ color: 'rgb(var(--n5))' }} title={v}>
             <span style={{ color: 'rgb(var(--n8))' }}>{k}</span>=<span>{v}</span>
           </span>
         ))}
@@ -509,7 +509,7 @@ function MosCowChip({ feature, isDragOverlay }: { feature: Feature; isDragOverla
       <span className="text-[11px] font-medium truncate flex-1" style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n5))', color: 'rgb(var(--n11))' }}>
         {feature.title}
       </span>
-      <span className="text-[9px] font-bold flex-shrink-0" style={{ color: PRIORITY_COLOR[feature.priority] }}>
+      <span className="text-[10px] font-bold flex-shrink-0" style={{ color: PRIORITY_COLOR[feature.priority] }}>
         {feature.priority}
       </span>
     </div>
@@ -542,7 +542,7 @@ function MosCowQuadrant({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <span
-              className="text-[9px] font-black px-1.5 py-0.5 rounded"
+              className="text-[10px] font-black px-1.5 py-0.5 rounded"
               style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.ring}` }}
             >
               {cfg.short}
@@ -552,14 +552,14 @@ function MosCowQuadrant({
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] font-bold" style={{ color: cfg.color }}>{features.length}</span>
             <span
-              className="text-[9px] px-1 py-0.5 rounded font-medium"
+              className="text-[10px] px-1 py-0.5 rounded font-medium"
               style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}
             >
               {pct}%
             </span>
           </div>
         </div>
-        <p className="text-[9px] mt-0.5" style={{ color: 'rgb(var(--n8))' }}>{cfg.desc}</p>
+        <p className="text-[10px] mt-0.5" style={{ color: 'rgb(var(--n8))' }}>{cfg.desc}</p>
       </div>
 
       {/* Feature chips */}
@@ -646,7 +646,7 @@ function MoSCoWView() {
           </div>
           <div className="flex items-center gap-3 mt-1.5">
             {scopeSummary.map(q => q.count > 0 && (
-              <span key={q.id} className="flex items-center gap-1 text-[9px]">
+              <span key={q.id} className="flex items-center gap-1 text-[10px]">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: q.color }} />
                 <span style={{ color: 'rgb(var(--n8))' }}>{q.short} {q.pct}%</span>
               </span>
