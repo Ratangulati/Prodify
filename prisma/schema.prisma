@@ -70,6 +70,8 @@ model Workspace {
   taskKeyPrefix  String   @default("PROD")
   /// Number the next task will get; only ever goes up
   nextTaskNumber Int      @default(1)
+  /// Move tasks to Review when their PR opens and to Done when it merges
+  githubAutomation Boolean @default(false)
   createdAt      DateTime @default(now())
   tasks          Task[]
   github         GitHubConnection?

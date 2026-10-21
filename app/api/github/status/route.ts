@@ -16,5 +16,6 @@ export async function GET() {
     configured: githubAppConfig() !== null,
     connection: connection ? { accountLogin: connection.accountLogin } : null,
     repos:      repos.map((r) => ({ githubId: r.githubId, fullName: r.fullName })),
+    automation: workspace.githubAutomation,
   })
 }

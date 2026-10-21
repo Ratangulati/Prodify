@@ -14,6 +14,7 @@ interface Status {
   configured: boolean
   connection: { accountLogin: string } | null
   repos: { githubId: number; fullName: string }[]
+  automation: boolean
 }
 
 interface RepoOption {
@@ -76,6 +77,20 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
       toast.error(err instanceof Error ? err.message : 'Could not save repositories')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function setAutomation(automation: boolean) {
+    try {
+      const res = await fetch('/api/github/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ automation }),
+      })
+      if (!res.ok) throw new Error(await apiError(res))
+      setStatus((s) => (s ? { ...s, automation } : s))
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not save the setting')
     }
   }
 
@@ -182,6 +197,20 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
                   {saving ? 'Saving…' : 'Save repositories'}
                 </button>
               )}
+
+              <label className="flex items-start gap-2 pt-3 border-t cursor-pointer" style={{ borderColor: '#2a2a2a' }}>
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={status.automation}
+                  onChange={(e) => setAutomation(e.target.checked)}
+                />
+                <span>
+                  <span className="block" style={{ color: '#ddd' }}>Move tasks automatically</span>
+                  When a linked PR is opened, move its task to Review; when it&apos;s merged, move it to Done. Each
+                  move is noted in the task&apos;s activity.
+                </span>
+              </label>
             </div>
           )}
         </div>

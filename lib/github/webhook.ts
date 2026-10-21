@@ -1,7 +1,7 @@
 import type { Prisma, PrismaClient } from '@prisma/client'
 import { formatTaskKey } from '@/lib/tasks'
 import { findTaskKeys } from '@/lib/github/keys'
-import { linkFields, type GitHubPullRequest } from '@/lib/github/pull-requests'
+import { linkFields, type GitHubPullRequest, type PullRequestState } from '@/lib/github/pull-requests'
 
 type Tx = Prisma.TransactionClient
 
@@ -133,10 +133,45 @@ async function handlePullRequest(tx: Tx, event: PullRequestEvent): Promise<Webho
         },
       })
     }
+    if (repo.workspace.githubAutomation) {
+      await applyAutomation(tx, task, { action: event.action, state: fields.state, number: pr.number })
+    }
     linked.push(key)
   }
 
   return linked.length
     ? { status: 'processed', detail: `Updated ${linked.join(', ')}.` }
     : { status: 'ignored', detail: 'No task keys in this pull request.' }
+}
+
+/**
+ * Optional automation (off by default): an opened PR moves its task to
+ * Review, a merged PR moves it to Done. Every move leaves an activity note,
+ * so a status never changes silently.
+ */
+async function applyAutomation(
+  tx: Tx,
+  task: { id: string; status: string },
+  pr: { action: string; state: PullRequestState; number: number },
+) {
+  let status: string | null = null
+  let reason = ''
+
+  if (pr.state === 'merged' && task.status !== 'done') {
+    status = 'done'
+    reason = `PR #${pr.number} was merged`
+  } else if (
+    pr.state === 'open' &&
+    ['opened', 'reopened', 'ready_for_review'].includes(pr.action) &&
+    (task.status === 'todo' || task.status === 'in_progress')
+  ) {
+    status = 'review'
+    reason = `PR #${pr.number} is ready for review`
+  }
+  if (!status) return
+
+  await tx.task.update({ where: { id: task.id }, data: { status } })
+  await tx.taskActivity.create({
+    data: { taskId: task.id, message: `Moved to ${status === 'done' ? 'Done' : 'Review'} automatically: ${reason}.` },
+  })
 }

@@ -142,3 +142,39 @@ describe('installation webhooks', () => {
     expect(await db.gitHubRepo.count({ where: { workspaceId: 'ws-b' } })).toBe(1)
   })
 })
+
+describe('automation', () => {
+  const statusOf = async (id: string) => (await db.task.findUnique({ where: { id } }))?.status
+
+  it('changes nothing when automation is off (the default)', async () => {
+    await processWebhook(db.asPrisma(), prEvent())
+    await processWebhook(db.asPrisma(), prEvent({ action: 'closed', state: 'closed', merged: true, updatedAt: '2026-10-21T11:00:00Z' }))
+    expect(await statusOf('task-a1')).toBe('todo')
+  })
+
+  it('moves a task to Review when its PR opens and to Done when it merges, with notes', async () => {
+    await db.workspace.update({ where: { id: 'ws-a' }, data: { githubAutomation: true } })
+
+    await processWebhook(db.asPrisma(), prEvent())
+    expect(await statusOf('task-a1')).toBe('review')
+
+    await processWebhook(db.asPrisma(), prEvent({ action: 'closed', state: 'closed', merged: true, updatedAt: '2026-10-21T11:00:00Z' }))
+    expect(await statusOf('task-a1')).toBe('done')
+
+    const notes = (await db.taskActivity.findMany({ where: { taskId: 'task-a1' } })).map((n) => n.message)
+    expect(notes).toEqual(expect.arrayContaining([
+      expect.stringMatching(/Moved to Review automatically: PR #12/),
+      expect.stringMatching(/Moved to Done automatically: PR #12 was merged/),
+    ]))
+  })
+
+  it('leaves draft PRs and finished tasks alone', async () => {
+    await db.workspace.update({ where: { id: 'ws-a' }, data: { githubAutomation: true } })
+    await processWebhook(db.asPrisma(), prEvent({ draft: true }))
+    expect(await statusOf('task-a1')).toBe('todo')
+
+    await db.task.update({ where: { id: 'task-a1' }, data: { status: 'done' } })
+    await processWebhook(db.asPrisma(), prEvent({ action: 'reopened', updatedAt: '2026-10-21T12:00:00Z' }))
+    expect(await statusOf('task-a1')).toBe('done')
+  })
+})
