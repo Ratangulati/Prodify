@@ -29,3 +29,41 @@ export async function errorFromResponse(res: Response): Promise<AIError> {
     return new AIError(`The AI request failed (HTTP ${res.status}). Please try again.`)
   }
 }
+
+/**
+ * Sends one request to /api/ai and returns the whole answer. Any failure
+ * (an error response, the server's mid-stream error marker, an empty
+ * answer, no connection) becomes an AIError with a readable message, so
+ * callers never mistake an error for an answer. An abort is rethrown as is.
+ */
+export async function askAI(
+  body: { workflow: string; userMessage: string; documentContext?: string | null; conversationHistory?: unknown[] },
+  options: { signal?: AbortSignal; onText?: (textSoFar: string) => void } = {},
+): Promise<string> {
+  try {
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: options.signal,
+      body: JSON.stringify({ conversationHistory: [], ...body }),
+    })
+    if (!res.ok || !res.body) throw await errorFromResponse(res)
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let full = ''
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      full += decoder.decode(value, { stream: true })
+      const at = full.indexOf(STREAM_ERROR_MARKER)
+      if (at !== -1) throw new AIError(full.slice(at + STREAM_ERROR_MARKER.length))
+      options.onText?.(full)
+    }
+    if (!full.trim()) throw new AIError('The AI returned an empty answer. Please try again.')
+    return full
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') throw err
+    throw toAIError(err)
+  }
+}

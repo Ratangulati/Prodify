@@ -16,6 +16,7 @@ import {
   Legend,
 } from 'recharts'
 import Tip from '@/components/ui/Tip'
+import { askAI } from '@/lib/ai-client'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 type Confidence = 'high' | 'medium' | 'low'
@@ -254,6 +255,7 @@ const FILTERS: { id: DataInsight['type'] | 'all'; label: string }[] = [
 export default function DataPanel() {
   const [input, setInput]           = useState('')
   const [status, setStatus]         = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
   const [streamText, setStreamText] = useState('')
   const [result, setResult]         = useState<AnalysisResult | null>(null)
   const [filter, setFilter]         = useState<DataInsight['type'] | 'all'>('all')
@@ -304,35 +306,15 @@ export default function DataPanel() {
     abortRef.current = ctrl
 
     setStatus('loading')
+    setErrorMsg('')
     setStreamText('')
     setResult(null)
 
     try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: ctrl.signal,
-        body: JSON.stringify({
-          workflow: 'data',
-          userMessage: `${DATA_PROMPT}\n\nData to analyse:\n${input}`,
-          documentContext: null,
-          conversationHistory: [],
-        }),
-      })
-
-      if (!res.ok || !res.body) throw new Error('Stream failed')
-
-      const reader  = res.body.getReader()
-      const decoder = new TextDecoder()
-      let   full    = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        full += chunk
-        setStreamText(full)
-      }
+      const full = await askAI(
+        { workflow: 'data', userMessage: `${DATA_PROMPT}\n\nData to analyse:\n${input}` },
+        { signal: ctrl.signal, onText: setStreamText },
+      )
 
       const parsed = extractJSON(full)
       if (parsed) {
@@ -340,10 +322,14 @@ export default function DataPanel() {
         setStatus('done')
         toast.success(`Analysis complete — ${parsed.insights.length} insights found`)
       } else {
+        setErrorMsg('')   // the AI answered, but not in a shape we could read
         setStatus('error')
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.name !== 'AbortError') setStatus('error')
+      if (err instanceof Error && err.name !== 'AbortError') {
+        setErrorMsg(err.message)
+        setStatus('error')
+      }
     }
   }
 
@@ -494,7 +480,7 @@ export default function DataPanel() {
             className="rounded-lg p-3 text-xs"
             style={{ background: 'rgb(var(--red) / 0.08)', border: '1px solid rgb(var(--red) / 0.2)', color: 'rgb(var(--red-fg))' }}
           >
-            Analysis failed. Check that your data has clear column headers and try again.
+            {errorMsg || 'Analysis failed. Check that your data has clear column headers and try again.'}
           </div>
         )}
 
