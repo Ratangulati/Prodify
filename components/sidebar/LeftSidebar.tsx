@@ -60,7 +60,7 @@ export default function LeftSidebar({ onToggleTheme, theme }: LeftSidebarProps) 
       <div className="flex-shrink-0 border-t" style={{ borderColor: 'rgb(var(--n6))' }}>
         <button
           onClick={() => setFeaturesOpen(v => !v)}
-          className="flex items-center gap-1.5 w-full px-3 py-2 text-xs font-medium transition-colors hover:bg-white/5"
+          className="press-tint flex items-center gap-1.5 w-full px-3 py-2 text-xs font-medium transition-colors hover:bg-white/5"
           style={{ color: 'rgb(var(--n9))' }}
         >
           {featuresOpen ? <ChevronDown size={11} /> : <ChevronRight size={11} />}

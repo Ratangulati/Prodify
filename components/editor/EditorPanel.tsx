@@ -206,14 +206,14 @@ export default function EditorPanel() {
               <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Copy</p>
               <button
                 onClick={() => copyText(htmlToMarkdown(doc.content), 'Copied!')}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
+                className="press-tint flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
                 <Copy size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Copy as Markdown
               </button>
               <button
                 onClick={() => copyText(htmlToText(doc.content), 'Copied!')}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
+                className="press-tint flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
                 <Copy size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Copy as Plain Text
@@ -226,7 +226,7 @@ export default function EditorPanel() {
                   downloadBlob(htmlToMarkdown(doc.content), `${doc.title}.md`, 'text/markdown')
                   setExportOpen(false)
                 }}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
+                className="press-tint flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
                 <Download size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Download .md
@@ -236,7 +236,7 @@ export default function EditorPanel() {
                   downloadBlob(htmlToText(doc.content), `${doc.title}.txt`, 'text/plain')
                   setExportOpen(false)
                 }}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
+                className="press-tint flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
                 <Download size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Download .txt

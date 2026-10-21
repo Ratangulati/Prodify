@@ -545,7 +545,7 @@ export default function Editor({ docId }: { docId: string }) {
             return (
               <button
                 key={cmd.id}
-                className="flex items-center gap-3 w-full px-3 py-2.5 text-left transition-colors"
+                className="press-tint flex items-center gap-3 w-full px-3 py-2.5 text-left transition-colors"
                 style={{
                   background: active ? 'rgb(var(--brand) / 0.12)' : 'transparent',
                   borderLeft: active ? '2px solid rgb(var(--brand))' : '2px solid transparent',

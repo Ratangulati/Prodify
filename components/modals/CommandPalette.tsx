@@ -175,7 +175,7 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                   key={isAI ? w.id : d.type}
                   onClick={() => handleSelect(i)}
                   onMouseEnter={() => setSelected(i)}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left"
+                  className="press-tint flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left"
                   style={{ background: selected === i ? 'rgb(var(--brand) / 0.1)' : 'transparent' }}
                 >
                   <span style={{ color: selected === i ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}>

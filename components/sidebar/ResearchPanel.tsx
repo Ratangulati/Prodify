@@ -78,7 +78,7 @@ function LinkFeatureDropdown({
                 <button
                   key={f.id}
                   onClick={() => { onLink(f.id); setOpen(false) }}
-                  className={`flex items-center gap-2 w-full px-3 py-2 text-left text-xs transition-colors hover:bg-n5 ${linked ? 'text-brand-fg' : 'text-n10'}`}
+                  className={`press-tint flex items-center gap-2 w-full px-3 py-2 text-left text-xs transition-colors hover:bg-n5 ${linked ? 'text-brand-fg' : 'text-n10'}`}
                 >
                   {linked ? <Check size={11} style={{ color: 'rgb(var(--brand-fg))', flexShrink: 0 }} /> : <Plus size={11} style={{ flexShrink: 0, color: 'rgb(var(--n8))' }} />}
                   <span className="truncate">{f.title}</span>

@@ -164,7 +164,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
   return (
     <>
       <div
-        className={`group flex items-center rounded text-xs transition-colors cursor-pointer ${
+        className={`press-tint group flex items-center rounded text-xs transition-colors cursor-pointer ${
           isActive ? 'bg-brand/[0.12] text-brand-soft' : 'text-n10 hover:bg-white/5'
         }`}
         style={{
@@ -370,7 +370,7 @@ export default function FileExplorer() {
         {/* New Folder */}
         <button
           onClick={() => { setDocPickerOpen(false); setCreating({ parentId: null, type: 'folder' }) }}
-          className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-white/5"
+          className="press-tint flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-white/5"
           style={{ border: `1px solid ${BORDER}`, color: 'rgb(var(--n9))' }}
         >
           <FolderPlus size={13} style={{ color: 'rgb(var(--amber))' }} />
@@ -380,7 +380,7 @@ export default function FileExplorer() {
         {/* New Document */}
         <button
           onClick={() => { setCreating(null); setDocPickerOpen(v => !v) }}
-          className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
+          className="press-tint flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
           style={{
             background: docPickerOpen ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--brand))',
             color: 'rgb(var(--white))',
