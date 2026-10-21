@@ -489,7 +489,8 @@
    Visible ring for keyboard users only (:focus-visible), above any
    outline-none utility. Full-width rows draw it inset so scroll
    containers don't clip it.                                          */
-:is(button, a[href], summary, [role="button"], [role="tab"], [role="treeitem"], [tabindex]:not([tabindex="-1"])):focus-visible {
+/* Text editors show their caret instead, so editable regions are left out */
+:is(button, a[href], summary, [role="button"], [role="tab"], [role="treeitem"], [tabindex]:not([tabindex="-1"])):not([contenteditable="true"]):focus-visible {
   outline: 2px solid rgb(var(--brand-fg));
   outline-offset: 2px;
 }
