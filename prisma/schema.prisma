@@ -90,6 +90,8 @@ model Task {
   updatedAt   DateTime  @updatedAt
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  pullRequests PullRequestLink[]
+  activity     TaskActivity[]
 
   @@unique([workspaceId, number])
   @@index([docId])
@@ -121,4 +123,49 @@ model GitHubRepo {
   createdAt   DateTime  @default(now())
 
   @@index([workspaceId])
+}
+
+/// A pull request linked to a task, either automatically (its branch, title
+/// or description mentions the task key) or by pasting its URL.
+model PullRequestLink {
+  id           String   @id @default(uuid())
+  workspaceId  String
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  /// owner/name, e.g. acme/web
+  repoFullName String
+  number       Int
+  title        String
+  url          String
+  /// open | draft | merged | closed
+  state        String
+  author       String
+  /// GitHub's updated_at for the PR; older webhook events are ignored
+  prUpdatedAt  DateTime
+  /// auto | manual
+  source       String
+  createdAt    DateTime @default(now())
+
+  @@unique([taskId, repoFullName, number])
+  @@index([workspaceId, repoFullName, number])
+}
+
+/// Every webhook delivery we've processed, keyed by X-GitHub-Delivery.
+/// GitHub can send the same delivery twice; the second insert fails and the
+/// event is skipped.
+model WebhookDelivery {
+  id         String   @id
+  event      String
+  receivedAt DateTime @default(now())
+}
+
+/// A short note on a task's history, so automatic changes are never silent
+model TaskActivity {
+  id        String   @id @default(uuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([taskId])
 }
