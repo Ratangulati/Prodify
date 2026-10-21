@@ -7,7 +7,6 @@ import type {
   AIMessage,
   ResearchInsight,
   FileNode,
-  FileNodeType,
   DocumentType,
   SaveStatus,
   AIWorkflow,
