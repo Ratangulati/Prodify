@@ -34,7 +34,7 @@ function ToastCard({ toast, onRemove }: { toast: ToastItem; onRemove: () => void
       </span>
       <button
         onClick={onRemove}
-        className="p-0.5 rounded hover:bg-white/10 transition-colors flex-shrink-0"
+        className="p-0.5 rounded hover:bg-overlay/10 transition-colors flex-shrink-0"
         style={{ color: 'rgb(var(--n8))' }}
       >
         <X size={12} />

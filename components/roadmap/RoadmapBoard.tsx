@@ -136,7 +136,7 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
         background: 'rgb(var(--n3))',
         borderColor: 'rgb(var(--n5))',
         boxShadow: isDragOverlay
-          ? '0 16px 48px rgb(var(--black) / 0.7), 0 0 0 1px rgb(var(--brand) / 0.4)'
+          ? '0 16px 48px rgb(var(--shadow) / 0.7), 0 0 0 1px rgb(var(--brand) / 0.4)'
           : 'none',
         // The overlay is positioned by DragOverlay itself, so it only needs the "lifted" tilt
         transform: isDragOverlay ? 'rotate(1.5deg) scale(1.02)' : style?.transform,
@@ -283,7 +283,7 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
           type="submit"
           disabled={!form.title.trim()}
           className="flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-40"
-          style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--white))' }}
+          style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--on-brand))' }}
         >
           Add feature
         </button>
@@ -411,7 +411,7 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
       >
         <Filter size={11} />
         Filter
-        {active && <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 ml-0.5" />}
+        {active && <span className="w-1.5 h-1.5 rounded-full bg-brand ml-0.5" />}
         <ChevronDown size={10} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
@@ -698,7 +698,7 @@ export default function RoadmapBoard() {
               className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] transition-colors"
               style={{
                 background: view === v.id ? 'rgb(var(--brand))' : 'transparent',
-                color:      view === v.id ? 'rgb(var(--white))'    : 'rgb(var(--n8))',
+                color:      view === v.id ? 'rgb(var(--on-brand))'    : 'rgb(var(--n8))',
               }}
               title={v.id}
             >

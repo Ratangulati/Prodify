@@ -33,9 +33,15 @@ const config: Config = {
           soft:    'rgb(var(--brand-soft) / <alpha-value>)',
           strong:  'rgb(var(--brand-strong) / <alpha-value>)',
         },
+        'on-brand': 'rgb(var(--on-brand) / <alpha-value>)',
+        overlay:    'rgb(var(--overlay) / <alpha-value>)',
         danger:  { DEFAULT: 'rgb(var(--red) / <alpha-value>)',     fg: 'rgb(var(--red-fg) / <alpha-value>)' },
         success: { DEFAULT: 'rgb(var(--green) / <alpha-value>)',   fg: 'rgb(var(--green-fg) / <alpha-value>)' },
         mint:    { DEFAULT: 'rgb(var(--emerald) / <alpha-value>)', fg: 'rgb(var(--emerald-fg) / <alpha-value>)', soft: 'rgb(var(--emerald-soft) / <alpha-value>)' },
+      },
+      fontFamily: {
+        // Newsreader (app/layout.tsx), for document titles and large headings
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',

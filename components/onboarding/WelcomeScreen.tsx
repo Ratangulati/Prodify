@@ -62,7 +62,7 @@ export default function WelcomeScreen() {
           className="flex items-center justify-center rounded-2xl mb-2"
           style={{ width: 56, height: 56, background: 'rgb(var(--brand))' }}
         >
-          <Sparkles size={24} className="text-white" />
+          <Sparkles size={24} className="text-on-brand" />
         </div>
         <h1 className="text-3xl font-bold leading-[1.1] tracking-[-0.022em] text-balance" style={{ color: 'rgb(var(--n12))' }}>
           Welcome to Prodify-AI

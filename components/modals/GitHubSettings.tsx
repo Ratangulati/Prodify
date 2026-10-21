@@ -106,7 +106,7 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
   return (
     <div
       className="fixed inset-0 z-[1000] flex items-center justify-center"
-      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgb(var(--shadow) / 0.7)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
@@ -114,27 +114,27 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
         aria-modal="true"
         aria-label="GitHub settings"
         className="w-full rounded-xl shadow-2xl overflow-hidden"
-        style={{ maxWidth: 480, background: '#161616', border: '1px solid #2a2a2a' }}
+        style={{ maxWidth: 480, background: 'rgb(var(--n2))', border: '1px solid rgb(var(--n6))' }}
       >
         {/* Header */}
-        <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: '#2a2a2a' }}>
-          <Github size={15} style={{ color: '#e0e0e0' }} />
-          <span className="text-sm font-semibold" style={{ color: '#e0e0e0' }}>GitHub</span>
-          <button onClick={onClose} aria-label="Close" className="ml-auto p-1 rounded hover:bg-white/10 transition-colors" style={{ color: '#888' }}>
+        <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
+          <Github size={15} style={{ color: 'rgb(var(--n11))' }} />
+          <span className="text-sm font-semibold" style={{ color: 'rgb(var(--n11))' }}>GitHub</span>
+          <button onClick={onClose} aria-label="Close" className="ml-auto p-1 rounded hover:bg-overlay/10 transition-colors" style={{ color: 'rgb(var(--n9))' }}>
             <X size={14} />
           </button>
         </div>
 
-        <div className="p-4 space-y-4 text-xs" style={{ color: '#aaa' }}>
+        <div className="p-4 space-y-4 text-xs" style={{ color: 'rgb(var(--n10))' }}>
           {error && (
-            <p className="rounded-lg px-3 py-2" style={{ background: 'rgba(239,68,68,0.1)', color: '#fca5a5' }}>{error}</p>
+            <p className="rounded-lg px-3 py-2" style={{ background: 'rgb(var(--red) / 0.1)', color: 'rgb(var(--red-soft))' }}>{error}</p>
           )}
 
           {!status && !error && <p>Loading…</p>}
 
           {status && !status.configured && (
             <div className="space-y-2">
-              <p style={{ color: '#ddd' }}>The GitHub App isn&apos;t set up on the server yet.</p>
+              <p style={{ color: 'rgb(var(--n11))' }}>The GitHub App isn&apos;t set up on the server yet.</p>
               <p>
                 Set <code>GITHUB_APP_ID</code>, <code>GITHUB_APP_SLUG</code>, <code>GITHUB_PRIVATE_KEY</code> and{' '}
                 <code>GITHUB_WEBHOOK_SECRET</code> in <code>.env</code>, then restart. The README&apos;s
@@ -151,7 +151,7 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
               </p>
               <a
                 href="/api/github/install"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-indigo-500 hover:bg-indigo-600 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-on-brand bg-brand hover:bg-brand-strong transition-colors"
               >
                 <Github size={13} /> Connect GitHub
               </a>
@@ -161,14 +161,14 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
           {status?.connection && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <p>Connected to <span style={{ color: '#ddd' }}>@{status.connection.accountLogin}</span></p>
-                <button onClick={disconnect} className="text-[11px] px-2 py-1 rounded transition-colors text-zinc-500 hover:text-red-400 hover:bg-red-500/10">
+                <p>Connected to <span style={{ color: 'rgb(var(--n11))' }}>@{status.connection.accountLogin}</span></p>
+                <button onClick={disconnect} className="text-[11px] px-2 py-1 rounded transition-colors text-n8 hover:text-danger-fg hover:bg-danger/10">
                   Disconnect
                 </button>
               </div>
 
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: '#666' }}>
+                <p className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: 'rgb(var(--n8))' }}>
                   Repositories to track
                 </p>
                 {repos === null && !error && <p>Loading repositories…</p>}
@@ -178,9 +178,9 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
                 {repos && repos.length > 0 && (
                   <div className="max-h-56 overflow-y-auto space-y-1">
                     {repos.map((r) => (
-                      <label key={r.githubId} className="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-white/5">
+                      <label key={r.githubId} className="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-overlay/5">
                         <input type="checkbox" checked={selected.has(r.githubId)} onChange={() => toggle(r.githubId)} />
-                        <span style={{ color: '#ddd' }}>{r.fullName}</span>
+                        <span style={{ color: 'rgb(var(--n11))' }}>{r.fullName}</span>
                         {r.private && <Lock size={10} aria-label="Private" />}
                       </label>
                     ))}
@@ -192,13 +192,13 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
                 <button
                   onClick={saveRepos}
                   disabled={saving}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-on-brand bg-brand hover:bg-brand-strong disabled:opacity-40 transition-colors"
                 >
                   {saving ? 'Saving…' : 'Save repositories'}
                 </button>
               )}
 
-              <label className="flex items-start gap-2 pt-3 border-t cursor-pointer" style={{ borderColor: '#2a2a2a' }}>
+              <label className="flex items-start gap-2 pt-3 border-t cursor-pointer" style={{ borderColor: 'rgb(var(--n6))' }}>
                 <input
                   type="checkbox"
                   className="mt-0.5"
@@ -206,7 +206,7 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
                   onChange={(e) => setAutomation(e.target.checked)}
                 />
                 <span>
-                  <span className="block" style={{ color: '#ddd' }}>Move tasks automatically</span>
+                  <span className="block" style={{ color: 'rgb(var(--n11))' }}>Move tasks automatically</span>
                   When a linked PR is opened, move its task to Review; when it&apos;s merged, move it to Done. Each
                   move is noted in the task&apos;s activity.
                 </span>

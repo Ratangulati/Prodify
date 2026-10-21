@@ -125,7 +125,7 @@ function ReasoningPanel({ items, features, onApply, onClose }: {
           <button
             onClick={onApply}
             className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg font-medium transition-colors"
-            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--white))' }}
+            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--on-brand))' }}
           >
             <Check size={11} /> Apply all
           </button>
@@ -501,7 +501,7 @@ function MosCowChip({ feature, isDragOverlay }: { feature: Feature; isDragOverla
         ...style,
         opacity: isDragging ? 0.3 : 1,
         cursor: isDragging ? 'grabbing' : 'grab',
-        boxShadow: isDragOverlay ? '0 8px 24px rgb(var(--black) / 0.6)' : 'none',
+        boxShadow: isDragOverlay ? '0 8px 24px rgb(var(--shadow) / 0.6)' : 'none',
       }}
       className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border select-none mb-1.5"
       {...(isDragOverlay ? {} : { ...attributes, ...listeners })}
@@ -696,7 +696,7 @@ export default function PrioritizationPanel() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: active ? 'rgb(var(--brand))'  : 'rgb(var(--n3))',
-                color:      active ? 'rgb(var(--white))'     : 'rgb(var(--n8))',
+                color:      active ? 'rgb(var(--on-brand))'     : 'rgb(var(--n8))',
                 border:     `1px solid ${active ? 'rgb(var(--brand))' : 'rgb(var(--n5))'}`,
               }}
             >

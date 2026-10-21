@@ -14,6 +14,7 @@ import CommandPalette from './modals/CommandPalette'
 import KeyboardShortcuts from './modals/KeyboardShortcuts'
 import GitHubSettings from './modals/GitHubSettings'
 import { toast } from '@/lib/toast'
+import { applyTheme, currentTheme } from '@/lib/theme'
 import WelcomeScreen from './onboarding/WelcomeScreen'
 
 export default function AppShell() {
@@ -46,17 +47,16 @@ export default function AppShell() {
     setGithubOpen(true)
   }, [router])
 
-  /* ── Apply theme class to <html> ─────────────────────────────── */
-  useEffect(() => {
-    const html = document.documentElement
-    if (theme === 'dark') {
-      html.classList.add('dark')
-      html.classList.remove('light')
-    } else {
-      html.classList.remove('dark')
-      html.classList.add('light')
-    }
-  }, [theme])
+  /* ── Theme ───────────────────────────────────────────────────────
+     The page's theme is set before paint by themeInitScript (layout.tsx);
+     the store just mirrors it so the toggle shows the right icon. */
+  useEffect(() => { setTheme(currentTheme()) }, [setTheme])
+
+  function toggleTheme() {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark'
+    applyTheme(next)
+    setTheme(next)
+  }
 
   /* ── Global keyboard shortcuts ───────────────────────────────── */
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function AppShell() {
     return (
       <div className="h-screen flex items-center justify-center" style={{ background: 'rgb(var(--n0))' }}>
         <div className="text-center space-y-3">
-          <div className="animate-spin inline-block w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full" />
+          <div className="animate-spin inline-block w-5 h-5 border-2 border-brand border-t-transparent rounded-full" />
           <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Loading workspace…</p>
         </div>
       </div>
@@ -125,20 +125,20 @@ export default function AppShell() {
     <MotionConfig reducedMotion="user" transition={springs.ui}>
       <div
         className="h-screen overflow-hidden"
-        style={{ background: theme === 'dark' ? 'rgb(var(--n0))' : 'rgb(var(--n12))', minWidth: 1024 }}
+        style={{ background: 'rgb(var(--n0))', minWidth: 1024 }}
       >
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left sidebar */}
           <Panel defaultSize={18} minSize={12} maxSize={30}>
             <LeftSidebar
-              onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onToggleTheme={toggleTheme}
               onOpenGitHub={() => setGithubOpen(true)}
               theme={theme}
             />
           </Panel>
 
           <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
-            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-indigo-500/30 group-data-[resize-handle-active]:bg-indigo-500/50 transition-colors" />
+            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-brand/30 group-data-[resize-handle-active]:bg-brand/50 transition-colors" />
           </PanelResizeHandle>
 
           {/* Center editor */}
@@ -149,7 +149,7 @@ export default function AppShell() {
           </Panel>
 
           <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
-            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-indigo-500/30 group-data-[resize-handle-active]:bg-indigo-500/50 transition-colors" />
+            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-brand/30 group-data-[resize-handle-active]:bg-brand/50 transition-colors" />
           </PanelResizeHandle>
 
           {/* Right panel */}

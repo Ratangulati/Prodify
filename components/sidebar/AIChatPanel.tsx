@@ -477,7 +477,7 @@ function MessageBubble({
         <div className="max-w-[88%]">
           <div
             className="px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm leading-relaxed"
-            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--white))' }}
+            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--on-brand))' }}
           >
             {msg.content}
           </div>
@@ -493,7 +493,7 @@ function MessageBubble({
         className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5"
         style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
       >
-        <Wand2 size={11} className="text-white" />
+        <Wand2 size={11} className="text-on-brand" />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -997,7 +997,7 @@ export default function AIChatPanel() {
                   className="flex-shrink-0 flex items-center justify-center rounded-full"
                   style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
                 >
-                  <Wand2 size={11} className="text-white" />
+                  <Wand2 size={11} className="text-on-brand" />
                 </div>
                 <div
                   className="flex items-center gap-1 px-4 py-3 rounded-2xl rounded-tl-sm"
@@ -1128,7 +1128,7 @@ export default function AIChatPanel() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               style={{
                 background: input.trim() && !isStreaming ? 'rgb(var(--brand))' : 'rgb(var(--n5))',
-                color: input.trim() && !isStreaming ? 'rgb(var(--white))' : 'rgb(var(--n8))',
+                color: input.trim() && !isStreaming ? 'rgb(var(--on-brand))' : 'rgb(var(--n8))',
               }}
             >
               {isStreaming ? (

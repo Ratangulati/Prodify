@@ -6,10 +6,10 @@ import type { PullRequestState } from '@/lib/github/pull-requests'
 
 // GitHub's own conventions: green open, gray draft, purple merged, red closed
 export const PR_STATE_STYLE: Record<PullRequestState, { label: string; color: string; bg: string; Icon: typeof GitPullRequest }> = {
-  open:   { label: 'Open',   color: '#4ade80', bg: 'rgba(34,197,94,0.12)',   Icon: GitPullRequest },
-  draft:  { label: 'Draft',  color: '#a1a1aa', bg: 'rgba(113,113,122,0.15)', Icon: GitPullRequestDraft },
-  merged: { label: 'Merged', color: '#c4b5fd', bg: 'rgba(139,92,246,0.15)',  Icon: GitMerge },
-  closed: { label: 'Closed', color: '#f87171', bg: 'rgba(239,68,68,0.12)',   Icon: GitPullRequestClosed },
+  open:   { label: 'Open',   color: 'rgb(var(--green-fg))', bg: 'rgb(var(--green) / 0.12)',   Icon: GitPullRequest },
+  draft:  { label: 'Draft',  color: 'rgb(var(--n10))', bg: 'rgb(var(--n8) / 0.15)', Icon: GitPullRequestDraft },
+  merged: { label: 'Merged', color: 'rgb(var(--violet-soft))', bg: 'rgb(var(--violet) / 0.15)',  Icon: GitMerge },
+  closed: { label: 'Closed', color: 'rgb(var(--red-fg))', bg: 'rgb(var(--red) / 0.12)',   Icon: GitPullRequestClosed },
 }
 
 /** Small link chip: icon, #number and state, opening the PR on GitHub */

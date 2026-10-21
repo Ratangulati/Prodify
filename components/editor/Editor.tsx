@@ -508,7 +508,7 @@ export default function Editor({ docId }: { docId: string }) {
             left: toolbar.left,
             background: 'rgb(var(--n3))',
             borderColor: 'rgb(var(--n6))',
-            boxShadow: '0 8px 32px rgb(var(--black) / 0.6)',
+            boxShadow: '0 8px 32px rgb(var(--shadow) / 0.6)',
             pointerEvents: aiLoading ? 'none' : 'auto',
           }}
           onMouseDown={(e) => e.stopPropagation()}
@@ -574,7 +574,7 @@ export default function Editor({ docId }: { docId: string }) {
             width: 280,
             background: 'rgb(var(--n3))',
             borderColor: 'rgb(var(--n6))',
-            boxShadow: '0 16px 48px rgb(var(--black) / 0.7)',
+            boxShadow: '0 16px 48px rgb(var(--shadow) / 0.7)',
           }}
           onMouseDown={(e) => e.preventDefault()}
         >

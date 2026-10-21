@@ -51,12 +51,12 @@ export default function KeyboardShortcuts({ open, onClose }: KeyboardShortcutsPr
       panelStyle={{ maxWidth: 440 }}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--white) / 0.06)' }}>
+      <div className="flex items-center gap-2 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--overlay) / 0.06)' }}>
         <Keyboard size={15} style={{ color: 'rgb(var(--brand))' }} />
         <span className="text-sm font-semibold" style={{ color: 'rgb(var(--n11))' }}>Keyboard Shortcuts</span>
         <button
           onClick={onClose}
-          className="ml-auto p-1 rounded hover:bg-white/10 transition-colors"
+          className="ml-auto p-1 rounded hover:bg-overlay/10 transition-colors"
           style={{ color: 'rgb(var(--n8))' }}
         >
           <X size={14} />
@@ -71,7 +71,7 @@ export default function KeyboardShortcuts({ open, onClose }: KeyboardShortcutsPr
           </p>
           <div className="space-y-1">
             {SHORTCUTS.map(({ keys, label }) => (
-              <div key={label} className="flex items-center justify-between py-1.5 px-2 rounded" style={{ background: 'rgb(var(--white) / 0.04)' }}>
+              <div key={label} className="flex items-center justify-between py-1.5 px-2 rounded" style={{ background: 'rgb(var(--overlay) / 0.04)' }}>
                 <span className="text-xs" style={{ color: 'rgb(var(--n11))' }}>{label}</span>
                 <Keys keys={keys} />
               </div>
@@ -86,7 +86,7 @@ export default function KeyboardShortcuts({ open, onClose }: KeyboardShortcutsPr
           </p>
           <div className="space-y-1">
             {EDITOR_SHORTCUTS.map(({ keys, label }) => (
-              <div key={label} className="flex items-center justify-between py-1.5 px-2 rounded" style={{ background: 'rgb(var(--white) / 0.04)' }}>
+              <div key={label} className="flex items-center justify-between py-1.5 px-2 rounded" style={{ background: 'rgb(var(--overlay) / 0.04)' }}>
                 <span className="text-xs" style={{ color: 'rgb(var(--n11))' }}>{label}</span>
                 <Keys keys={keys} />
               </div>

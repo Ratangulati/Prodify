@@ -369,7 +369,7 @@ export default function DataPanel() {
         {result && (
           <button
             onClick={reset}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs transition-colors hover:bg-white/5"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs transition-colors hover:bg-overlay/5"
             style={{ color: 'rgb(var(--n8))' }}
           >
             <RefreshCw size={11} />
@@ -451,7 +451,7 @@ export default function DataPanel() {
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
               style={{
                 background: status === 'loading' ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--brand))',
-                color: 'rgb(var(--white))',
+                color: 'rgb(var(--on-brand))',
                 cursor: !input.trim() || status === 'loading' ? 'not-allowed' : 'pointer',
               }}
             >
@@ -565,7 +565,7 @@ export default function DataPanel() {
             {/* Re-analyse */}
             <button
               onClick={reset}
-              className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-xs transition-colors hover:bg-white/5"
+              className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-xs transition-colors hover:bg-overlay/5"
               style={{ color: 'rgb(var(--n8))', border: '1px solid rgb(var(--n6))' }}
             >
               <RefreshCw size={11} />

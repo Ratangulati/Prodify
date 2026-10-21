@@ -461,7 +461,7 @@ User 3: "Navigation feels unintuitive on mobile..."`}
           <button
             onClick={handleAnalyze}
             disabled={!notes.trim() || status === 'loading'}
-            className="w-full mt-2.5 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 bg-brand text-white enabled:hover:bg-brand-strong"
+            className="w-full mt-2.5 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 bg-brand text-on-brand enabled:hover:bg-brand-strong"
           >
             {status === 'loading' ? (
               <><Loader2 size={14} className="animate-spin" /> Analyzing research…</>

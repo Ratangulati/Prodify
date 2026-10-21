@@ -13,10 +13,10 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
 }
 
 export const STATUS_COLORS: Record<TaskStatus, string> = {
-  todo:        '#71717a',
-  in_progress: '#6366f1',
-  review:      '#f59e0b',
-  done:        '#22c55e',
+  todo:        'rgb(var(--n8))',
+  in_progress: 'rgb(var(--brand))',
+  review:      'rgb(var(--amber))',
+  done:        'rgb(var(--green))',
 }
 
 /** Copies the task's branch name (prod-42-add-csv-import) */
@@ -38,9 +38,9 @@ export function CopyBranchButton({ branch }: { branch: string }) {
       onClick={(e) => { e.stopPropagation(); copy() }}
       title={`Copy branch name: ${branch}`}
       aria-label={`Copy branch name ${branch}`}
-      className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] transition-colors text-zinc-500 hover:text-zinc-200 hover:bg-white/5"
+      className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] transition-colors text-n8 hover:text-n11 hover:bg-overlay/5"
     >
-      {copied ? <Check size={11} className="text-green-500" /> : <GitBranch size={11} />}
+      {copied ? <Check size={11} className="text-success" /> : <GitBranch size={11} />}
       {copied ? 'Copied' : 'Branch'}
     </button>
   )

@@ -9,62 +9,124 @@
 }
 
 /* ── Design tokens ──────────────────────────────────────────────────
-   App palette as RGB channels so both inline styles and Tailwind
-   alpha modifiers work: rgb(var(--n3)) / rgb(var(--brand) / 0.15).
-   Neutral ramp, darkest → lightest:
-     n0  canvas            n1  sunken bars       n2  raised bar
-     n3  panels & cards    n4  menus, chips      n5  hover, hairline
-     n6  borders           n7  strong borders    n8  tertiary text
-     n9  secondary text    n10 body-muted text   n11 body text
-     n12 headings                                                     */
+   Colours are RGB channels so inline styles and Tailwind alpha both work:
+   rgb(var(--n3)) or rgb(var(--brand) / 0.15). Each step has one job, and
+   each theme gives that job its own value:
+     n0  canvas            n1  sidebars, bars     n2  raised bar
+     n3  panels & cards    n4  menus, modals      n5  hover, chips, hairline
+     n6  borders           n7  strong borders     n8  tertiary text
+     n9  secondary text    n10 body-muted text    n11 body text
+     n12 headings
+   brand = the one accent (terracotta). brand-fg / brand-soft are its text
+   colours; on-brand is text placed on a brand fill. overlay tints hovers,
+   shadow tints shadows and scrims.
+   Light ("cream paper") is the default; dark is warm charcoal. Every text
+   token meets WCAG AA (≥ 4.5:1) on every surface token in both themes.  */
 @layer base {
   :root {
-    --n0:  14 14 16;
-    --n1:  18 18 20;
-    --n2:  22 22 24;
-    --n3:  25 25 28;
-    --n4:  31 31 34;
-    --n5:  38 38 42;
-    --n6:  44 44 48;
-    --n7:  58 58 64;
-    --n8:  116 116 126;
-    --n9:  142 142 152;
-    --n10: 168 168 178;
-    --n11: 208 208 214;
-    --n12: 236 236 240;
-    --white: 255 255 255;
-    --black: 0 0 0;
+    color-scheme: light;
+    --n0:  246 243 234;
+    --n1:  239 234 223;
+    --n2:  242 238 228;
+    --n3:  253 252 248;
+    --n4:  255 255 255;
+    --n5:  233 227 214;
+    --n6:  226 219 205;
+    --n7:  201 191 172;
+    --n8:  104 96 84;
+    --n9:  92 85 75;
+    --n10: 74 68 59;
+    --n11: 46 43 38;
+    --n12: 31 29 26;
+    --overlay: 31 29 26;
+    --shadow:  60 45 25;
 
-    --brand:        99 102 241;
-    --brand-fg:     129 140 248;
-    --brand-soft:   165 180 252;
-    --brand-strong: 79 70 229;
-    --violet:       139 92 246;
-    --violet-fg:    167 139 250;
+    --brand:        194 85 45;
+    --brand-fg:     168 70 31;
+    --brand-soft:   168 70 31;
+    --brand-strong: 168 70 31;
+    --on-brand:     255 255 255;
+    --violet:       124 77 176;
+    --violet-fg:    109 63 160;
+    --violet-soft:  109 63 160;
 
-    --green:      34 197 94;
-    --green-fg:   74 222 128;
-    --green-soft: 134 239 172;
-    --green-deep: 22 101 52;
-    --red:        239 68 68;
-    --red-fg:     248 113 113;
-    --red-soft:   252 165 165;
-    --red-deep:   127 29 29;
-    --amber:      245 158 11;
-    --amber-fg:   251 191 36;
-    --amber-soft: 252 211 77;
-    --yellow:     234 179 8;
-    --yellow-fg:  250 204 21;
-    --orange:     249 115 22;
-    --orange-fg:  251 146 60;
-    --blue:       59 130 246;
-    --blue-fg:    96 165 250;
-    --blue-soft:  147 197 253;
-    --emerald:      16 185 129;
-    --emerald-fg:   52 211 153;
-    --emerald-soft: 110 231 183;
-    --cyan: 6 182 212;
-    --pink: 236 72 153;
+    --green:      61 138 82;
+    --green-fg:   53 111 67;
+    --green-soft: 44 90 55;
+    --green-deep: 44 90 55;
+    --red:        196 78 60;
+    --red-fg:     176 62 43;
+    --red-soft:   138 50 34;
+    --red-deep:   138 50 34;
+    --amber:      192 138 30;
+    --amber-fg:   124 86 14;
+    --amber-soft: 124 86 14;
+    --yellow:     196 160 20;
+    --yellow-fg:  124 96 10;
+    --orange:     205 110 40;
+    --orange-fg:  160 78 20;
+    --blue:       74 120 184;
+    --blue-fg:    44 92 150;
+    --blue-soft:  38 80 130;
+    --emerald:      47 140 110;
+    --emerald-fg:   31 110 85;
+    --emerald-soft: 27 95 74;
+    --cyan: 30 130 150;
+    --pink: 190 70 120;
+  }
+
+  /* Warm charcoal. Applied by the toggle (data-theme) or, before any choice
+     is stored, by the system setting. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --n0:  28 26 23;
+    --n1:  23 21 19;
+    --n2:  32 30 26;
+    --n3:  36 33 29;
+    --n4:  43 40 35;
+    --n5:  51 47 41;
+    --n6:  60 56 49;
+    --n7:  86 80 70;
+    --n8:  158 149 136;
+    --n9:  184 176 162;
+    --n10: 207 200 187;
+    --n11: 228 222 211;
+    --n12: 242 237 228;
+    --overlay: 255 255 255;
+    --shadow:  0 0 0;
+
+    --brand:        224 123 82;
+    --brand-fg:     232 150 115;
+    --brand-soft:   238 171 140;
+    --brand-strong: 200 100 62;
+    --on-brand:     28 26 23;
+    --violet:       167 139 250;
+    --violet-fg:    196 170 240;
+    --violet-soft:  196 170 240;
+
+    --green:      74 170 100;
+    --green-fg:   140 196 150;
+    --green-soft: 170 215 168;
+    --green-deep: 34 48 31;
+    --red:        220 100 80;
+    --red-fg:     240 149 127;
+    --red-soft:   240 176 160;
+    --red-deep:   58 35 29;
+    --amber:      214 160 60;
+    --amber-fg:   224 180 92;
+    --amber-soft: 232 196 120;
+    --yellow:     220 190 60;
+    --yellow-fg:  232 205 100;
+    --orange:     225 130 60;
+    --orange-fg:  235 150 90;
+    --blue:       100 150 220;
+    --blue-fg:    130 170 230;
+    --blue-soft:  160 190 240;
+    --emerald:      60 180 140;
+    --emerald-fg:   90 200 160;
+    --emerald-soft: 120 215 175;
+    --cyan: 60 180 200;
+    --pink: 230 110 160;
   }
 }
 
@@ -307,7 +369,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.editor-table tr:hover td { background: rgb(var(--white) / 0.02); }
+.editor-table tr:hover td { background: rgb(var(--overlay) / 0.02); }
 .editor-table .selectedCell { background: rgb(var(--brand) / 0.1) !important; }
 
 /* Scrollbar */
@@ -345,12 +407,12 @@
   transition-timing-function: ease-out;
 }
 .press-tint:not(.no-press, :disabled):active {
-  box-shadow: inset 0 0 0 100vmax rgb(var(--white) / 0.05);
+  box-shadow: inset 0 0 0 100vmax rgb(var(--overlay) / 0.05);
   transition-duration: 0ms;
 }
 
 /* ── Modal scrim ── dims to focus; the panel itself carries the material */
-.overlay-scrim { background: rgb(var(--black) / 0.5); }
+.overlay-scrim { background: rgb(var(--shadow) / 0.5); }
 
 /* ── Materials ──────────────────────────────────────────────────────
    One translucent layer at a time: never stack glass on glass.
@@ -361,16 +423,16 @@
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   /* Faint hairline instead of a hard divider; light catching the edge */
-  box-shadow: inset 0 -1px 0 rgb(var(--white) / 0.06);
+  box-shadow: inset 0 -1px 0 rgb(var(--overlay) / 0.06);
 }
 .material-panel {
   background: rgb(var(--n2) / 0.78);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgb(var(--white) / 0.08);
+  border: 1px solid rgb(var(--overlay) / 0.08);
   box-shadow:
-    inset 0 1px 0 rgb(var(--white) / 0.06),
-    0 24px 64px rgb(var(--black) / 0.55);
+    inset 0 1px 0 rgb(var(--overlay) / 0.06),
+    0 24px 64px rgb(var(--shadow) / 0.55);
 }
 
 /* ── Streaming indicators ───────────────────────────────────────────
@@ -452,7 +514,7 @@
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  .overlay-scrim { background: rgb(var(--black) / 0.7); }
+  .overlay-scrim { background: rgb(var(--shadow) / 0.7); }
 }
 
 /* ── Increase Contrast ─────────────────────────────────────────────── */

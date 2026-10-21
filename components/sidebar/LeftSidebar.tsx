@@ -16,8 +16,6 @@ const STATUS_COLORS: Record<FeatureStatus, string> = {
   Done: 'rgb(var(--n8))',
 }
 
-const LIGHT_THEME_READY = false
-
 interface LeftSidebarProps {
   onToggleTheme: () => void
   onOpenGitHub: () => void
@@ -47,7 +45,7 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
           className="flex items-center justify-center rounded-lg flex-shrink-0"
           style={{ width: 28, height: 28, background: 'rgb(var(--brand))' }}
         >
-          <Sparkles size={14} className="text-white" />
+          <Sparkles size={14} className="text-on-brand" />
         </div>
         <span className="font-semibold text-sm tracking-tight" style={{ color: 'rgb(var(--n12))' }}>
           Prodify-AI
@@ -61,7 +59,7 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
       <div className="flex-shrink-0 border-t" style={{ borderColor: 'rgb(var(--n6))' }}>
         <button
           onClick={() => setFeaturesOpen(v => !v)}
-          className="press-tint flex items-center gap-1.5 w-full px-3 py-2 text-xs font-medium transition-colors hover:bg-white/5"
+          className="press-tint flex items-center gap-1.5 w-full px-3 py-2 text-xs font-medium transition-colors hover:bg-overlay/5"
           style={{ color: 'rgb(var(--n9))' }}
         >
           {featuresOpen ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
@@ -105,22 +103,22 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
         </p>
         <button
           onClick={onOpenGitHub}
-          className="p-1.5 rounded transition-colors hover:bg-white/10 flex-shrink-0"
+          className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
           style={{ color: 'rgb(var(--n8))' }}
           title="GitHub settings"
           aria-label="GitHub settings"
         >
           <Github size={13} />
         </button>
-        {/* Every surface is still dark-only, so the toggle stays hidden until light tokens exist */}
-        {LIGHT_THEME_READY && <button
+        <button
           onClick={onToggleTheme}
-          className="p-1.5 rounded transition-colors hover:bg-white/10 flex-shrink-0"
+          className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
           style={{ color: 'rgb(var(--n8))' }}
           title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
+          aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
         >
           {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
-        </button>}
+        </button>
         <span className="flex-shrink-0" style={{ color: 'rgb(var(--n8))' }} title="Press ? for shortcuts">
           <Keyboard size={13} />
         </span>

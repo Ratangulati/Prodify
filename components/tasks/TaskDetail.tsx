@@ -68,39 +68,39 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#111113' }}>
+    <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n1))' }}>
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-b flex-shrink-0" style={{ borderColor: '#1e1e22' }}>
-        <button onClick={onBack} aria-label="Back to tasks" title="Back to tasks" className="p-1 rounded text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-colors">
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b flex-shrink-0" style={{ borderColor: 'rgb(var(--n4))' }}>
+        <button onClick={onBack} aria-label="Back to tasks" title="Back to tasks" className="p-1 rounded text-n8 hover:text-n11 hover:bg-overlay/5 transition-colors">
           <ArrowLeft size={14} />
         </button>
-        <span className="text-[11px] font-mono font-semibold" style={{ color: '#818cf8' }}>{task.key}</span>
+        <span className="text-[11px] font-mono font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>{task.key}</span>
         <div className="ml-auto"><CopyBranchButton branch={task.branch} /></div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-5">
-        <h2 className="text-sm font-semibold leading-snug" style={{ color: '#e4e4e7' }}>{task.title}</h2>
+        <h2 className="text-sm font-semibold leading-snug" style={{ color: 'rgb(var(--n12))' }}>{task.title}</h2>
 
         {/* Status + PRD */}
         <div className="grid grid-cols-2 gap-2">
           <label className="space-y-1">
-            <span className="block text-[10px] uppercase tracking-wider" style={{ color: '#71717a' }}>Status</span>
+            <span className="block text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Status</span>
             <select
               value={task.status}
               onChange={(e) => change({ status: e.target.value as TaskStatus })}
               className="w-full text-xs rounded-lg px-2 py-1.5 outline-none"
-              style={{ background: '#18181b', color: '#e4e4e7', border: '1px solid #2e2e32' }}
+              style={{ background: 'rgb(var(--n3))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n6))' }}
             >
               {TASK_STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
             </select>
           </label>
           <label className="space-y-1">
-            <span className="block text-[10px] uppercase tracking-wider" style={{ color: '#71717a' }}>PRD</span>
+            <span className="block text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>PRD</span>
             <select
               value={task.docId ?? ''}
               onChange={(e) => change({ docId: e.target.value || null })}
               className="w-full text-xs rounded-lg px-2 py-1.5 outline-none"
-              style={{ background: '#18181b', color: '#e4e4e7', border: '1px solid #2e2e32' }}
+              style={{ background: 'rgb(var(--n3))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n6))' }}
             >
               <option value="">None</option>
               {prds.map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}
@@ -110,11 +110,11 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
 
         {/* Pull requests */}
         <section>
-          <h3 className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: '#71717a' }}>
+          <h3 className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: 'rgb(var(--n8))' }}>
             Pull requests
           </h3>
           {task.pullRequests.length === 0 && (
-            <p className="text-xs mb-2" style={{ color: '#71717a' }}>
+            <p className="text-xs mb-2" style={{ color: 'rgb(var(--n8))' }}>
               None yet. Use the branch name above, put <span className="font-mono">{task.key}</span> in a PR title,
               or paste a PR link.
             </p>
@@ -123,14 +123,14 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
             {task.pullRequests.map((pr) => {
               const style = PR_STATE_STYLE[pr.state]
               return (
-                <li key={pr.id} className="group rounded-lg p-2.5 border" style={{ background: '#18181b', borderColor: '#27272a' }}>
+                <li key={pr.id} className="group rounded-lg p-2.5 border" style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n5))' }}>
                   <div className="flex items-start gap-2">
                     <style.Icon size={13} className="mt-0.5 flex-shrink-0" style={{ color: style.color }} aria-label={style.label} />
                     <div className="min-w-0 flex-1">
-                      <a href={pr.url} target="_blank" rel="noreferrer" className="text-xs font-medium hover:underline" style={{ color: '#e4e4e7' }}>
+                      <a href={pr.url} target="_blank" rel="noreferrer" className="text-xs font-medium hover:underline" style={{ color: 'rgb(var(--n12))' }}>
                         {pr.title} <ExternalLink size={10} className="inline" aria-hidden />
                       </a>
-                      <p className="text-[10px] mt-0.5" style={{ color: '#71717a' }}>
+                      <p className="text-[10px] mt-0.5" style={{ color: 'rgb(var(--n8))' }}>
                         {pr.repoFullName}#{pr.number} · {pr.author} ·{' '}
                         <span style={{ color: style.color }}>{style.label}</span> · updated {ago(pr.updatedAt)}
                       </p>
@@ -139,7 +139,7 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
                       onClick={() => handleUnlink(pr.id)}
                       title="Unlink this pull request"
                       aria-label={`Unlink pull request #${pr.number}`}
-                      className="p-1 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-zinc-500 hover:text-red-400 transition"
+                      className="p-1 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-n8 hover:text-danger-fg transition"
                     >
                       <Unlink size={11} />
                     </button>
@@ -156,31 +156,31 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
               placeholder="https://github.com/owner/repo/pull/12"
               aria-label="Pull request URL"
               className="flex-1 min-w-0 text-xs rounded-lg px-2.5 py-1.5 outline-none"
-              style={{ background: '#18181b', border: '1px solid #2e2e32', color: '#e4e4e7' }}
+              style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n6))', color: 'rgb(var(--n12))' }}
             />
             <button
               onClick={handleLink}
               disabled={!url.trim() || linking}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-white bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-on-brand bg-brand hover:bg-brand-strong disabled:opacity-40 transition-colors"
             >
               {linking ? 'Checking…' : 'Link'}
             </button>
           </div>
-          {linkError && <p role="alert" className="text-[11px] mt-1.5" style={{ color: '#f87171' }}>{linkError}</p>}
+          {linkError && <p role="alert" className="text-[11px] mt-1.5" style={{ color: 'rgb(var(--red-fg))' }}>{linkError}</p>}
         </section>
 
         {/* Activity */}
         <section>
-          <h3 className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: '#71717a' }}>Activity</h3>
+          <h3 className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: 'rgb(var(--n8))' }}>Activity</h3>
           {activity === null ? (
-            <p className="text-xs" style={{ color: '#71717a' }}>Loading…</p>
+            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Loading…</p>
           ) : activity.length === 0 ? (
-            <p className="text-xs" style={{ color: '#71717a' }}>Nothing yet.</p>
+            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Nothing yet.</p>
           ) : (
             <ul className="space-y-1.5">
               {activity.map((a) => (
-                <li key={a.id} className="text-[11px] leading-relaxed" style={{ color: '#a1a1aa' }}>
-                  {a.message} <span style={{ color: '#52525b' }}>{ago(a.createdAt)}</span>
+                <li key={a.id} className="text-[11px] leading-relaxed" style={{ color: 'rgb(var(--n10))' }}>
+                  {a.message} <span style={{ color: 'rgb(var(--n8))' }}>{ago(a.createdAt)}</span>
                 </li>
               ))}
             </ul>

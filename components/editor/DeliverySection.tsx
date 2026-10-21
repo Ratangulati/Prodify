@@ -33,26 +33,26 @@ export default function DeliverySection({ docId }: { docId: string }) {
   const pct = prdTasks.length ? Math.round((shipped / prdTasks.length) * 100) : 0
 
   return (
-    <div className="flex-shrink-0 border-b px-6 py-2" style={{ borderColor: '#1e1e1e', background: '#0f0f0f' }}>
+    <div className="flex-shrink-0 border-b px-6 py-2" style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         className="flex items-center gap-2 w-full text-left"
       >
-        {open ? <ChevronDown size={12} style={{ color: '#71717a' }} /> : <ChevronRight size={12} style={{ color: '#71717a' }} />}
-        <Rocket size={12} style={{ color: '#818cf8' }} />
-        <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#a1a1aa' }}>Delivery</span>
+        {open ? <ChevronDown size={12} style={{ color: 'rgb(var(--n8))' }} /> : <ChevronRight size={12} style={{ color: 'rgb(var(--n8))' }} />}
+        <Rocket size={12} style={{ color: 'rgb(var(--brand-fg))' }} />
+        <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'rgb(var(--n10))' }}>Delivery</span>
         {prdTasks.length === 0 ? (
-          <span className="text-[11px]" style={{ color: '#71717a' }}>No tasks linked yet</span>
+          <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>No tasks linked yet</span>
         ) : (
           <>
-            <span className="text-[11px]" style={{ color: '#e4e4e7' }}>
+            <span className="text-[11px]" style={{ color: 'rgb(var(--n12))' }}>
               {shipped} of {prdTasks.length} tasks shipped
             </span>
-            <span className="flex-1 max-w-[160px] h-1 rounded-full overflow-hidden" style={{ background: '#27272a' }} aria-hidden>
-              <span className="block h-full rounded-full transition-all" style={{ width: `${pct}%`, background: '#22c55e' }} />
+            <span className="flex-1 max-w-[160px] h-1 rounded-full overflow-hidden" style={{ background: 'rgb(var(--n5))' }} aria-hidden>
+              <span className="block h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'rgb(var(--green))' }} />
             </span>
-            <span className="text-[10px]" style={{ color: '#71717a' }}>{prs.size} PR{prs.size === 1 ? '' : 's'}</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{prs.size} PR{prs.size === 1 ? '' : 's'}</span>
           </>
         )}
       </button>
@@ -60,21 +60,21 @@ export default function DeliverySection({ docId }: { docId: string }) {
       {open && (
         <div className="mt-2 mb-1 pl-5 space-y-1.5">
           {prdTasks.length === 0 && (
-            <p className="text-xs" style={{ color: '#71717a' }}>
+            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>
               Add tasks from the Tasks tab while this PRD is open and they&apos;ll be linked here. A task counts as
               shipped when it&apos;s Done or one of its pull requests is merged.
             </p>
           )}
           {prdTasks.length > 0 && prs.size === 0 && (
-            <p className="text-xs" style={{ color: '#71717a' }}>No pull requests linked to these tasks yet.</p>
+            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>No pull requests linked to these tasks yet.</p>
           )}
           {Array.from(prs.values()).map((pr) => (
             <div key={`${pr.repoFullName}#${pr.number}`} className="flex items-center gap-2 text-xs">
               <PullRequestBadge pr={pr} />
-              <a href={pr.url} target="_blank" rel="noreferrer" className="truncate hover:underline" style={{ color: '#d4d4d8' }}>
+              <a href={pr.url} target="_blank" rel="noreferrer" className="truncate hover:underline" style={{ color: 'rgb(var(--n11))' }}>
                 {pr.title}
               </a>
-              <span className="text-[10px] flex-shrink-0 font-mono" style={{ color: '#71717a' }}>{pr.taskKeys.join(', ')}</span>
+              <span className="text-[10px] flex-shrink-0 font-mono" style={{ color: 'rgb(var(--n8))' }}>{pr.taskKeys.join(', ')}</span>
             </div>
           ))}
         </div>

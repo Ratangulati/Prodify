@@ -69,7 +69,7 @@ export default function RightPanel() {
       >
         <button
           onClick={() => setCollapsed(false)}
-          className="p-1.5 rounded transition-colors hover:bg-white/5"
+          className="p-1.5 rounded transition-colors hover:bg-overlay/5"
           style={{ color: 'rgb(var(--n8))' }}
           title="Expand panel"
         >
@@ -124,7 +124,7 @@ export default function RightPanel() {
         {/* Collapse button */}
         <button
           onClick={() => setCollapsed(true)}
-          className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-white/5"
+          className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-overlay/5"
           style={{ color: 'rgb(var(--n8))' }}
           title="Collapse panel"
         >

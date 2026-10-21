@@ -165,7 +165,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
     <>
       <div
         className={`press-tint group flex items-center rounded text-xs transition-colors cursor-pointer ${
-          isActive ? 'bg-brand/[0.12] text-brand-soft' : 'text-n10 hover:bg-white/5'
+          isActive ? 'bg-brand/[0.12] text-brand-soft' : 'text-n10 hover:bg-overlay/5'
         }`}
         style={{
           paddingLeft:  indent + 6,
@@ -240,7 +240,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
                   e.stopPropagation()
                   tree.onSetTypePicker(showPicker ? null : node.id)
                 }}
-                className="flex items-center justify-center rounded transition-colors hover:bg-white/10"
+                className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
                 style={{ width: 18, height: 18, color: showPicker ? 'rgb(var(--brand-fg))' : MUTED, fontWeight: 600, fontSize: 15 }}
               >
                 {showPicker ? '×' : '+'}
@@ -249,7 +249,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
             <button
               title="Rename"
               onClick={e => { e.stopPropagation(); tree.onStartRename(node.id, node.name) }}
-              className="flex items-center justify-center rounded transition-colors hover:bg-white/10"
+              className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
               style={{ width: 18, height: 18, color: MUTED }}
             >
               <Pencil size={11} />
@@ -380,7 +380,7 @@ export default function FileExplorer() {
         {/* New Folder */}
         <button
           onClick={() => { setDocPickerOpen(false); setCreating({ parentId: null, type: 'folder' }) }}
-          className="press-tint flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-white/5"
+          className="press-tint flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-overlay/5"
           style={{ border: `1px solid ${BORDER}`, color: 'rgb(var(--n9))' }}
         >
           <FolderPlus size={13} style={{ color: 'rgb(var(--amber))' }} />
@@ -393,7 +393,7 @@ export default function FileExplorer() {
           className="press-tint flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
           style={{
             background: docPickerOpen ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--brand))',
-            color: 'rgb(var(--white))',
+            color: 'rgb(var(--on-brand))',
           }}
         >
           <Plus size={13} />
