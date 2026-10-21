@@ -140,7 +140,7 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
       <div className="flex-1 flex items-center justify-center" style={{ background: 'rgb(var(--n0))' }}>
         <div className="text-center max-w-xs space-y-3">
           <FileText size={22} className="mx-auto" style={{ color: 'rgb(var(--n8))' }} aria-hidden />
-          <h2 className="font-serif text-[28px] font-semibold leading-tight tracking-[-0.015em]" style={{ color: 'rgb(var(--n12))' }}>
+          <h2 className="text-xl font-semibold leading-tight tracking-[-0.015em]" style={{ color: 'rgb(var(--n12))' }}>
             No document open
           </h2>
           <p className="text-sm" style={{ color: 'rgb(var(--n9))' }}>Pick one from the sidebar, or start a new one.</p>

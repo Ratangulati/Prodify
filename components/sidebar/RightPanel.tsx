@@ -99,38 +99,35 @@ export default function RightPanel() {
       className="flex flex-col w-full h-full"
       style={{ background: 'rgb(var(--n3))' }}
     >
-      {/* Tab bar */}
-      <div
-        className="flex items-center border-b flex-shrink-0 overflow-x-auto scrollbar-hide"
-        style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n2))' }}
-      >
-        {TABS.map((tab) => {
-          const isActive = activeTab === tab.id
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveSidebarTab(tab.id)}
-              className="flex items-center gap-1.5 px-3 py-3 text-xs font-medium transition-colors relative flex-shrink-0 whitespace-nowrap"
-              style={{ color: isActive ? 'rgb(var(--brand-soft))' : 'rgb(var(--n8))' }}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-              {isActive && (
-                <span
-                  className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                  style={{ background: 'rgb(var(--brand))' }}
-                />
-              )}
-            </button>
-          )
-        })}
+      {/* Tab bar: one segmented control. The active tab shows its label on a
+          raised pill; the rest are icons with tooltips, so all six always fit. */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b flex-shrink-0" style={{ borderColor: 'rgb(var(--n6))' }}>
+        <div role="tablist" aria-label="Panel" className="flex flex-1 min-w-0 items-center gap-0.5 p-0.5 rounded-lg bg-n5/70">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id
+            const button = (
+              <button
+                role="tab"
+                aria-selected={isActive}
+                aria-label={tab.label}
+                onClick={() => setActiveSidebarTab(tab.id)}
+                className={`flex items-center justify-center gap-1.5 h-7 rounded-md text-xs font-medium transition-colors ${
+                  isActive ? 'flex-[1_0_auto] px-2.5 bg-n3 text-n12' : 'flex-1 px-2 text-n8 hover:text-n11'
+                }`}
+                style={isActive ? { boxShadow: 'var(--elev-sm)' } : undefined}
+              >
+                <span className={isActive ? 'text-brand-fg' : undefined}>{tab.icon}</span>
+                {isActive && <span>{tab.label}</span>}
+              </button>
+            )
+            return isActive ? <span key={tab.id} className="contents">{button}</span> : <Tip key={tab.id} label={tab.label}>{button}</Tip>
+          })}
+        </div>
 
-        {/* Collapse button */}
         <Tip label="Collapse panel">
           <button
             onClick={() => setCollapsed(true)}
-            className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-overlay/5"
-            style={{ color: 'rgb(var(--n8))' }}
+            className="p-1.5 rounded-md transition-colors text-n8 hover:text-n11 hover:bg-overlay/5 flex-shrink-0"
             aria-label="Collapse panel"
           >
             <PanelRightClose size={14} />
