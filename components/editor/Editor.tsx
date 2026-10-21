@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  useEffect, useRef, useState, useCallback, useMemo,
+  useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo,
 } from 'react'
 import { useEditor, EditorContent, Extension } from '@tiptap/react'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
@@ -237,14 +237,18 @@ export default function Editor({ docId }: { docId: string }) {
   const isPreviewing = previewHtml !== null
   // Follow the writing as it grows, unless the reader scrolls away
   const followPreview = useRef(true)
+  const previewScrollTop = useRef(0)
   useEffect(() => { if (!isPreviewing) followPreview.current = true }, [isPreviewing])
   useEffect(() => {
     const el = scrollRef.current
     if (el && isPreviewing && followPreview.current) el.scrollTop = el.scrollHeight
+    if (el && isPreviewing) previewScrollTop.current = el.scrollTop
   }, [previewHtml, isPreviewing])
   const handleScroll = () => {
     const el = scrollRef.current
-    if (el && isPreviewing) followPreview.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+    if (!el || !isPreviewing) return
+    followPreview.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+    previewScrollTop.current = el.scrollTop
   }
   const saveTimer      = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -416,13 +420,24 @@ export default function Editor({ docId }: { docId: string }) {
   }, [editor, slashQuery, closeSlash])
 
   /* ── Sync content when doc changes or AI applies content ────────  */
-  useEffect(() => {
+  // Layout effect: content lands before paint, so swapping the live preview
+  // for the real editor never shows an empty frame
+  useLayoutEffect(() => {
     if (!editor || !doc) return
     if (editor.getHTML() !== doc.content) {
       editor.commands.setContent(doc.content || '')
       setWordCount(countWords(editor.getText()))
     }
   }, [docId, aiContentVersion]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the reader where the preview left them when the real editor takes over
+  useLayoutEffect(() => {
+    const el = scrollRef.current
+    if (!isPreviewing && el && previewScrollTop.current) {
+      el.scrollTop = previewScrollTop.current
+      previewScrollTop.current = 0
+    }
+  }, [isPreviewing])
 
   /* ── Hide toolbar on outside click ─────────────────────────────  */
   useEffect(() => {

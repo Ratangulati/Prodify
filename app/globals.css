@@ -208,6 +208,13 @@
 .editor-prose ul,
 .editor-prose ol {
   padding-left: 1.5rem;
+}
+/* Tailwind's preflight strips list markers; documents need them back */
+.editor-prose ul { list-style: disc; }
+.editor-prose ol { list-style: decimal; }
+.editor-prose li::marker { color: rgb(var(--n8)); }
+.editor-prose ul,
+.editor-prose ol {
   margin: 0.25rem 0 0.75rem;
 }
 .editor-prose li {

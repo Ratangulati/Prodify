@@ -23,8 +23,9 @@ const config: Config = {
         input:       'hsl(var(--input))',
         ring:        'hsl(var(--ring))',
         // App palette — see the token block in app/globals.css
-        n: Object.fromEntries(
-          Array.from({ length: 13 }, (_, i) => [i, `rgb(var(--n${i}) / <alpha-value>)`])
+        // Flat keys (n0…n12) so classes read bg-n3 / text-n8; a nested object would be bg-n-3
+        ...Object.fromEntries(
+          Array.from({ length: 13 }, (_, i) => [`n${i}`, `rgb(var(--n${i}) / <alpha-value>)`])
         ),
         brand: {
           DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
