@@ -34,20 +34,26 @@ function OverlayContent({
   // While exiting, let clicks fall through to the app underneath
   const isPresent = useIsPresent()
 
+  // The scrim is a sibling, not a parent: a fading ancestor would stop the
+  // panel's backdrop-filter from seeing the app behind it.
   return (
-    <m.div
-      className={`overlay-scrim fixed inset-0 z-[1000] flex justify-center ${className}`}
+    <div
+      className={`fixed inset-0 z-[1000] flex justify-center ${className}`}
       style={{ pointerEvents: isPresent ? 'auto' : 'none' }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={springs.ui}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
+      <m.div
+        aria-hidden
+        className="overlay-scrim absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={springs.ui}
+        onClick={onClose}
+      />
       <m.div
         role="dialog"
         aria-modal="true"
-        className={panelClassName}
+        className={`relative ${panelClassName}`}
         style={{ transformOrigin: origin, ...panelStyle }}
         initial={{ opacity: 0, scale: 0.96, y: -8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -56,6 +62,6 @@ function OverlayContent({
       >
         {children}
       </m.div>
-    </m.div>
+    </div>
   )
 }

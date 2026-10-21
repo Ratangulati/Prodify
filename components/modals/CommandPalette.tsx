@@ -119,15 +119,11 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
       onClose={onClose}
       className="items-start pt-[15vh]"
       origin="top center"
-      panelClassName="w-full rounded-xl shadow-2xl overflow-hidden"
-      panelStyle={{
-        maxWidth: 560,
-        background: 'rgb(var(--n2))',
-        border: '1px solid rgb(var(--n6))',
-      }}
+      panelClassName="material-panel w-full rounded-xl shadow-2xl overflow-hidden"
+      panelStyle={{ maxWidth: 560 }}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
+      <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--white) / 0.06)' }}>
         <Sparkles size={15} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />
         <input
           ref={inputRef}
@@ -197,7 +193,7 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
       {/* Footer */}
       <div
         className="flex gap-4 px-4 py-2 border-t"
-        style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n1))' }}
+        style={{ borderColor: 'rgb(var(--white) / 0.06)' }}
       >
         {[['↑↓', 'Navigate'], ['↵', 'Select'], ['Esc', 'Close']].map(([key, label]) => (
           <div key={key} className="flex items-center gap-1.5">

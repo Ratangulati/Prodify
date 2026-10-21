@@ -337,3 +337,24 @@
 
 /* ── Modal scrim ── dims to focus; the panel itself carries the material */
 .overlay-scrim { background: rgb(var(--black) / 0.5); }
+
+/* ── Materials ──────────────────────────────────────────────────────
+   One translucent layer at a time: never stack glass on glass.
+   material-bar   — chrome the content scrolls under (editor title bar)
+   material-panel — floating modal panels; thicker blur, deeper shadow */
+.material-bar {
+  background: rgb(var(--n0) / 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  /* Faint hairline instead of a hard divider; light catching the edge */
+  box-shadow: inset 0 -1px 0 rgb(var(--white) / 0.06);
+}
+.material-panel {
+  background: rgb(var(--n2) / 0.78);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgb(var(--white) / 0.08);
+  box-shadow:
+    inset 0 1px 0 rgb(var(--white) / 0.06),
+    0 24px 64px rgb(var(--black) / 0.55);
+}

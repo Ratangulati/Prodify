@@ -142,12 +142,9 @@ export default function EditorPanel() {
   const savedAt   = format(new Date(doc.updatedAt), 'h:mm a')
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: 'rgb(var(--n0))' }}>
-      {/* Top bar */}
-      <div
-        className="flex items-center gap-3 px-6 py-3 border-b flex-shrink-0"
-        style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n1))' }}
-      >
+    <div className="relative flex-1 flex flex-col overflow-hidden" style={{ background: 'rgb(var(--n0))' }}>
+      {/* Top bar — a translucent layer the document scrolls underneath */}
+      <div className="material-bar absolute inset-x-0 top-0 z-30 flex items-center gap-3 px-6 py-3">
         {/* Title */}
         {editingTitle ? (
           <input
