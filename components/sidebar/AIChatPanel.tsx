@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  Fragment, useState, useRef, useEffect, useCallback, useMemo,
+  useState, useRef, useEffect, useCallback, useMemo,
 } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { AnimatePresence, m } from 'motion/react'
@@ -17,21 +17,28 @@ import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
 import { springs } from '@/lib/motion'
 import { clearStreamingPreview, publishStreamingPreview } from '@/lib/streaming-preview'
 import Tip from '@/components/ui/Tip'
+import AIModeMenu from './AIModeMenu'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
 const WORKFLOWS: {
   id: AIWorkflow
   label: string
+  /** Name in the mode menu */
+  name: string
+  /** One line saying what this mode writes */
+  hint: string
   icon: React.ReactNode
   isGeneral?: boolean
+  /** Answer goes into a document (see WORKFLOW_DOC_TYPE) */
+  writesDoc?: boolean
 }[] = [
-  { id: 'prd',            label: 'PRD',       icon: <FileText size={12} /> },
-  { id: 'stories',        label: 'Stories',   icon: <BookOpen size={12} /> },
-  { id: 'roadmap',        label: 'Roadmap',   icon: <Map size={12} /> },
-  { id: 'prioritization', label: 'Prioritize',icon: <BarChart3 size={12} /> },
-  { id: 'research',       label: 'Research',  icon: <FlaskConical size={12} /> },
-  { id: 'data',           label: 'Data',      icon: <TrendingUp size={12} /> },
-  { id: 'general',        label: 'Chat',      icon: <MessageSquare size={12} />, isGeneral: true },
+  { id: 'prd',            label: 'PRD',        name: 'PRD',                hint: 'Writes a product requirements doc into the editor', icon: <FileText size={13} />, writesDoc: true },
+  { id: 'stories',        label: 'Stories',    name: 'User stories',       hint: 'Stories with acceptance criteria',                  icon: <BookOpen size={13} />, writesDoc: true },
+  { id: 'roadmap',        label: 'Roadmap',    name: 'Roadmap plan',       hint: 'Now / Next / Later sequencing',                     icon: <Map size={13} />, writesDoc: true },
+  { id: 'prioritization', label: 'Prioritize', name: 'Prioritization',     hint: 'RICE and MoSCoW reasoning, answered in chat',       icon: <BarChart3 size={13} /> },
+  { id: 'research',       label: 'Research',   name: 'Research synthesis', hint: 'Themes and quotes from interview notes',            icon: <FlaskConical size={13} />, writesDoc: true },
+  { id: 'data',           label: 'Data',       name: 'Data analysis',      hint: 'Funnels, anomalies and hypotheses, in chat',        icon: <TrendingUp size={13} /> },
+  { id: 'general',        label: 'Chat',       name: 'Free chat',          hint: 'Ask anything; nothing is written to a document',    icon: <MessageSquare size={13} />, isGeneral: true },
 ]
 
 /* ── Starter prompts per workflow ───────────────────────────────── */
@@ -489,17 +496,18 @@ function MessageBubble({
     )
   }
 
+  // Full width: a small name row on top, the reply underneath (no avatar gutter)
   return (
-    <div className="flex gap-2.5 mb-5 group">
-      <div
-        className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5"
-        style={{ width: 24, height: 24, background: 'rgb(var(--brand))' }}
-      >
-        <Wand2 size={11} className="text-on-brand" />
-      </div>
-
-      <div className="flex-1 min-w-0">
+    <div className="mb-5 group">
+      <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1.5">
+          <span
+            className="flex-shrink-0 flex items-center justify-center rounded-full"
+            style={{ width: 18, height: 18, background: 'rgb(var(--brand))' }}
+            aria-hidden
+          >
+            <Wand2 size={9} className="text-on-brand" />
+          </span>
           <span className="text-xs font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>AI</span>
           <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{timeStr}</span>
           <div className="ml-auto">
@@ -905,48 +913,10 @@ export default function AIChatPanel() {
   return (
     <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n1))' }}>
 
-      {/* ── Workflow tabs ───────────────────────────────────────── */}
-      <div
-        className="flex-shrink-0 border-b overflow-x-auto scrollbar-hide"
-        style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}
-      >
-        <div className="flex min-w-max items-stretch">
-          {WORKFLOWS.map((wf) => {
-            const active = workflow === wf.id
-            const isChat = wf.isGeneral
-            return (
-              <Fragment key={wf.id}>
-                {/* Separator before the Chat tab */}
-                {isChat && (
-                  <div
-                    key="sep"
-                    className="flex-shrink-0 self-center mx-0.5"
-                    style={{ width: 1, height: 16, background: 'rgb(var(--n6))' }}
-                  />
-                )}
-                <button
-                  key={wf.id}
-                  onClick={() => setWorkflow(wf.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors relative whitespace-nowrap flex-shrink-0 ${
-                    active
-                      ? (isChat ? 'text-mint-fg' : 'text-brand-soft')
-                      : (isChat ? 'text-n8 hover:text-mint-soft' : 'text-n8 hover:text-n10')
-                  }`}
-                  title={isChat ? 'Free chat — no document mode' : undefined}
-                >
-                  {wf.icon}
-                  <span>{wf.label}</span>
-                  {active && (
-                    <span
-                      className="absolute bottom-0 left-0 right-0 h-0.5"
-                      style={{ background: isChat ? 'rgb(var(--emerald))' : 'rgb(var(--brand))', borderRadius: '2px 2px 0 0' }}
-                    />
-                  )}
-                </button>
-              </Fragment>
-            )
-          })}
-        </div>
+      {/* ── Mode: what the AI produces (the panel tabs above pick the view) ── */}
+      {/* relative z-20: the menu must sit above the animated (transformed) messages below */}
+      <div className="relative z-20 flex items-center px-2 py-1.5 border-b flex-shrink-0" style={{ borderColor: 'rgb(var(--n6))' }}>
+        <AIModeMenu modes={WORKFLOWS} value={workflow} onChange={setWorkflow} />
       </div>
 
       {/* ── Messages area ───────────────────────────────────────── */}
@@ -990,16 +960,16 @@ export default function AIChatPanel() {
             )}
             {isStreaming && !streamingContent && !streamingTargetTitle && (
               <m.div
-                className="flex gap-2.5 mb-4"
+                className="flex items-center gap-2 mb-4"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={springs.snappy}
               >
                 <div
                   className="flex-shrink-0 flex items-center justify-center rounded-full"
-                  style={{ width: 24, height: 24, background: 'rgb(var(--brand))' }}
+                  style={{ width: 18, height: 18, background: 'rgb(var(--brand))' }}
                 >
-                  <Wand2 size={11} className="text-on-brand" />
+                  <Wand2 size={9} className="text-on-brand" />
                 </div>
                 <div
                   className="flex items-center gap-1 px-4 py-3 rounded-2xl rounded-tl-sm"
@@ -1025,17 +995,6 @@ export default function AIChatPanel() {
         className="flex-shrink-0 border-t px-3 pt-2.5 pb-3 space-y-2.5"
         style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}
       >
-        {/* Free chat pill — shown when on a document workflow */}
-        {workflow !== 'general' && (
-          <button
-            onClick={() => setWorkflow('general')}
-            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium transition-colors border bg-mint/[0.06] border-mint/20 text-mint-soft hover:bg-mint/[0.12] hover:border-mint/40"
-          >
-            <MessageSquare size={13} style={{ flexShrink: 0 }} />
-            <span>Switch to free chat</span>
-            <span className="ml-auto text-[10px] opacity-50">no document mode</span>
-          </button>
-        )}
 
         {/* Doc context toggle + Clear */}
         <div className="flex items-center justify-between">
