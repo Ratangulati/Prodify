@@ -12,8 +12,11 @@ export async function GET() {
     prisma.gitHubConnection.findUnique({ where: { workspaceId: workspace.id } }),
     prisma.gitHubRepo.findMany({ where: { workspaceId: workspace.id }, orderBy: { fullName: 'asc' } }),
   ])
+  const config = githubAppConfig()
   return NextResponse.json({
-    configured: githubAppConfig() !== null,
+    configured: config !== null,
+    // GitHub's page for choosing which repositories the app can see
+    manageUrl:  config ? `https://github.com/apps/${config.slug}/installations/new` : null,
     connection: connection ? { accountLogin: connection.accountLogin } : null,
     repos:      repos.map((r) => ({ githubId: r.githubId, fullName: r.fullName })),
     automation: workspace.githubAutomation,

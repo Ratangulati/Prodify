@@ -9,6 +9,7 @@ import {
 import { useWorkspaceStore } from '@/lib/store'
 import { toast } from '@/lib/toast'
 import Tip from '@/components/ui/Tip'
+import { askAI } from '@/lib/ai-client'
 
 /* ── Types ───────────────────────────────────────────────────────── */
 interface ParsedTheme {
@@ -310,29 +311,10 @@ User research notes to analyze:
 ${notes}`
 
     try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: abortRef.current.signal,
-        body: JSON.stringify({
-          workflow: 'research',
-          userMessage: prompt,
-          conversationHistory: [],
-        }),
-      })
-
-      if (!res.body) throw new Error('No response body')
-      const reader = res.body.getReader()
-      const dec = new TextDecoder()
-      let full = ''
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        full += dec.decode(value, { stream: true })
-      }
+      const full = await askAI({ workflow: 'research', userMessage: prompt }, { signal: abortRef.current.signal })
 
       const jsonMatch = full.match(/```(?:json)?\s*([\s\S]*?)```/) || full.match(/(\{[\s\S]*\})/)
-      if (!jsonMatch) throw new Error('Could not parse AI response as JSON')
+      if (!jsonMatch) throw new Error("The AI's answer wasn't in the expected format. Please try again.")
       const data: ParsedResearch = JSON.parse(jsonMatch[1])
       if (!data.themes?.length) throw new Error('No themes found in response')
 

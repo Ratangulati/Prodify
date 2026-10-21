@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Github, Lock, X } from 'lucide-react'
+import { ExternalLink, Github, Lock, X } from 'lucide-react'
 import { toast } from '@/lib/toast'
 import { apiError } from '@/lib/use-tasks'
 import Overlay from '@/components/ui/Overlay'
@@ -13,6 +13,7 @@ interface GitHubSettingsProps {
 
 interface Status {
   configured: boolean
+  manageUrl: string | null
   connection: { accountLogin: string } | null
   repos: { githubId: number; fullName: string }[]
   automation: boolean
@@ -53,6 +54,13 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
   }, [])
 
   useEffect(() => { if (open) load() }, [open, load])
+
+  // After choosing repositories on GitHub in another tab, coming back refreshes the list
+  useEffect(() => {
+    if (!open) return
+    window.addEventListener('focus', load)
+    return () => window.removeEventListener('focus', load)
+  }, [open, load])
 
   function toggle(id: number) {
     setSelected((prev) => {
@@ -167,7 +175,7 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
               </p>
               {repos === null && !error && <p>Loading repositories…</p>}
               {repos?.length === 0 && (
-                <p>The app can&apos;t see any repositories. Give it access on GitHub, then reopen this window.</p>
+                <p>The app can&apos;t see any repositories yet. Give it access on GitHub.</p>
               )}
               {repos && repos.length > 0 && (
                 <div className="max-h-56 overflow-y-auto space-y-1">
@@ -181,6 +189,17 @@ export default function GitHubSettings({ open, onClose }: GitHubSettingsProps) {
                 </div>
               )}
             </div>
+
+            {status.manageUrl && (
+              <a
+                href={status.manageUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-[11px] text-brand-fg hover:underline"
+              >
+                Missing a repository? Choose which ones Prodify can see on GitHub <ExternalLink size={11} />
+              </a>
+            )}
 
             {repos && repos.length > 0 && (
               <button

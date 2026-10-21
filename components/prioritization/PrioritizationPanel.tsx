@@ -17,6 +17,7 @@ import { useWorkspaceStore } from '@/lib/store'
 import { SPRING_EASING } from '@/lib/motion'
 import { toast } from '@/lib/toast'
 import type { Feature, FeaturePriority, MoscowType } from '@/lib/types'
+import { askAI } from '@/lib/ai-client'
 
 /* ── Constants ───────────────────────────────────────────────────── */
 const PRIORITY_COLOR: Record<FeaturePriority, string> = {
@@ -231,29 +232,11 @@ Features to score:
 ${featureList}`
 
     try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workflow: 'prioritization',
-          userMessage: prompt,
-          conversationHistory: [],
-        }),
-      })
-      if (!res.body) throw new Error('No response body')
-
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let full = ''
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        full += decoder.decode(value, { stream: true })
-      }
+      const full = await askAI({ workflow: 'prioritization', userMessage: prompt })
 
       // Extract JSON — handle markdown code fences or raw JSON
       const jsonMatch = full.match(/```(?:json)?\s*([\s\S]*?)```/) || full.match(/(\{[\s\S]*\})/)
-      if (!jsonMatch) throw new Error('Could not parse AI response')
+      if (!jsonMatch) throw new Error("The AI's answer wasn't in the expected format. Please try again.")
       const parsed = JSON.parse(jsonMatch[1])
       if (!parsed.features?.length) throw new Error('No features in response')
 

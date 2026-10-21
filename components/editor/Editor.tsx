@@ -25,6 +25,8 @@ import { AnimatePresence, m } from 'motion/react'
 import { springs } from '@/lib/motion'
 import { useStreamingPreview } from '@/lib/streaming-preview'
 import Tip from '@/components/ui/Tip'
+import { askAI } from '@/lib/ai-client'
+import { toast } from '@/lib/toast'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 interface BubblePos { top: number; left: number; fromViewport?: boolean }
@@ -462,27 +464,15 @@ export default function Editor({ docId, header }: { docId: string; header?: Reac
     }
 
     try {
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workflow: action === 'acceptance' ? 'stories' : 'general',
-          userMessage: prompts[action],
-          conversationHistory: [],
-        }),
+      const result = await askAI({
+        workflow: action === 'acceptance' ? 'stories' : 'general',
+        userMessage: prompts[action],
       })
-      if (!res.body) return
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let result = ''
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        result += decoder.decode(value, { stream: true })
-      }
+      // Only now, with a real answer, replace the selected text
       editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, result.trim()).run()
     } catch (err) {
-      console.error('AI error', err)
+      // Leave the text untouched and say why
+      toast.error(err instanceof Error ? err.message : 'The AI request failed. Please try again.')
     } finally {
       setAiLoading(null)
     }
