@@ -225,7 +225,7 @@ function readingMinutes(words: number) {
 }
 
 /* ── Main Editor component ──────────────────────────────────────── */
-export default function Editor({ docId }: { docId: string }) {
+export default function Editor({ docId, header }: { docId: string; header?: React.ReactNode }) {
   const { documents, updateDocument, setSaveStatus, aiContentVersion } = useWorkspaceStore()
   const doc = documents.find((d) => d.id === docId)
 
@@ -506,9 +506,9 @@ export default function Editor({ docId }: { docId: string }) {
           style={{
             top: toolbar.top,
             left: toolbar.left,
-            background: 'rgb(var(--n3))',
+            background: 'rgb(var(--n4))',
             borderColor: 'rgb(var(--n6))',
-            boxShadow: '0 8px 32px rgb(var(--shadow) / 0.6)',
+            boxShadow: 'var(--elev-md)',
             pointerEvents: aiLoading ? 'none' : 'auto',
           }}
           onMouseDown={(e) => e.stopPropagation()}
@@ -574,7 +574,7 @@ export default function Editor({ docId }: { docId: string }) {
             width: 280,
             background: 'rgb(var(--n3))',
             borderColor: 'rgb(var(--n6))',
-            boxShadow: '0 16px 48px rgb(var(--shadow) / 0.7)',
+            boxShadow: 'var(--elev-md)',
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
@@ -635,19 +635,22 @@ export default function Editor({ docId }: { docId: string }) {
 
       {/* ── Editor scroll area ───────────────────────────────────── */}
       <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto">
-        {/* Centered notion-like content area */}
-        {/* Top padding clears the floating glass title bar in EditorPanel */}
-        <div className="mx-auto px-8 pt-24 pb-12" style={{ maxWidth: 760 }}>
-          {/* Read-only stand-in while AI writes; same styles as the editor, so the hand-off doesn't jump */}
-          {previewHtml !== null && (
-            <div
-              className="editor-prose editor-preview streaming-caret"
-              dangerouslySetInnerHTML={{ __html: previewHtml }}
-            />
-          )}
-          <div className={isPreviewing ? 'hidden' : undefined}>
-            <EditorContent editor={editor} />
-          </div>
+        {/* A paper page centred on the canvas, about 650px of text per line.
+            Top padding clears the floating glass title bar in EditorPanel. */}
+        <div className="mx-auto px-6 pt-20 pb-16" style={{ maxWidth: 808 }}>
+          {header}
+          <article className="paper-page px-14 py-12">
+            {/* Read-only stand-in while AI writes; same styles as the editor, so the hand-off doesn't jump */}
+            {previewHtml !== null && (
+              <div
+                className="editor-prose editor-preview streaming-caret"
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            )}
+            <div className={isPreviewing ? 'hidden' : undefined}>
+              <EditorContent editor={editor} />
+            </div>
+          </article>
         </div>
       </div>
 

@@ -40,6 +40,10 @@
     --n12: 31 29 26;
     --overlay: 31 29 26;
     --shadow:  60 45 25;
+    /* Elevation: cards / menus & toasts / modals. Warm and light, never harsh */
+    --elev-sm: 0 1px 2px rgb(60 45 25 / 0.06);
+    --elev-md: 0 4px 12px rgb(60 45 25 / 0.08), 0 1px 2px rgb(60 45 25 / 0.05);
+    --elev-lg: 0 24px 48px -12px rgb(60 45 25 / 0.18), 0 2px 6px rgb(60 45 25 / 0.06);
 
     --brand:        194 85 45;
     --brand-fg:     168 70 31;
@@ -94,6 +98,9 @@
     --n12: 242 237 228;
     --overlay: 255 255 255;
     --shadow:  0 0 0;
+    --elev-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+    --elev-md: 0 6px 16px rgb(0 0 0 / 0.35), 0 1px 2px rgb(0 0 0 / 0.3);
+    --elev-lg: 0 24px 56px -12px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.3);
 
     --brand:        224 123 82;
     --brand-fg:     232 150 115;
@@ -222,34 +229,38 @@
 .editor-prose .is-empty::before {
   content: attr(data-placeholder);
   float: left;
-  color: rgb(var(--n7));
+  color: rgb(var(--n8));
   pointer-events: none;
   height: 0;
 }
 
-/* Headings — Notion-like scale */
-.editor-prose h1 {
-  font-size: 2.25rem;    /* 36px */
-  font-weight: 700;
-  line-height: 1.12;     /* tight leading for display sizes */
-  letter-spacing: -0.022em;
+/* Headings — editorial serif for H1/H2 (40 / 28), sans for H3 (20).
+   Newsreader is optically sized, so it tightens itself as it grows; the
+   negative tracking just finishes the job at display sizes. */
+.editor-prose h1,
+.editor-prose h2 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
   text-wrap: balance;
   color: rgb(var(--n12));
-  margin: 2rem 0 0.5rem;
+}
+.editor-prose h1 {
+  font-size: 2.5rem;     /* 40px */
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 2.25rem 0 0.75rem;
   padding-bottom: 0;
 }
 .editor-prose h1:first-child { margin-top: 0; }
 .editor-prose h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.017em;
-  text-wrap: balance;
-  color: rgb(var(--n12));
-  margin: 1.75rem 0 0.4rem;
+  font-size: 1.75rem;    /* 28px */
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 2rem 0 0.5rem;
 }
 .editor-prose h3 {
-  font-size: 1.1875rem;
+  font-size: 1.25rem;    /* 20px */
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -287,13 +298,13 @@
 }
 .editor-prose li p { margin: 0; }
 
-/* Blockquote */
+/* Blockquote — a quiet rule; the accent is kept for actions */
 .editor-prose blockquote {
-  border-left: 3px solid rgb(var(--brand));
+  border-left: 3px solid rgb(var(--n7));
   margin: 1rem 0;
   padding: 0.5rem 1.25rem;
-  background: rgb(var(--brand) / 0.06);
-  border-radius: 0 6px 6px 0;
+  background: rgb(var(--n1));
+  border-radius: 0 8px 8px 0;
 }
 .editor-prose blockquote p {
   color: rgb(var(--n10));
@@ -304,18 +315,18 @@
 /* Inline code */
 .editor-prose code {
   background: rgb(var(--n5));
-  border: 1px solid rgb(var(--n7));
+  border: 1px solid rgb(var(--n6));
   border-radius: 4px;
   padding: 0.1em 0.4em;
   font-size: 0.85em;
-  color: rgb(var(--violet-fg));
+  color: rgb(var(--n11));
   font-family: var(--font-geist-mono, monospace);
 }
 
 /* Code block */
 .editor-prose pre {
-  background: rgb(var(--n0));
-  border: 1px solid rgb(var(--n5));
+  background: rgb(var(--n1));
+  border: 1px solid rgb(var(--n6));
   border-radius: 10px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -332,13 +343,13 @@
 /* Horizontal rule */
 .editor-prose hr {
   border: none;
-  border-top: 1px solid rgb(var(--n5));
+  border-top: 1px solid rgb(var(--n6));
   margin: 2rem 0;
 }
 
-/* Highlight mark */
+/* Highlight mark — a soft highlighter, not the accent */
 .editor-prose mark {
-  background-color: rgb(var(--brand) / 0.2);
+  background-color: rgb(var(--amber) / 0.28);
   color: inherit;
   border-radius: 3px;
   padding: 0.05em 0.2em;
@@ -354,7 +365,7 @@
 .editor-table { border-collapse: collapse; width: 100%; margin: 1.25rem 0; }
 .editor-table th,
 .editor-table td {
-  border: 1px solid rgb(var(--n5));
+  border: 1px solid rgb(var(--n6));
   padding: 0.5rem 0.875rem;
   font-size: 0.875rem;
   text-align: left;
@@ -362,14 +373,14 @@
   vertical-align: top;
 }
 .editor-table th {
-  background: rgb(var(--n3));
-  color: rgb(var(--n10));
+  background: rgb(var(--n1));
+  color: rgb(var(--n9));
   font-weight: 600;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.editor-table tr:hover td { background: rgb(var(--overlay) / 0.02); }
+.editor-table tr:hover td { background: rgb(var(--overlay) / 0.03); }
 .editor-table .selectedCell { background: rgb(var(--brand) / 0.1) !important; }
 
 /* Scrollbar */
@@ -532,4 +543,13 @@
     border-color: rgb(var(--n7));
   }
   .material-bar { box-shadow: inset 0 -1px 0 rgb(var(--n7)); }
+}
+
+/* ── Document page ───────────────────────────────────────────────────
+   The editor sits on a near-white sheet over the cream canvas. */
+.paper-page {
+  background: rgb(var(--n3));
+  border: 1px solid rgb(var(--n6) / 0.7);
+  border-radius: 12px;
+  box-shadow: var(--elev-sm), 0 12px 32px -20px rgb(var(--shadow) / 0.25);
 }

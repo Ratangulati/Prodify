@@ -28,12 +28,13 @@ export default function DeliverySection({ docId }: { docId: string }) {
     }
   }
 
-  if (loading) return null
+  // Same height as the real strip, so the page doesn't jump when tasks arrive
+  if (loading) return <div className="mb-3 h-[42px] rounded-xl skeleton" aria-hidden />
 
   const pct = prdTasks.length ? Math.round((shipped / prdTasks.length) * 100) : 0
 
   return (
-    <div className="flex-shrink-0 border-b px-6 py-2" style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n0))' }}>
+    <div className="mb-3 rounded-xl border px-4 py-2.5" style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n3))', boxShadow: 'var(--elev-sm)' }}>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}

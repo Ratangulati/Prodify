@@ -229,7 +229,7 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
               exit={{ opacity: 0, scale: 0.96, y: -4 }}
               transition={springs.ui}
               className="absolute right-0 top-full mt-1 w-48 rounded-lg py-1 z-50 origin-top-right"
-              style={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n6))', boxShadow: '0 8px 24px rgb(var(--shadow) / 0.5)' }}
+              style={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n6))', boxShadow: 'var(--elev-md)' }}
             >
               <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Copy</p>
               <button
@@ -275,11 +275,9 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
         </div>
       </div>
 
-      {doc.type === 'prd' && <DeliverySection docId={doc.id} />}
-
       {/* Editor area */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <Editor docId={doc.id} />
+        <Editor docId={doc.id} header={doc.type === 'prd' ? <DeliverySection docId={doc.id} /> : null} />
       </div>
     </div>
   )
