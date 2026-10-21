@@ -60,3 +60,35 @@ model FileNode {
   children  String   @default("[]")
   createdAt DateTime @default(now())
 }
+
+/// Prodify runs as a single workspace for now (id "default"). Tasks and
+/// GitHub data hang off it so a second workspace never sees the first's data.
+model Workspace {
+  id             String   @id
+  name           String
+  /// Prefix for task keys, e.g. PROD in PROD-42
+  taskKeyPrefix  String   @default("PROD")
+  /// Number the next task will get; only ever goes up
+  nextTaskNumber Int      @default(1)
+  createdAt      DateTime @default(now())
+  tasks          Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  /// Per-workspace number: PROD-42 has number 42
+  number      Int
+  title       String
+  description String    @default("")
+  /// todo | in_progress | review | done
+  status      String    @default("todo")
+  /// The PRD this task delivers, if any
+  docId       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, number])
+  @@index([docId])
+}

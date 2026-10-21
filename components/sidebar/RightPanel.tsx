@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import {
-  MessageSquare, Map, BarChart3, FlaskConical, TrendingUp,
+  MessageSquare, Map, BarChart3, FlaskConical, TrendingUp, ListChecks,
   PanelRightClose, PanelRightOpen,
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
@@ -11,9 +11,11 @@ import RoadmapBoard from '@/components/roadmap/RoadmapBoard'
 import PrioritizationPanel from '@/components/prioritization/PrioritizationPanel'
 import ResearchPanel from './ResearchPanel'
 import DataPanel from './DataPanel'
+import TasksBoard from '@/components/tasks/TasksBoard'
 
 const TABS = [
   { id: 'chat',           label: 'Chat',       icon: <MessageSquare size={14} /> },
+  { id: 'tasks',          label: 'Tasks',      icon: <ListChecks size={14} /> },
   { id: 'roadmap',        label: 'Roadmap',    icon: <Map size={14} /> },
   { id: 'prioritize',     label: 'Prioritize', icon: <BarChart3 size={14} /> },
   { id: 'research',       label: 'Research',   icon: <FlaskConical size={14} /> },
@@ -25,6 +27,7 @@ type TabId = typeof TABS[number]['id']
 /* ── Placeholder content per tab ──────────────────────────────── */
 function TabPlaceholder({ tab }: { tab: TabId }) {
   const descriptions: Record<TabId, { title: string; body: string; icon: string }> = {
+    tasks:      { icon: '☑', title: 'Tasks',           body: 'Engineering tasks with keys like PROD-1, linked to PRDs and pull requests.' },
     chat:       { icon: '✦', title: 'AI Chat',          body: 'Ask anything about your product, get PRDs written, stories generated, and strategies crafted.' },
     roadmap:    { icon: '🗺', title: 'Roadmap Board',    body: 'Drag and drop features across Now / Next / Later columns. Coming up next.' },
     prioritize: { icon: '⚖️', title: 'Prioritization',   body: 'RICE scoring, MoSCoW classification, and stack-ranked feature lists.' },
@@ -130,6 +133,7 @@ export default function RightPanel() {
       {/* Tab content */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {activeTab === 'chat'       ? <AIChatPanel />          :
+         activeTab === 'tasks'      ? <TasksBoard />           :
          activeTab === 'roadmap'    ? <RoadmapBoard />          :
          activeTab === 'prioritize' ? <PrioritizationPanel />   :
          activeTab === 'research'   ? <ResearchPanel />         :

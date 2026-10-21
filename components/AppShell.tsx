@@ -56,7 +56,7 @@ export default function AppShell() {
       // CMD+/ → cycle AI sidebar tabs
       if ((e.metaKey || e.ctrlKey) && e.key === '/') {
         e.preventDefault()
-        const tabs = ['chat', 'roadmap', 'prioritize', 'research', 'data']
+        const tabs = ['chat', 'tasks', 'roadmap', 'prioritize', 'research', 'data']
         const idx  = tabs.indexOf(activeSidebarTab)
         setActiveSidebarTab(tabs[(idx + 1) % tabs.length])
         return
