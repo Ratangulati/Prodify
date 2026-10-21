@@ -15,6 +15,7 @@ import { useWorkspaceStore } from '@/lib/store'
 import { AIError, STREAM_ERROR_MARKER, errorFromResponse, toAIError } from '@/lib/ai-client'
 import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
 import { springs } from '@/lib/motion'
+import { clearStreamingPreview, publishStreamingPreview } from '@/lib/streaming-preview'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
 const WORKFLOWS: {
@@ -447,6 +448,15 @@ function DiffView({ before, after }: { before: string; after: string }) {
   )
 }
 
+function wordCount(text: string) {
+  return text.split(/\s+/).filter(Boolean).length
+}
+
+/** The live editor preview is raw innerHTML, so neutralise any markup in the AI text */
+function escapeForPreview(md: string) {
+  return md.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+}
+
 /* ── Message bubble ──────────────────────────────────────────────── */
 function MessageBubble({
   msg, isStreaming, appliedDoc, writingToDoc,
@@ -501,13 +511,14 @@ function MessageBubble({
             className="rounded-2xl rounded-tl-sm px-3.5 py-3 flex items-center gap-2.5"
             style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--brand) / 0.3)' }}
           >
-            <span className="animate-spin inline-block flex-shrink-0">
-              <Wand2 size={13} style={{ color: 'rgb(var(--brand))' }} />
-            </span>
-            <div>
+            <span className="writing-dot flex-shrink-0" aria-hidden />
+            <div className="min-w-0 flex-1">
               <p className="text-xs font-medium" style={{ color: 'rgb(var(--brand-soft))' }}>Writing to editor…</p>
-              <p className="text-[11px] mt-0.5 truncate max-w-[200px]" style={{ color: 'rgb(var(--n8))' }}>{writingToDoc}</p>
+              <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgb(var(--n8))' }}>{writingToDoc}</p>
             </div>
+            <span className="text-[11px] tabular-nums flex-shrink-0" style={{ color: 'rgb(var(--n8))' }}>
+              {wordCount(msg.content).toLocaleString()} words
+            </span>
           </div>
         ) : appliedDocTitle ? (
           /* After apply: show compact action card */
@@ -575,7 +586,7 @@ function MessageBubble({
         ) : (
           /* No active doc: show response normally in chat */
           <div
-            className="rounded-2xl rounded-tl-sm px-3.5 py-3"
+            className={`rounded-2xl rounded-tl-sm px-3.5 py-3 ${isStreaming ? 'streaming-caret' : ''}`}
             style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
           >
             <ReactMarkdown
@@ -584,9 +595,6 @@ function MessageBubble({
             >
               {msg.content}
             </ReactMarkdown>
-            {isStreaming && (
-              <span className="inline-block w-0.5 h-3.5 ml-0.5 rounded-full align-middle" style={{ background: 'rgb(var(--brand-fg))', animation: 'blink 0.9s step-end infinite' }} />
-            )}
           </div>
         )}
       </div>
@@ -705,10 +713,22 @@ export default function AIChatPanel() {
     }, 50)
   }, [pendingAICommand, clearPendingAICommand])
 
-  // Scroll to bottom when messages change or streaming updates
+  // Follow new content only while the reader is at the bottom. Streaming chunks
+  // pin instantly (restarting a smooth scroll per chunk judders); new messages glide.
+  const messagesRef = useRef<HTMLDivElement>(null)
+  const stickToBottom = useRef(true)
+  const handleMessagesScroll = () => {
+    const el = messagesRef.current
+    if (el) stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+  }
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [workflowMessages.length, streamingContent])
+    stickToBottom.current = true
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }, [workflowMessages.length])
+  useEffect(() => {
+    const el = messagesRef.current
+    if (el && stickToBottom.current) el.scrollTop = el.scrollHeight
+  }, [streamingContent])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -816,6 +836,7 @@ export default function AIChatPanel() {
         const markerAt = full.indexOf(STREAM_ERROR_MARKER)
         if (markerAt !== -1) throw new AIError(full.slice(markerAt + STREAM_ERROR_MARKER.length))
         setStreamingContent(full)
+        if (targetDocId) publishStreamingPreview(targetDocId, markdownToHtml(escapeForPreview(full)))
       }
 
       // Don't overwrite the document with an empty answer
@@ -839,6 +860,7 @@ export default function AIChatPanel() {
         })
       }
     } finally {
+      clearStreamingPreview()
       setIsStreaming(false)
       setStreamingContent(null)
       setStreamingTargetTitle(null)
@@ -925,7 +947,7 @@ export default function AIChatPanel() {
       </div>
 
       {/* ── Messages area ───────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div ref={messagesRef} onScroll={handleMessagesScroll} className="flex-1 overflow-y-auto px-4 py-4">
         {showEmpty ? (
           <EmptyState workflow={workflow} onPrompt={(p) => { setInput(p); textareaRef.current?.focus() }} />
         ) : (
@@ -949,7 +971,7 @@ export default function AIChatPanel() {
                 </m.div>
               ))}
             </AnimatePresence>
-            {streamingMsg && (
+            {streamingMsg && (streamingMsg.content || streamingTargetTitle) && (
               <m.div
                 style={{ transformOrigin: 'top left' }}
                 initial={{ opacity: 0, y: 8, scale: 0.98 }}
@@ -963,8 +985,13 @@ export default function AIChatPanel() {
                 />
               </m.div>
             )}
-            {isStreaming && !streamingContent && (
-              <div className="flex gap-2.5 mb-4">
+            {isStreaming && !streamingContent && !streamingTargetTitle && (
+              <m.div
+                className="flex gap-2.5 mb-4"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={springs.snappy}
+              >
                 <div
                   className="flex-shrink-0 flex items-center justify-center rounded-full"
                   style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
@@ -978,15 +1005,12 @@ export default function AIChatPanel() {
                   {[0, 1, 2].map((i) => (
                     <span
                       key={i}
-                      className="rounded-full"
-                      style={{
-                        width: 6, height: 6, background: 'rgb(var(--brand))',
-                        animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-                      }}
+                      className="typing-dot"
+                      style={{ animationDelay: `${i * 0.16}s` }}
                     />
                   ))}
                 </div>
-              </div>
+              </m.div>
             )}
             <div ref={messagesEndRef} />
           </>
@@ -1108,7 +1132,7 @@ export default function AIChatPanel() {
             >
               {isStreaming ? (
                 <>
-                  <span className="animate-spin inline-block"><Wand2 size={12} /></span>
+                  <span className="writing-dot writing-dot-sm" aria-hidden />
                   <span>Thinking…</span>
                 </>
               ) : (

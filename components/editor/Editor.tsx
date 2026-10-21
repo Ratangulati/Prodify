@@ -23,6 +23,7 @@ import {
 import { useWorkspaceStore } from '@/lib/store'
 import { AnimatePresence, m } from 'motion/react'
 import { springs } from '@/lib/motion'
+import { useStreamingPreview } from '@/lib/streaming-preview'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 interface BubblePos { top: number; left: number; fromViewport?: boolean }
@@ -230,6 +231,21 @@ export default function Editor({ docId }: { docId: string }) {
 
   const containerRef   = useRef<HTMLDivElement>(null)
   const scrollRef      = useRef<HTMLDivElement>(null)
+
+  /* ── Live AI preview while a chat answer streams into this doc ── */
+  const previewHtml  = useStreamingPreview((s) => (s.docId === docId ? s.html : null))
+  const isPreviewing = previewHtml !== null
+  // Follow the writing as it grows, unless the reader scrolls away
+  const followPreview = useRef(true)
+  useEffect(() => { if (!isPreviewing) followPreview.current = true }, [isPreviewing])
+  useEffect(() => {
+    const el = scrollRef.current
+    if (el && isPreviewing && followPreview.current) el.scrollTop = el.scrollHeight
+  }, [previewHtml, isPreviewing])
+  const handleScroll = () => {
+    const el = scrollRef.current
+    if (el && isPreviewing) followPreview.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+  }
   const saveTimer      = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   /* ── Toolbar state ────────────────────────────────────────────── */
@@ -603,11 +619,20 @@ export default function Editor({ docId }: { docId: string }) {
       </AnimatePresence>
 
       {/* ── Editor scroll area ───────────────────────────────────── */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto">
         {/* Centered notion-like content area */}
         {/* Top padding clears the floating glass title bar in EditorPanel */}
         <div className="mx-auto px-8 pt-24 pb-12" style={{ maxWidth: 760 }}>
-          <EditorContent editor={editor} />
+          {/* Read-only stand-in while AI writes; same styles as the editor, so the hand-off doesn't jump */}
+          {previewHtml !== null && (
+            <div
+              className="editor-prose editor-preview streaming-caret"
+              dangerouslySetInnerHTML={{ __html: previewHtml }}
+            />
+          )}
+          <div className={isPreviewing ? 'hidden' : undefined}>
+            <EditorContent editor={editor} />
+          </div>
         </div>
       </div>
 
@@ -623,11 +648,11 @@ export default function Editor({ docId }: { docId: string }) {
         <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
           {readTime} min read
         </span>
-        {aiLoading && (
+        {(aiLoading || isPreviewing) && (
           <>
             <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>·</span>
-            <span className="flex items-center gap-1.5 text-[11px]" style={{ color: 'rgb(var(--brand))' }}>
-              <span className="animate-spin inline-block"><Wand2 size={10} /></span>
+            <span className="flex items-center gap-1.5 text-[11px]" style={{ color: 'rgb(var(--brand-fg))' }}>
+              <span className="writing-dot writing-dot-sm" aria-hidden />
               AI writing…
             </span>
           </>
