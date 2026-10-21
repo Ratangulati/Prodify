@@ -21,17 +21,16 @@ import { clearStreamingPreview, publishStreamingPreview } from '@/lib/streaming-
 const WORKFLOWS: {
   id: AIWorkflow
   label: string
-  emoji: string
   icon: React.ReactNode
   isGeneral?: boolean
 }[] = [
-  { id: 'prd',            label: 'PRD',       emoji: '✍️', icon: <FileText size={12} /> },
-  { id: 'stories',        label: 'Stories',   emoji: '📋', icon: <BookOpen size={12} /> },
-  { id: 'roadmap',        label: 'Roadmap',   emoji: '🗺', icon: <Map size={12} /> },
-  { id: 'prioritization', label: 'Prioritize',emoji: '⚖️', icon: <BarChart3 size={12} /> },
-  { id: 'research',       label: 'Research',  emoji: '🔍', icon: <FlaskConical size={12} /> },
-  { id: 'data',           label: 'Data',      emoji: '📊', icon: <TrendingUp size={12} /> },
-  { id: 'general',        label: 'Chat',      emoji: '💬', icon: <MessageSquare size={12} />, isGeneral: true },
+  { id: 'prd',            label: 'PRD',       icon: <FileText size={12} /> },
+  { id: 'stories',        label: 'Stories',   icon: <BookOpen size={12} /> },
+  { id: 'roadmap',        label: 'Roadmap',   icon: <Map size={12} /> },
+  { id: 'prioritization', label: 'Prioritize',icon: <BarChart3 size={12} /> },
+  { id: 'research',       label: 'Research',  icon: <FlaskConical size={12} /> },
+  { id: 'data',           label: 'Data',      icon: <TrendingUp size={12} /> },
+  { id: 'general',        label: 'Chat',      icon: <MessageSquare size={12} />, isGeneral: true },
 ]
 
 /* ── Starter prompts per workflow ───────────────────────────────── */
@@ -477,7 +476,7 @@ function MessageBubble({
         <div className="max-w-[88%]">
           <div
             className="px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm leading-relaxed"
-            style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--on-brand))' }}
+            style={{ background: 'rgb(var(--brand) / 0.1)', color: 'rgb(var(--n12))' }}
           >
             {msg.content}
           </div>
@@ -491,7 +490,7 @@ function MessageBubble({
     <div className="flex gap-2.5 mb-5 group">
       <div
         className="flex-shrink-0 flex items-center justify-center rounded-full mt-0.5"
-        style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
+        style={{ width: 24, height: 24, background: 'rgb(var(--brand))' }}
       >
         <Wand2 size={11} className="text-on-brand" />
       </div>
@@ -587,7 +586,7 @@ function MessageBubble({
           /* No active doc: show response normally in chat */
           <div
             className={`rounded-2xl rounded-tl-sm px-3.5 py-3 ${isStreaming ? 'streaming-caret' : ''}`}
-            style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
+            style={{ background: 'rgb(var(--n3))', boxShadow: 'var(--elev-sm)' }}
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -620,14 +619,14 @@ function EmptyState({
         style={{
           width: 44, height: 44,
           background: wf?.id === 'general'
-            ? 'linear-gradient(135deg, rgb(var(--emerald) / 0.15), rgb(var(--cyan) / 0.15))'
-            : 'linear-gradient(135deg, rgb(var(--brand) / 0.2), rgb(var(--violet) / 0.2))',
+            ? 'rgb(var(--emerald) / 0.12)'
+            : 'rgb(var(--brand) / 0.1)',
           border: wf?.id === 'general' ? '1px solid rgb(var(--emerald) / 0.3)' : '1px solid rgb(var(--brand) / 0.3)',
         }}
       >
         {wf?.id === 'general'
           ? <MessageSquare size={20} style={{ color: 'rgb(var(--emerald-fg))' }} />
-          : <span className="text-xl">{wf?.emoji}</span>
+          : <span className="[&>svg]:w-5 [&>svg]:h-5" style={{ color: 'rgb(var(--brand-fg))' }}>{wf?.icon}</span>
         }
       </div>
       <div className="text-center">
@@ -932,7 +931,7 @@ export default function AIChatPanel() {
                   }`}
                   title={isChat ? 'Free chat — no document mode' : undefined}
                 >
-                  {isChat ? <MessageSquare size={12} /> : <span>{wf.emoji}</span>}
+                  {wf.icon}
                   <span>{wf.label}</span>
                   {active && (
                     <span
@@ -995,7 +994,7 @@ export default function AIChatPanel() {
               >
                 <div
                   className="flex-shrink-0 flex items-center justify-center rounded-full"
-                  style={{ width: 24, height: 24, background: 'linear-gradient(135deg, rgb(var(--brand)), rgb(var(--violet)))' }}
+                  style={{ width: 24, height: 24, background: 'rgb(var(--brand))' }}
                 >
                   <Wand2 size={11} className="text-on-brand" />
                 </div>
