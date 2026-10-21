@@ -73,8 +73,9 @@ describe('pull_request webhooks', () => {
 
   it('ignores an event older than what is stored', async () => {
     await processWebhook(db.asPrisma(), prEvent({ action: 'closed', state: 'closed', merged: true, updatedAt: '2026-10-21T11:00:00Z' }))
-    await processWebhook(db.asPrisma(), prEvent({ action: 'edited', updatedAt: '2026-10-21T09:00:00Z' }))
+    const result = await processWebhook(db.asPrisma(), prEvent({ action: 'edited', updatedAt: '2026-10-21T09:00:00Z' }))
 
+    expect(result).toEqual({ status: 'ignored', detail: "Older than what's stored for PROD-1." })
     const [link] = await db.pullRequestLink.findMany()
     expect(link.state).toBe('merged')
   })

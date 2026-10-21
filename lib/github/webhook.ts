@@ -34,6 +34,10 @@ export async function processWebhook(
 ): Promise<WebhookResult> {
   try {
     return await db.$transaction(async (tx) => {
+      // The usual redelivery is caught here; the unique id below also stops
+      // two copies that arrive at the same moment
+      const seen = await tx.webhookDelivery.findUnique({ where: { id: delivery.deliveryId } })
+      if (seen) return { status: 'duplicate', detail: 'Already processed this delivery.' }
       await tx.webhookDelivery.create({ data: { id: delivery.deliveryId, event: delivery.event } })
       return handleEvent(tx, delivery.event, delivery.payload)
     })
@@ -107,13 +111,17 @@ async function handlePullRequest(tx: Tx, event: PullRequestEvent): Promise<Webho
   })
 
   const linked: string[] = []
+  const stale: string[]  = []
   for (const task of tasks) {
     const existing = existingLinks.find((l) => l.taskId === task.id)
     const key = formatTaskKey(repo.workspace.taskKeyPrefix, task.number)
 
     if (existing) {
       // Events can arrive out of order; never let an older one overwrite newer data
-      if (existing.prUpdatedAt > fields.prUpdatedAt) continue
+      if (existing.prUpdatedAt > fields.prUpdatedAt) {
+        stale.push(key)
+        continue
+      }
       await tx.pullRequestLink.update({ where: { id: existing.id }, data: fields })
     } else {
       await tx.pullRequestLink.create({
@@ -139,9 +147,9 @@ async function handlePullRequest(tx: Tx, event: PullRequestEvent): Promise<Webho
     linked.push(key)
   }
 
-  return linked.length
-    ? { status: 'processed', detail: `Updated ${linked.join(', ')}.` }
-    : { status: 'ignored', detail: 'No task keys in this pull request.' }
+  if (linked.length) return { status: 'processed', detail: `Updated ${linked.join(', ')}.` }
+  if (stale.length) return { status: 'ignored', detail: `Older than what's stored for ${stale.join(', ')}.` }
+  return { status: 'ignored', detail: 'No task keys in this pull request.' }
 }
 
 /**

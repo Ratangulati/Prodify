@@ -19,7 +19,7 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
   const { documents } = useWorkspaceStore()
   const prds = documents.filter((d) => d.type === 'prd')
 
-  const [activity, setActivity] = useState<Activity[]>([])
+  const [activity, setActivity] = useState<Activity[] | null>(null) // null while loading
   const [url, setUrl]           = useState('')
   const [linking, setLinking]   = useState(false)
   const [linkError, setLinkError] = useState<string | null>(null)
@@ -172,7 +172,9 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
         {/* Activity */}
         <section>
           <h3 className="text-[10px] uppercase tracking-wider font-semibold mb-2" style={{ color: '#71717a' }}>Activity</h3>
-          {activity.length === 0 ? (
+          {activity === null ? (
+            <p className="text-xs" style={{ color: '#71717a' }}>Loading…</p>
+          ) : activity.length === 0 ? (
             <p className="text-xs" style={{ color: '#71717a' }}>Nothing yet.</p>
           ) : (
             <ul className="space-y-1.5">
