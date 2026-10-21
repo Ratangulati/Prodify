@@ -11,6 +11,7 @@ import {
   ToggleLeft, ToggleRight, ChevronRight, Code2, MessageSquare,
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
+import { AIError, STREAM_ERROR_MARKER, errorFromResponse, toAIError } from '@/lib/ai-client'
 import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
@@ -796,7 +797,7 @@ export default function AIChatPanel() {
         }),
       })
 
-      if (!res.ok || !res.body) throw new Error('Stream failed')
+      if (!res.ok || !res.body) throw await errorFromResponse(res)
 
       const reader  = res.body.getReader()
       const decoder = new TextDecoder()
@@ -807,8 +808,14 @@ export default function AIChatPanel() {
         if (done) break
         const chunk = decoder.decode(value, { stream: true })
         full += chunk
+        // The server sends this marker + a message if the stream fails part-way
+        const markerAt = full.indexOf(STREAM_ERROR_MARKER)
+        if (markerAt !== -1) throw new AIError(full.slice(markerAt + STREAM_ERROR_MARKER.length))
         setStreamingContent(full)
       }
+
+      // Don't overwrite the document with an empty answer
+      if (!full.trim()) throw new AIError('The AI returned an empty answer. Please try again.')
 
       const msgId = addMessage({ role: 'assistant', content: full, workflow })
 
@@ -820,10 +827,10 @@ export default function AIChatPanel() {
         }))
       }
     } catch (err: unknown) {
-      if (err instanceof Error && err.name !== 'AbortError') {
+      if (!(err instanceof Error && err.name === 'AbortError')) {
         addMessage({
           role: 'assistant',
-          content: 'Sorry, something went wrong. Please try again.',
+          content: `⚠️ **AI request failed.** ${toAIError(err).message}`,
           workflow,
         })
       }
