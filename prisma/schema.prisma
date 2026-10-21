@@ -14,6 +14,8 @@ model Document {
   content   String
   type      String
   tags      String   @default("[]")
+  /// draft | final. Marking a PRD final can trigger auto-plan.
+  status    String   @default("draft")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -72,10 +74,15 @@ model Workspace {
   nextTaskNumber Int      @default(1)
   /// Move tasks to Review when their PR opens and to Done when it merges
   githubAutomation Boolean @default(false)
+  /// Create tasks from a PRD when it's marked final
+  autoPlan       Boolean  @default(false)
   createdAt      DateTime @default(now())
   tasks          Task[]
   github         GitHubConnection?
   githubRepos    GitHubRepo[]
+  members        Member[]
+  sprints        Sprint[]
+  autoPlanRuns   AutoPlanRun[]
 }
 
 model Task {
@@ -88,6 +95,15 @@ model Task {
   status      String    @default("todo")
   /// The PRD this task delivers, if any
   docId       String?
+  /// Story points; capacity planning adds these up
+  estimate    Int       @default(2)
+  assigneeId  String?
+  assignee    Member?   @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  /// null = backlog
+  sprintId    String?
+  sprint      Sprint?   @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  /// Set when auto-plan created this task, so the run can be undone
+  autoPlanRunId String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   workspaceId String
@@ -170,4 +186,50 @@ model TaskActivity {
   createdAt DateTime @default(now())
 
   @@index([taskId])
+}
+
+/// A teammate tasks can be assigned to
+model Member {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  /// Story points this person can take on per sprint
+  capacity    Int       @default(10)
+  createdAt   DateTime  @default(now())
+  tasks       Task[]
+
+  @@index([workspaceId])
+}
+
+/// A time-boxed iteration. A workspace has at most one active sprint.
+model Sprint {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  /// YYYY-MM-DD
+  startDate   String
+  endDate     String
+  /// active | completed
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  tasks       Task[]
+
+  @@index([workspaceId, status])
+}
+
+/// One auto-plan run: what it created and what it skipped, for the review
+/// summary and for Undo.
+model AutoPlanRun {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  docId       String
+  /// JSON summary shown in the review dialog
+  summary     String
+  undoneAt    DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId, docId])
 }

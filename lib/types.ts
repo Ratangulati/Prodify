@@ -18,6 +18,8 @@ export interface Document {
   createdAt: string
   updatedAt: string
   tags: string[]
+  /** draft | final (marking a PRD final can run auto-plan) */
+  status?: 'draft' | 'final'
 }
 
 export type FeatureStatus = 'Now' | 'Next' | 'Later' | 'Done'

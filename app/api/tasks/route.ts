@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createTask, getDefaultWorkspace } from '@/lib/tasks'
-import { toTaskDto } from '@/lib/task-dto'
+import { TASK_INCLUDE, toTaskDto } from '@/lib/task-dto'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,7 +11,7 @@ export async function GET() {
   const tasks = await prisma.task.findMany({
     where:   { workspaceId: workspace.id },
     orderBy: { number: 'desc' },
-    include: { pullRequests: { orderBy: { prUpdatedAt: 'desc' } } },
+    include: TASK_INCLUDE,
   })
   return NextResponse.json(tasks.map((t) => toTaskDto(t, workspace.taskKeyPrefix)))
 }

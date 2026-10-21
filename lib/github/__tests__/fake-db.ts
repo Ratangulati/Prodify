@@ -51,7 +51,10 @@ class FakeModel {
   async update({ where, data }: Row) {
     const row = this.rows.find((r) => matches(r, where))
     if (!row) throw Object.assign(new Error('Record not found'), { code: 'P2025' })
-    const next = { ...row, ...data, updatedAt: new Date() }
+    // Prisma's { increment: n } for numeric fields
+    const changes = Object.fromEntries(Object.entries(data).map(([k, v]: [string, any]) =>
+      [k, v && typeof v === 'object' && 'increment' in v ? row[k] + v.increment : v]))
+    const next = { ...row, ...changes, updatedAt: new Date() }
     this.checkUnique(next, row)
     Object.assign(row, next)
     return { ...row }
@@ -78,20 +81,29 @@ class FakeModel {
 /** An in-memory stand-in for the parts of PrismaClient the GitHub code uses */
 export class FakeDb {
   workspace        = new FakeModel(this, [], { taskKeyPrefix: 'PROD', nextTaskNumber: 1, githubAutomation: false })
-  task             = new FakeModel(this, [['workspaceId', 'number']], { description: '', status: 'todo', docId: null })
+  task             = new FakeModel(this, [['workspaceId', 'number']], {
+    description: '', status: 'todo', docId: null, estimate: 2, assigneeId: null, sprintId: null, autoPlanRunId: null,
+  })
   gitHubConnection = new FakeModel(this, [['workspaceId'], ['installationId']])
   gitHubRepo       = new FakeModel(this, [['githubId']])
   pullRequestLink  = new FakeModel(this, [['taskId', 'repoFullName', 'number']])
   webhookDelivery  = new FakeModel(this, [])
   taskActivity     = new FakeModel(this, [])
+  document         = new FakeModel(this, [], { status: 'draft', type: 'prd', tags: '[]' })
+  member           = new FakeModel(this, [], { capacity: 10 })
+  sprint           = new FakeModel(this, [], { status: 'active' })
+  autoPlanRun      = new FakeModel(this, [], { undoneAt: null })
 
   private models() {
     return [this.workspace, this.task, this.gitHubConnection, this.gitHubRepo,
-      this.pullRequestLink, this.webhookDelivery, this.taskActivity]
+      this.pullRequestLink, this.webhookDelivery, this.taskActivity,
+      this.document, this.member, this.sprint, this.autoPlanRun]
   }
 
   /** Like Prisma: if the callback throws, every change it made is undone */
-  async $transaction<T>(fn: (tx: this) => Promise<T>): Promise<T> {
+  // Prisma's optional { maxWait, timeout } second argument is accepted and ignored
+  async $transaction<T>(fn: (tx: this) => Promise<T>, ...options: unknown[]): Promise<T> {
+    void options
     const snapshot = this.models().map((m) => m.rows.map((r) => ({ ...r })))
     try {
       return await fn(this)

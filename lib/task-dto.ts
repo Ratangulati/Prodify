@@ -1,4 +1,4 @@
-import type { PullRequestLink, Task } from '@prisma/client'
+import type { Member, PullRequestLink, Sprint, Task } from '@prisma/client'
 import { branchName, formatTaskKey, type TaskStatus } from '@/lib/tasks'
 import type { PullRequestState } from '@/lib/github/pull-requests'
 
@@ -15,6 +15,13 @@ export interface PullRequestDto {
   source: 'auto' | 'manual'
 }
 
+/** Relations every task response includes */
+export const TASK_INCLUDE = {
+  pullRequests: { orderBy: { prUpdatedAt: 'desc' as const } },
+  assignee: true,
+  sprint: true,
+}
+
 /** What the API sends to the browser for one task */
 export interface TaskDto {
   id: string
@@ -26,6 +33,13 @@ export interface TaskDto {
   docId: string | null
   branch: string
   updatedAt: string
+  /** Story points */
+  estimate: number
+  assigneeId: string | null
+  assigneeName: string | null
+  /** null = backlog */
+  sprintId: string | null
+  sprintName: string | null
   pullRequests: PullRequestDto[]
 }
 
@@ -43,7 +57,13 @@ export function toPullRequestDto(link: PullRequestLink): PullRequestDto {
   }
 }
 
-export function toTaskDto(task: Task & { pullRequests?: PullRequestLink[] }, prefix: string): TaskDto {
+type TaskWithRelations = Task & {
+  pullRequests?: PullRequestLink[]
+  assignee?: Member | null
+  sprint?: Sprint | null
+}
+
+export function toTaskDto(task: TaskWithRelations, prefix: string): TaskDto {
   return {
     id:           task.id,
     key:          formatTaskKey(prefix, task.number),
@@ -54,6 +74,11 @@ export function toTaskDto(task: Task & { pullRequests?: PullRequestLink[] }, pre
     docId:        task.docId,
     branch:       branchName(prefix, task.number, task.title),
     updatedAt:    task.updatedAt.toISOString(),
+    estimate:     task.estimate,
+    assigneeId:   task.assigneeId,
+    assigneeName: task.assignee?.name ?? null,
+    sprintId:     task.sprintId,
+    sprintName:   task.sprint?.name ?? null,
     pullRequests: (task.pullRequests ?? []).map(toPullRequestDto),
   }
 }

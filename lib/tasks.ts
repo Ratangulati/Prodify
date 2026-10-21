@@ -37,28 +37,41 @@ export function getDefaultWorkspace(db: Db) {
   })
 }
 
+/** Fields a new task can start with besides its title */
+export type NewTask = {
+  title: string
+  docId?: string | null
+  estimate?: number
+  assigneeId?: string | null
+  sprintId?: string | null
+  autoPlanRunId?: string | null
+}
+
 /**
- * Creates a task with the workspace's next number. Bumping the counter and
- * creating the task happen in one transaction, so two tasks created at the
- * same moment can never get the same key.
+ * Takes the workspace's next number and creates the task with it. Call
+ * inside a transaction: bumping the counter and creating the task then
+ * commit together, so two tasks can never get the same key.
  */
-export function createTask(
-  db: PrismaClient,
-  workspaceId: string,
-  input: { title: string; docId?: string | null },
-) {
-  return db.$transaction(async (tx) => {
-    const workspace = await tx.workspace.update({
-      where: { id: workspaceId },
-      data:  { nextTaskNumber: { increment: 1 } },
-    })
-    return tx.task.create({
-      data: {
-        workspaceId,
-        number: workspace.nextTaskNumber - 1, // the number before we bumped it
-        title:  input.title,
-        docId:  input.docId ?? null,
-      },
-    })
+export async function createTaskInTx(tx: Prisma.TransactionClient, workspaceId: string, input: NewTask) {
+  const workspace = await tx.workspace.update({
+    where: { id: workspaceId },
+    data:  { nextTaskNumber: { increment: 1 } },
   })
+  return tx.task.create({
+    data: {
+      workspaceId,
+      number:        workspace.nextTaskNumber - 1, // the number before we bumped it
+      title:         input.title,
+      docId:         input.docId ?? null,
+      estimate:      input.estimate ?? 2,
+      assigneeId:    input.assigneeId ?? null,
+      sprintId:      input.sprintId ?? null,
+      autoPlanRunId: input.autoPlanRunId ?? null,
+    },
+  })
+}
+
+/** Creates one task with the workspace's next number */
+export function createTask(db: PrismaClient, workspaceId: string, input: NewTask) {
+  return db.$transaction((tx) => createTaskInTx(tx, workspaceId, input))
 }

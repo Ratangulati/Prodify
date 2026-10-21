@@ -8,6 +8,7 @@ const pr = (state: PullRequestDto['state']): PullRequestDto => ({
 const task = (status: TaskDto['status'], prs: PullRequestDto[] = []): TaskDto => ({
   id: 'x', key: 'PROD-1', number: 1, title: 't', description: '', status, docId: null,
   branch: 'prod-1-t', updatedAt: '', pullRequests: prs,
+  estimate: 2, assigneeId: null, assigneeName: null, sprintId: null, sprintName: null,
 })
 
 describe('delivery rules', () => {
