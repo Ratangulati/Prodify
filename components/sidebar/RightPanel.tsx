@@ -35,11 +35,11 @@ function TabPlaceholder({ tab }: { tab: TabId }) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-6 text-center gap-3 py-16">
       <div className="text-3xl">{d.icon}</div>
-      <p className="text-sm font-semibold" style={{ color: '#ddd' }}>{d.title}</p>
-      <p className="text-xs leading-relaxed" style={{ color: '#666' }}>{d.body}</p>
+      <p className="text-sm font-semibold" style={{ color: 'rgb(var(--n11))' }}>{d.title}</p>
+      <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>{d.body}</p>
       <div
         className="mt-2 px-3 py-1.5 rounded-md text-xs font-medium"
-        style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
+        style={{ background: 'rgb(var(--brand) / 0.12)', color: 'rgb(var(--brand-fg))' }}
       >
         Coming soon
       </div>
@@ -60,12 +60,12 @@ export default function RightPanel() {
     return (
       <div
         className="flex flex-col items-center py-4 gap-4 border-l w-full h-full"
-        style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
+        style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))' }}
       >
         <button
           onClick={() => setCollapsed(false)}
           className="p-1.5 rounded transition-colors hover:bg-white/5"
-          style={{ color: '#555' }}
+          style={{ color: 'rgb(var(--n8))' }}
           title="Expand panel"
         >
           <PanelRightOpen size={15} />
@@ -75,7 +75,7 @@ export default function RightPanel() {
             key={tab.id}
             onClick={() => { setActiveSidebarTab(tab.id); setCollapsed(false) }}
             className="p-1.5 rounded transition-colors"
-            style={{ color: activeTab === tab.id ? '#6366f1' : '#555' }}
+            style={{ color: activeTab === tab.id ? 'rgb(var(--brand))' : 'rgb(var(--n8))' }}
             title={tab.label}
           >
             {tab.icon}
@@ -88,12 +88,12 @@ export default function RightPanel() {
   return (
     <aside
       className="flex flex-col w-full h-full border-l"
-      style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
+      style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))' }}
     >
       {/* Tab bar */}
       <div
         className="flex items-center border-b flex-shrink-0 overflow-x-auto scrollbar-hide"
-        style={{ borderColor: '#2a2a2a', background: '#161616' }}
+        style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n2))' }}
       >
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id
@@ -102,14 +102,14 @@ export default function RightPanel() {
               key={tab.id}
               onClick={() => setActiveSidebarTab(tab.id)}
               className="flex items-center gap-1.5 px-3 py-3 text-xs font-medium transition-colors relative flex-shrink-0 whitespace-nowrap"
-              style={{ color: isActive ? '#a5b4fc' : '#666' }}
+              style={{ color: isActive ? 'rgb(var(--brand-soft))' : 'rgb(var(--n8))' }}
             >
               {tab.icon}
               <span>{tab.label}</span>
               {isActive && (
                 <span
                   className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                  style={{ background: '#6366f1' }}
+                  style={{ background: 'rgb(var(--brand))' }}
                 />
               )}
             </button>
@@ -120,7 +120,7 @@ export default function RightPanel() {
         <button
           onClick={() => setCollapsed(true)}
           className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-white/5"
-          style={{ color: '#555' }}
+          style={{ color: 'rgb(var(--n8))' }}
           title="Collapse panel"
         >
           <PanelRightClose size={14} />

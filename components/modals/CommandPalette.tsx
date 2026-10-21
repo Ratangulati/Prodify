@@ -117,20 +117,20 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
   return (
     <div
       className="fixed inset-0 z-[1000] flex items-start justify-center pt-[15vh]"
-      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgb(var(--black) / 0.7)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         className="w-full rounded-xl shadow-2xl overflow-hidden"
         style={{
           maxWidth: 560,
-          background: '#161616',
-          border: '1px solid #2a2a2a',
+          background: 'rgb(var(--n2))',
+          border: '1px solid rgb(var(--n6))',
         }}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: '#2a2a2a' }}>
-          <Sparkles size={15} style={{ color: '#6366f1', flexShrink: 0 }} />
+        <div className="flex items-center gap-3 px-4 py-3 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
+          <Sparkles size={15} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />
           <input
             ref={inputRef}
             value={query}
@@ -138,9 +138,9 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
             onKeyDown={handleKey}
             placeholder={mode === 'ai' ? 'Ask AI or choose a workflow…' : 'Create a new document…'}
             className="flex-1 bg-transparent text-sm outline-none"
-            style={{ color: '#f0f0f0' }}
+            style={{ color: 'rgb(var(--n12))' }}
           />
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: '#2a2a2a', color: '#555' }}>ESC</kbd>
+          <kbd className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgb(var(--n6))', color: 'rgb(var(--n8))' }}>ESC</kbd>
         </div>
 
         {/* Mode tabs */}
@@ -151,20 +151,20 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
               onClick={() => setMode(m)}
               className="px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
               style={{
-                background: mode === m ? 'rgba(99,102,241,0.15)' : 'transparent',
-                color: mode === m ? '#818cf8' : '#555',
+                background: mode === m ? 'rgb(var(--brand) / 0.15)' : 'transparent',
+                color: mode === m ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))',
               }}
             >
               {m === 'ai' ? '✦ AI Workflows' : '+ New Document'}
             </button>
           ))}
-          <span className="ml-auto text-[10px] self-center" style={{ color: '#444' }}>Tab to switch</span>
+          <span className="ml-auto text-[10px] self-center" style={{ color: 'rgb(var(--n8))' }}>Tab to switch</span>
         </div>
 
         {/* Results */}
         <div className="pb-2 max-h-72 overflow-y-auto">
           {filtered.length === 0 ? (
-            <p className="px-4 py-6 text-xs text-center" style={{ color: '#555' }}>No results</p>
+            <p className="px-4 py-6 text-xs text-center" style={{ color: 'rgb(var(--n8))' }}>No results</p>
           ) : (
             filtered.map((item, i) => {
               const isAI = mode === 'ai'
@@ -176,20 +176,20 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                   onClick={() => handleSelect(i)}
                   onMouseEnter={() => setSelected(i)}
                   className="flex items-center gap-3 w-full px-4 py-2.5 transition-colors text-left"
-                  style={{ background: selected === i ? 'rgba(99,102,241,0.1)' : 'transparent' }}
+                  style={{ background: selected === i ? 'rgb(var(--brand) / 0.1)' : 'transparent' }}
                 >
-                  <span style={{ color: selected === i ? '#818cf8' : '#555' }}>
+                  <span style={{ color: selected === i ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}>
                     {isAI ? w.icon : d.icon}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium" style={{ color: selected === i ? '#e0e0e0' : '#aaa' }}>
+                    <p className="text-xs font-medium" style={{ color: selected === i ? 'rgb(var(--n11))' : 'rgb(var(--n10))' }}>
                       {isAI ? w.label : d.label}
                     </p>
                     {isAI && (
-                      <p className="text-[10px] truncate mt-0.5" style={{ color: '#555' }}>{w.description}</p>
+                      <p className="text-[10px] truncate mt-0.5" style={{ color: 'rgb(var(--n8))' }}>{w.description}</p>
                     )}
                   </div>
-                  {selected === i && <ArrowRight size={12} style={{ color: '#6366f1', flexShrink: 0 }} />}
+                  {selected === i && <ArrowRight size={12} style={{ color: 'rgb(var(--brand))', flexShrink: 0 }} />}
                 </button>
               )
             })
@@ -199,12 +199,12 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
         {/* Footer */}
         <div
           className="flex gap-4 px-4 py-2 border-t"
-          style={{ borderColor: '#2a2a2a', background: '#111' }}
+          style={{ borderColor: 'rgb(var(--n6))', background: 'rgb(var(--n1))' }}
         >
           {[['↑↓', 'Navigate'], ['↵', 'Select'], ['Esc', 'Close']].map(([key, label]) => (
             <div key={key} className="flex items-center gap-1.5">
-              <kbd className="text-[9px] px-1 py-0.5 rounded" style={{ background: '#222', color: '#555' }}>{key}</kbd>
-              <span className="text-[10px]" style={{ color: '#444' }}>{label}</span>
+              <kbd className="text-[9px] px-1 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>{key}</kbd>
+              <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{label}</span>
             </div>
           ))}
         </div>

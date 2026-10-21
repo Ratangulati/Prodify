@@ -44,9 +44,9 @@ interface AnalysisResult {
 /* ── Helpers ────────────────────────────────────────────────────── */
 function confidenceBadge(c: Confidence) {
   const map: Record<Confidence, { label: string; bg: string; color: string }> = {
-    high:   { label: 'High',   bg: 'rgba(34,197,94,0.12)',  color: '#4ade80' },
-    medium: { label: 'Medium', bg: 'rgba(234,179,8,0.12)',  color: '#facc15' },
-    low:    { label: 'Low',    bg: 'rgba(239,68,68,0.12)',  color: '#f87171' },
+    high:   { label: 'High',   bg: 'rgb(var(--green) / 0.12)',  color: 'rgb(var(--green-fg))' },
+    medium: { label: 'Medium', bg: 'rgb(var(--yellow) / 0.12)',  color: 'rgb(var(--yellow-fg))' },
+    low:    { label: 'Low',    bg: 'rgb(var(--red) / 0.12)',  color: 'rgb(var(--red-fg))' },
   }
   const s = map[c]
   return (
@@ -62,10 +62,10 @@ function confidenceBadge(c: Confidence) {
 function insightIcon(type: DataInsight['type']) {
   const props = { size: 13, className: 'flex-shrink-0 mt-0.5' }
   switch (type) {
-    case 'finding':    return <TrendingUp    {...props} style={{ color: '#818cf8' }} />
-    case 'anomaly':    return <AlertTriangle {...props} style={{ color: '#f59e0b' }} />
-    case 'hypothesis': return <Lightbulb     {...props} style={{ color: '#34d399' }} />
-    case 'next_step':  return <ArrowRight    {...props} style={{ color: '#60a5fa' }} />
+    case 'finding':    return <TrendingUp    {...props} style={{ color: 'rgb(var(--brand-fg))' }} />
+    case 'anomaly':    return <AlertTriangle {...props} style={{ color: 'rgb(var(--amber))' }} />
+    case 'hypothesis': return <Lightbulb     {...props} style={{ color: 'rgb(var(--emerald-fg))' }} />
+    case 'next_step':  return <ArrowRight    {...props} style={{ color: 'rgb(var(--blue-fg))' }} />
   }
 }
 
@@ -121,36 +121,38 @@ function InsightCard({ insight }: { insight: DataInsight }) {
   return (
     <div
       className="rounded-lg p-3 flex gap-2.5"
-      style={{ background: '#252525', border: '1px solid #2e2e2e' }}
+      style={{ background: 'rgb(var(--n5))', border: '1px solid rgb(var(--n6))' }}
     >
       {insightIcon(insight.type)}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: '#555' }}>
+          <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'rgb(var(--n8))' }}>
             {TYPE_LABELS[insight.type]}
           </span>
           {insight.metric && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: '#1e1e1e', color: '#888' }}>
+            <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n9))' }}>
               {insight.metric}
             </span>
           )}
           {insight.delta && (
             <span
               className="text-[10px] font-semibold"
-              style={{ color: insight.delta.startsWith('+') ? '#4ade80' : '#f87171' }}
+              style={{ color: insight.delta.startsWith('+') ? 'rgb(var(--green-fg))' : 'rgb(var(--red-fg))' }}
             >
               {insight.delta}
             </span>
           )}
           <span className="ml-auto">{confidenceBadge(insight.confidence)}</span>
         </div>
-        <p className="text-xs leading-relaxed" style={{ color: '#ccc' }}>{insight.text}</p>
+        <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n11))' }}>{insight.text}</p>
       </div>
     </div>
   )
 }
 
 /* ── Chart ──────────────────────────────────────────────────────── */
+// Recharts writes these as SVG attributes, which can't read CSS variables.
+// Values mirror --brand, --emerald-fg, --amber, --red-fg, --blue-fg and --n6 / --n8.
 const CHART_COLORS = ['#6366f1', '#34d399', '#f59e0b', '#f87171', '#60a5fa']
 
 function DataChart({ result }: { result: AnalysisResult }) {
@@ -159,14 +161,14 @@ function DataChart({ result }: { result: AnalysisResult }) {
   if (!result.chartData?.length || result.chartType === 'none') return null
 
   return (
-    <div className="rounded-lg p-3" style={{ background: '#252525', border: '1px solid #2e2e2e' }}>
+    <div className="rounded-lg p-3" style={{ background: 'rgb(var(--n5))', border: '1px solid rgb(var(--n6))' }}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-medium" style={{ color: '#aaa' }}>Chart Preview</p>
+        <p className="text-xs font-medium" style={{ color: 'rgb(var(--n10))' }}>Chart Preview</p>
         <div className="flex gap-1">
           <button
             onClick={() => setChartView('line')}
             className="p-1 rounded transition-colors"
-            style={{ background: chartView === 'line' ? 'rgba(99,102,241,0.2)' : 'transparent', color: chartView === 'line' ? '#818cf8' : '#555' }}
+            style={{ background: chartView === 'line' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'line' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
             title="Line chart"
           >
             <LineChart size={13} />
@@ -174,7 +176,7 @@ function DataChart({ result }: { result: AnalysisResult }) {
           <button
             onClick={() => setChartView('bar')}
             className="p-1 rounded transition-colors"
-            style={{ background: chartView === 'bar' ? 'rgba(99,102,241,0.2)' : 'transparent', color: chartView === 'bar' ? '#818cf8' : '#555' }}
+            style={{ background: chartView === 'bar' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'bar' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
             title="Bar chart"
           >
             <BarChart2 size={13} />
@@ -189,11 +191,11 @@ function DataChart({ result }: { result: AnalysisResult }) {
             <XAxis dataKey="label" tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip
-              contentStyle={{ background: '#1e1e1e', border: '1px solid #333', borderRadius: 6, fontSize: 11 }}
-              labelStyle={{ color: '#999' }}
-              itemStyle={{ color: '#ccc' }}
+              contentStyle={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n7))', borderRadius: 6, fontSize: 11 }}
+              labelStyle={{ color: 'rgb(var(--n9))' }}
+              itemStyle={{ color: 'rgb(var(--n11))' }}
             />
-            <Legend wrapperStyle={{ fontSize: 10, color: '#666' }} />
+            <Legend wrapperStyle={{ fontSize: 10, color: 'rgb(var(--n8))' }} />
             {(result.chartKeys || ['value']).map((key, i) => (
               <Line
                 key={key}
@@ -212,11 +214,11 @@ function DataChart({ result }: { result: AnalysisResult }) {
             <XAxis dataKey="label" tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip
-              contentStyle={{ background: '#1e1e1e', border: '1px solid #333', borderRadius: 6, fontSize: 11 }}
-              labelStyle={{ color: '#999' }}
-              itemStyle={{ color: '#ccc' }}
+              contentStyle={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n7))', borderRadius: 6, fontSize: 11 }}
+              labelStyle={{ color: 'rgb(var(--n9))' }}
+              itemStyle={{ color: 'rgb(var(--n11))' }}
             />
-            <Legend wrapperStyle={{ fontSize: 10, color: '#666' }} />
+            <Legend wrapperStyle={{ fontSize: 10, color: 'rgb(var(--n8))' }} />
             {(result.chartKeys || ['value']).map((key, i) => (
               <Bar
                 key={key}
@@ -353,22 +355,22 @@ export default function DataPanel() {
 
   /* ── Render ──────────────────────────────────────────────────── */
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: '#1a1a1a' }}>
+    <div className="flex flex-col h-full overflow-hidden" style={{ background: 'rgb(var(--n3))' }}>
 
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 flex-shrink-0 border-b"
-        style={{ borderColor: '#2a2a2a' }}
+        style={{ borderColor: 'rgb(var(--n6))' }}
       >
         <div>
-          <p className="text-xs font-semibold" style={{ color: '#ddd' }}>Data Analysis</p>
-          <p className="text-[10px]" style={{ color: '#555' }}>Upload, paste, or drag CSV → AI interprets</p>
+          <p className="text-xs font-semibold" style={{ color: 'rgb(var(--n11))' }}>Data Analysis</p>
+          <p className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>Upload, paste, or drag CSV → AI interprets</p>
         </div>
         {result && (
           <button
             onClick={reset}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs transition-colors hover:bg-white/5"
-            style={{ color: '#666' }}
+            style={{ color: 'rgb(var(--n8))' }}
           >
             <RefreshCw size={11} />
             Reset
@@ -393,15 +395,12 @@ export default function DataPanel() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={status === 'loading'}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-40"
-                style={{ background: '#252525', color: '#aaa', border: '1px solid #2e2e2e' }}
-                onMouseEnter={e => { if (status !== 'loading') (e.currentTarget as HTMLButtonElement).style.background = '#2e2e2e' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-40 border bg-n5 border-n6 text-n10 enabled:hover:bg-n6"
               >
                 <FileText size={12} />
                 Upload CSV
               </button>
-              <span className="text-[10px]" style={{ color: '#444' }}>or paste data below</span>
+              <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>or paste data below</span>
             </div>
 
             <div
@@ -413,11 +412,11 @@ export default function DataPanel() {
               {isDragging && (
                 <div
                   className="absolute inset-0 rounded-lg flex items-center justify-center z-10 pointer-events-none"
-                  style={{ background: 'rgba(99,102,241,0.12)', border: '2px dashed #6366f1' }}
+                  style={{ background: 'rgb(var(--brand) / 0.12)', border: '2px dashed rgb(var(--brand))' }}
                 >
                   <div className="flex flex-col items-center gap-1.5">
-                    <FileText size={20} style={{ color: '#818cf8' }} />
-                    <span className="text-xs font-medium" style={{ color: '#818cf8' }}>Drop CSV file here</span>
+                    <FileText size={20} style={{ color: 'rgb(var(--brand-fg))' }} />
+                    <span className="text-xs font-medium" style={{ color: 'rgb(var(--brand-fg))' }}>Drop CSV file here</span>
                   </div>
                 </div>
               )}
@@ -427,9 +426,9 @@ export default function DataPanel() {
                 placeholder={`Paste your metrics, CSV data, or funnel numbers here…\n\nExample:\nDate,DAU,Revenue,Churn\n2024-01,12000,48000,2.1%\n2024-02,13400,51200,1.8%\n…`}
                 className="w-full rounded-lg text-xs leading-relaxed resize-none outline-none transition-colors"
                 style={{
-                  background: isDragging ? 'rgba(99,102,241,0.05)' : '#252525',
-                  border: `1px solid ${isDragging ? '#6366f1' : '#2e2e2e'}`,
-                  color: '#ccc',
+                  background: isDragging ? 'rgb(var(--brand) / 0.05)' : 'rgb(var(--n5))',
+                  border: `1px solid ${isDragging ? 'rgb(var(--brand))' : 'rgb(var(--n6))'}`,
+                  color: 'rgb(var(--n11))',
                   padding: '12px',
                   minHeight: 160,
                   fontFamily: 'monospace',
@@ -439,7 +438,7 @@ export default function DataPanel() {
               {input && (
                 <span
                   className="absolute bottom-2 right-2 text-[10px]"
-                  style={{ color: '#444' }}
+                  style={{ color: 'rgb(var(--n8))' }}
                 >
                   {input.split('\n').length} lines
                 </span>
@@ -451,8 +450,8 @@ export default function DataPanel() {
               disabled={!input.trim() || status === 'loading'}
               className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40"
               style={{
-                background: status === 'loading' ? 'rgba(99,102,241,0.2)' : '#6366f1',
-                color: '#fff',
+                background: status === 'loading' ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--brand))',
+                color: 'rgb(var(--white))',
                 cursor: !input.trim() || status === 'loading' ? 'not-allowed' : 'pointer',
               }}
             >
@@ -475,7 +474,7 @@ export default function DataPanel() {
         {status === 'loading' && streamText && (
           <div
             className="rounded-lg p-3 text-[10px] font-mono leading-relaxed max-h-32 overflow-y-auto"
-            style={{ background: '#111', color: '#555', border: '1px solid #222' }}
+            style={{ background: 'rgb(var(--n1))', color: 'rgb(var(--n8))', border: '1px solid rgb(var(--n4))' }}
           >
             {streamText.slice(-600)}
             <span className="animate-pulse">▌</span>
@@ -486,7 +485,7 @@ export default function DataPanel() {
         {status === 'error' && (
           <div
             className="rounded-lg p-3 text-xs"
-            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}
+            style={{ background: 'rgb(var(--red) / 0.08)', border: '1px solid rgb(var(--red) / 0.2)', color: 'rgb(var(--red-fg))' }}
           >
             Analysis failed. Check that your data has clear column headers and try again.
           </div>
@@ -498,12 +497,12 @@ export default function DataPanel() {
             {/* Summary */}
             <div
               className="rounded-lg p-3"
-              style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)' }}
+              style={{ background: 'rgb(var(--brand) / 0.08)', border: '1px solid rgb(var(--brand) / 0.15)' }}
             >
-              <p className="text-[10px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: '#818cf8' }}>
+              <p className="text-[10px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'rgb(var(--brand-fg))' }}>
                 Summary
               </p>
-              <p className="text-xs leading-relaxed" style={{ color: '#ccc' }}>{result.summary}</p>
+              <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n11))' }}>{result.summary}</p>
             </div>
 
             {/* Chart */}
@@ -518,13 +517,13 @@ export default function DataPanel() {
                     key={t}
                     className="rounded-lg p-2 text-center cursor-pointer transition-colors"
                     style={{
-                      background: filter === t ? 'rgba(99,102,241,0.15)' : '#252525',
-                      border: `1px solid ${filter === t ? 'rgba(99,102,241,0.3)' : '#2e2e2e'}`,
+                      background: filter === t ? 'rgb(var(--brand) / 0.15)' : 'rgb(var(--n5))',
+                      border: `1px solid ${filter === t ? 'rgb(var(--brand) / 0.3)' : 'rgb(var(--n6))'}`,
                     }}
                     onClick={() => setFilter(filter === t ? 'all' : t)}
                   >
-                    <p className="text-base font-bold" style={{ color: filter === t ? '#818cf8' : '#ccc' }}>{count}</p>
-                    <p className="text-[9px] uppercase tracking-wide leading-tight" style={{ color: '#555' }}>
+                    <p className="text-base font-bold" style={{ color: filter === t ? 'rgb(var(--brand-fg))' : 'rgb(var(--n11))' }}>{count}</p>
+                    <p className="text-[9px] uppercase tracking-wide leading-tight" style={{ color: 'rgb(var(--n8))' }}>
                       {TYPE_LABELS[t].slice(0, 6)}
                     </p>
                   </div>
@@ -540,9 +539,9 @@ export default function DataPanel() {
                   onClick={() => setFilter(f.id as DataInsight['type'] | 'all')}
                   className="px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors"
                   style={{
-                    background: filter === f.id ? 'rgba(99,102,241,0.2)' : '#252525',
-                    color: filter === f.id ? '#818cf8' : '#666',
-                    border: `1px solid ${filter === f.id ? 'rgba(99,102,241,0.3)' : '#2e2e2e'}`,
+                    background: filter === f.id ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--n5))',
+                    color: filter === f.id ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))',
+                    border: `1px solid ${filter === f.id ? 'rgb(var(--brand) / 0.3)' : 'rgb(var(--n6))'}`,
                   }}
                 >
                   {f.label}
@@ -553,7 +552,7 @@ export default function DataPanel() {
             {/* Insight cards */}
             <div className="flex flex-col gap-2">
               {filteredInsights.length === 0 ? (
-                <p className="text-xs text-center py-6" style={{ color: '#555' }}>
+                <p className="text-xs text-center py-6" style={{ color: 'rgb(var(--n8))' }}>
                   No {filter === 'all' ? 'insights' : TYPE_LABELS[filter as DataInsight['type']].toLowerCase()} found.
                 </p>
               ) : (
@@ -567,7 +566,7 @@ export default function DataPanel() {
             <button
               onClick={reset}
               className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-xs transition-colors hover:bg-white/5"
-              style={{ color: '#555', border: '1px solid #2a2a2a' }}
+              style={{ color: 'rgb(var(--n8))', border: '1px solid rgb(var(--n6))' }}
             >
               <RefreshCw size={11} />
               Analyse different data

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0f0f0f] text-white overflow-hidden`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-n0 text-n12 overflow-hidden`}>
         <TooltipProvider>
           {children}
         </TooltipProvider>

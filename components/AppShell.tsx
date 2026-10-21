@@ -86,10 +86,10 @@ export default function AppShell() {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ background: '#0f0f0f' }}>
+      <div className="h-screen flex items-center justify-center" style={{ background: 'rgb(var(--n0))' }}>
         <div className="text-center space-y-3">
           <div className="animate-spin inline-block w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full" />
-          <p className="text-xs" style={{ color: '#555' }}>Loading workspace…</p>
+          <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Loading workspace…</p>
         </div>
       </div>
     )
@@ -99,7 +99,7 @@ export default function AppShell() {
     <>
       <div
         className="h-screen overflow-hidden"
-        style={{ background: theme === 'dark' ? '#0f0f0f' : '#f5f5f5', minWidth: 1024 }}
+        style={{ background: theme === 'dark' ? 'rgb(var(--n0))' : 'rgb(var(--n12))', minWidth: 1024 }}
       >
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left sidebar */}
@@ -107,7 +107,7 @@ export default function AppShell() {
             <LeftSidebar onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} theme={theme} />
           </Panel>
 
-          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: '#2a2a2a' }}>
+          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
             <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-indigo-500/30 group-data-[resize-handle-active]:bg-indigo-500/50 transition-colors" />
           </PanelResizeHandle>
 
@@ -118,7 +118,7 @@ export default function AppShell() {
             </div>
           </Panel>
 
-          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: '#2a2a2a' }}>
+          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
             <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-indigo-500/30 group-data-[resize-handle-active]:bg-indigo-500/50 transition-colors" />
           </PanelResizeHandle>
 

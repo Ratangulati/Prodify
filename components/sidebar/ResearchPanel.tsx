@@ -30,10 +30,10 @@ interface ParsedResearch {
 
 /* ── Severity config ─────────────────────────────────────────────── */
 const SEV_CFG = {
-  Critical: { color: '#f87171', bg: 'rgba(239,68,68,0.1)',  ring: 'rgba(239,68,68,0.25)' },
-  High:     { color: '#fb923c', bg: 'rgba(249,115,22,0.1)', ring: 'rgba(249,115,22,0.25)' },
-  Medium:   { color: '#fbbf24', bg: 'rgba(234,179,8,0.1)',  ring: 'rgba(234,179,8,0.25)'  },
-  Low:      { color: '#4ade80', bg: 'rgba(34,197,94,0.1)',  ring: 'rgba(34,197,94,0.25)'  },
+  Critical: { color: 'rgb(var(--red-fg))', bg: 'rgb(var(--red) / 0.1)',  ring: 'rgb(var(--red) / 0.25)' },
+  High:     { color: 'rgb(var(--orange-fg))', bg: 'rgb(var(--orange) / 0.1)', ring: 'rgb(var(--orange) / 0.25)' },
+  Medium:   { color: 'rgb(var(--amber-fg))', bg: 'rgb(var(--yellow) / 0.1)',  ring: 'rgb(var(--yellow) / 0.25)'  },
+  Low:      { color: 'rgb(var(--green-fg))', bg: 'rgb(var(--green) / 0.1)',  ring: 'rgb(var(--green) / 0.25)'  },
 }
 
 /* ── Link to Feature dropdown ────────────────────────────────────── */
@@ -56,7 +56,7 @@ function LinkFeatureDropdown({
       <button
         onClick={() => setOpen(v => !v)}
         className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-colors"
-        style={{ background: 'rgba(99,102,241,0.1)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)' }}
+        style={{ background: 'rgb(var(--brand) / 0.1)', color: 'rgb(var(--brand-fg))', border: '1px solid rgb(var(--brand) / 0.2)' }}
       >
         <Link2 size={10} />
         Link feature
@@ -66,9 +66,9 @@ function LinkFeatureDropdown({
       {open && (
         <div
           className="absolute left-0 z-50 mt-1 rounded-xl border overflow-hidden shadow-2xl"
-          style={{ width: 220, background: '#18181b', borderColor: '#2e2e32', top: '100%' }}
+          style={{ width: 220, background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))', top: '100%' }}
         >
-          <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider border-b" style={{ color: '#52525b', borderColor: '#27272a' }}>
+          <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider border-b" style={{ color: 'rgb(var(--n8))', borderColor: 'rgb(var(--n5))' }}>
             Link to feature
           </p>
           <div className="max-h-48 overflow-y-auto">
@@ -78,12 +78,9 @@ function LinkFeatureDropdown({
                 <button
                   key={f.id}
                   onClick={() => { onLink(f.id); setOpen(false) }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-left text-xs transition-colors"
-                  style={{ color: linked ? '#818cf8' : '#a1a1aa' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#27272a' }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                  className={`flex items-center gap-2 w-full px-3 py-2 text-left text-xs transition-colors hover:bg-n5 ${linked ? 'text-brand-fg' : 'text-n10'}`}
                 >
-                  {linked ? <Check size={11} style={{ color: '#818cf8', flexShrink: 0 }} /> : <Plus size={11} style={{ flexShrink: 0, color: '#52525b' }} />}
+                  {linked ? <Check size={11} style={{ color: 'rgb(var(--brand-fg))', flexShrink: 0 }} /> : <Plus size={11} style={{ flexShrink: 0, color: 'rgb(var(--n8))' }} />}
                   <span className="truncate">{f.title}</span>
                 </button>
               )
@@ -114,12 +111,12 @@ function ThemeCard({
   return (
     <div
       className="rounded-xl border mb-3 overflow-hidden"
-      style={{ background: '#111113', borderColor: '#1e1e22', borderLeft: `3px solid ${sev.color}` }}
+      style={{ background: 'rgb(var(--n1))', borderColor: 'rgb(var(--n4))', borderLeft: `3px solid ${sev.color}` }}
     >
       {/* Header */}
       <div className="px-3 pt-3 pb-2">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="text-xs font-semibold leading-snug flex-1" style={{ color: '#e4e4e7' }}>
+          <h3 className="text-xs font-semibold leading-snug flex-1" style={{ color: 'rgb(var(--n12))' }}>
             {theme.title}
           </h3>
           <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -132,7 +129,7 @@ function ThemeCard({
             <button
               onClick={() => onDelete(theme.id)}
               className="p-0.5 rounded transition-colors opacity-40 hover:opacity-100"
-              style={{ color: '#ef4444' }}
+              style={{ color: 'rgb(var(--red))' }}
             >
               <X size={11} />
             </button>
@@ -142,12 +139,12 @@ function ThemeCard({
         {/* Frequency bar */}
         <div className="mb-2">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px]" style={{ color: '#52525b' }}>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
               {theme.frequency} of {theme.total} participants · {freqPct}%
             </span>
             <span className="text-[10px] font-semibold" style={{ color: sev.color }}>{freqPct}%</span>
           </div>
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: '#27272a' }}>
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgb(var(--n5))' }}>
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{ width: `${freqPct}%`, background: sev.color }}
@@ -156,7 +153,7 @@ function ThemeCard({
         </div>
 
         {/* Summary */}
-        <p className="text-[11px] leading-relaxed mb-2.5" style={{ color: '#a1a1aa' }}>
+        <p className="text-[11px] leading-relaxed mb-2.5" style={{ color: 'rgb(var(--n10))' }}>
           {theme.summary}
         </p>
 
@@ -164,10 +161,10 @@ function ThemeCard({
         {theme.opportunity && (
           <div
             className="flex items-start gap-2 rounded-lg px-2.5 py-2 mb-2.5"
-            style={{ background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.15)' }}
+            style={{ background: 'rgb(var(--brand) / 0.07)', border: '1px solid rgb(var(--brand) / 0.15)' }}
           >
-            <Lightbulb size={11} className="flex-shrink-0 mt-0.5" style={{ color: '#818cf8' }} />
-            <p className="text-[10px] leading-relaxed" style={{ color: '#818cf8' }}>{theme.opportunity}</p>
+            <Lightbulb size={11} className="flex-shrink-0 mt-0.5" style={{ color: 'rgb(var(--brand-fg))' }} />
+            <p className="text-[10px] leading-relaxed" style={{ color: 'rgb(var(--brand-fg))' }}>{theme.opportunity}</p>
           </div>
         )}
 
@@ -176,7 +173,7 @@ function ThemeCard({
           <button
             onClick={() => setExpanded(v => !v)}
             className="flex items-center gap-1 text-[10px] transition-colors mb-1"
-            style={{ color: expanded ? '#818cf8' : '#52525b' }}
+            style={{ color: expanded ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
           >
             <Quote size={10} />
             {theme.quotes.length} quote{theme.quotes.length !== 1 ? 's' : ''}
@@ -192,10 +189,10 @@ function ThemeCard({
             <blockquote
               key={i}
               className="flex items-start gap-2 rounded-lg px-2.5 py-2"
-              style={{ background: '#0d0d0f', border: '1px solid #1e1e22' }}
+              style={{ background: 'rgb(var(--n0))', border: '1px solid rgb(var(--n4))' }}
             >
-              <Quote size={10} className="flex-shrink-0 mt-0.5" style={{ color: '#3f3f46' }} />
-              <p className="text-[11px] italic leading-relaxed" style={{ color: '#71717a' }}>
+              <Quote size={10} className="flex-shrink-0 mt-0.5" style={{ color: 'rgb(var(--n8))' }} />
+              <p className="text-[11px] italic leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
                 &ldquo;{q}&rdquo;
               </p>
             </blockquote>
@@ -209,7 +206,7 @@ function ThemeCard({
           <span
             key={i}
             className="text-[10px] px-1.5 py-0.5 rounded"
-            style={{ background: '#1e1e22', color: '#52525b' }}
+            style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}
           >
             {sf}
           </span>
@@ -384,19 +381,19 @@ ${notes}`
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#0d0d0f' }}>
+    <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n0))' }}>
       {/* Header */}
       <div
         className="flex-shrink-0 flex items-center justify-between px-3 py-2.5 border-b"
-        style={{ borderColor: '#1a1a1a' }}
+        style={{ borderColor: 'rgb(var(--n3))' }}
       >
         <div className="flex items-center gap-2">
-          <FlaskConical size={13} style={{ color: '#818cf8' }} />
-          <span className="text-xs font-semibold" style={{ color: '#e4e4e7' }}>Research Insights</span>
+          <FlaskConical size={13} style={{ color: 'rgb(var(--brand-fg))' }} />
+          <span className="text-xs font-semibold" style={{ color: 'rgb(var(--n12))' }}>Research Insights</span>
           {parsed && (
             <span
               className="text-[10px] px-1.5 py-0.5 rounded-full"
-              style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8' }}
+              style={{ background: 'rgb(var(--brand) / 0.12)', color: 'rgb(var(--brand-fg))' }}
             >
               {parsed.themes.length} themes
             </span>
@@ -406,10 +403,7 @@ ${notes}`
           {parsed && (
             <button
               onClick={() => exportAsMarkdown(parsed, notes)}
-              className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-colors"
-              style={{ background: '#18181b', color: '#52525b', border: '1px solid #27272a' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#a1a1aa' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#52525b' }}
+              className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-colors border bg-n3 border-n5 text-n8 hover:text-n10"
               title="Export as Markdown"
             >
               <Download size={11} />
@@ -419,10 +413,7 @@ ${notes}`
           {(parsed || notes) && (
             <button
               onClick={handleClear}
-              className="p-1 rounded transition-colors"
-              style={{ color: '#3f3f46' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#ef4444' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#3f3f46' }}
+              className="p-1 rounded transition-colors text-n8 hover:text-danger"
               title="Clear all"
             >
               <Trash2 size={12} />
@@ -434,7 +425,7 @@ ${notes}`
       {/* Paste zone — hidden after analysis */}
       {!parsed && (
         <div className="flex-shrink-0 p-3">
-          <label className="block text-[10px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#52525b' }}>
+          <label className="block text-[10px] font-medium uppercase tracking-wider mb-1.5" style={{ color: 'rgb(var(--n8))' }}>
             Paste interview notes, survey responses, or feedback
           </label>
           <textarea
@@ -449,19 +440,19 @@ User 3: "Navigation feels unintuitive on mobile..."`}
             rows={9}
             className="w-full resize-none rounded-xl outline-none text-xs leading-relaxed p-3"
             style={{
-              background: '#111113',
-              border: '1px solid #1e1e22',
-              color: '#d4d4d8',
-              caretColor: '#818cf8',
+              background: 'rgb(var(--n1))',
+              border: '1px solid rgb(var(--n4))',
+              color: 'rgb(var(--n11))',
+              caretColor: 'rgb(var(--brand-fg))',
               fontFamily: 'var(--font-geist-mono, monospace)',
             }}
-            onFocus={(e) => { (e.currentTarget as HTMLTextAreaElement).style.borderColor = 'rgba(99,102,241,0.4)' }}
-            onBlur={(e)  => { (e.currentTarget as HTMLTextAreaElement).style.borderColor = '#1e1e22' }}
+            onFocus={(e) => { (e.currentTarget as HTMLTextAreaElement).style.borderColor = 'rgb(var(--brand) / 0.4)' }}
+            onBlur={(e)  => { (e.currentTarget as HTMLTextAreaElement).style.borderColor = 'rgb(var(--n4))' }}
           />
 
           {status === 'error' && (
             <div className="mt-2 flex items-start gap-2 px-2.5 py-2 rounded-lg text-[11px]"
-              style={{ background: 'rgba(239,68,68,0.08)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>
+              style={{ background: 'rgb(var(--red) / 0.08)', color: 'rgb(var(--red-fg))', border: '1px solid rgb(var(--red) / 0.2)' }}>
               <AlertCircle size={11} className="flex-shrink-0 mt-0.5" />
               {errorMsg}
             </div>
@@ -470,10 +461,7 @@ User 3: "Navigation feels unintuitive on mobile..."`}
           <button
             onClick={handleAnalyze}
             disabled={!notes.trim() || status === 'loading'}
-            className="w-full mt-2.5 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-40"
-            style={{ background: '#6366f1', color: '#fff' }}
-            onMouseEnter={(e) => { if (notes.trim()) (e.currentTarget as HTMLButtonElement).style.background = '#4f46e5' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#6366f1' }}
+            className="w-full mt-2.5 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-40 bg-brand text-white enabled:hover:bg-brand-strong"
           >
             {status === 'loading' ? (
               <><Loader2 size={14} className="animate-spin" /> Analyzing research…</>
@@ -488,23 +476,20 @@ User 3: "Navigation feels unintuitive on mobile..."`}
       {parsed && (
         <div
           className="flex-shrink-0 mx-3 mt-2 mb-1 rounded-xl px-3 py-2.5"
-          style={{ background: 'rgba(99,102,241,0.07)', border: '1px solid rgba(99,102,241,0.15)' }}
+          style={{ background: 'rgb(var(--brand) / 0.07)', border: '1px solid rgb(var(--brand) / 0.15)' }}
         >
           <div className="flex items-center gap-2 mb-1">
-            <FlaskConical size={11} style={{ color: '#818cf8' }} />
-            <span className="text-[11px] font-semibold" style={{ color: '#818cf8' }}>
+            <FlaskConical size={11} style={{ color: 'rgb(var(--brand-fg))' }} />
+            <span className="text-[11px] font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>
               {parsed.participantCount} participants · {parsed.themes.length} themes
             </span>
           </div>
-          <p className="text-[11px] leading-relaxed" style={{ color: '#71717a' }}>
+          <p className="text-[11px] leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
             {parsed.researchSummary}
           </p>
           <button
             onClick={() => { setParsed(null); setStatus('idle') }}
-            className="mt-2 text-[10px] transition-colors"
-            style={{ color: '#3f3f46' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#818cf8' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#3f3f46' }}
+            className="mt-2 text-[10px] transition-colors text-n8 hover:text-brand-fg"
           >
             ← Analyze different notes
           </button>
@@ -534,12 +519,12 @@ User 3: "Navigation feels unintuitive on mobile..."`}
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-3 pb-8">
           <div
             className="flex items-center justify-center rounded-2xl"
-            style={{ width: 44, height: 44, background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)' }}
+            style={{ width: 44, height: 44, background: 'rgb(var(--brand) / 0.08)', border: '1px solid rgb(var(--brand) / 0.15)' }}
           >
-            <FlaskConical size={20} style={{ color: '#818cf8' }} />
+            <FlaskConical size={20} style={{ color: 'rgb(var(--brand-fg))' }} />
           </div>
-          <p className="text-sm font-semibold" style={{ color: '#e4e4e7' }}>Research Synthesizer</p>
-          <p className="text-xs leading-relaxed" style={{ color: '#52525b' }}>
+          <p className="text-sm font-semibold" style={{ color: 'rgb(var(--n12))' }}>Research Synthesizer</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
             Paste raw interview notes, survey responses, or customer feedback above.
             AI will surface themes, frequency, quotes, and product opportunities.
           </p>

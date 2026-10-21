@@ -9,22 +9,19 @@ import { useWorkspaceStore } from '@/lib/store'
 import type { FileNode, FileNodeType, DocumentType } from '@/lib/types'
 
 /* ── Design tokens (match rest of app) ──────────────────────────── */
-const BG        = '#1a1a1a'
-const BORDER    = '#2a2a2a'
-const HOVER_BG  = 'rgba(255,255,255,0.05)'
-const ACTIVE_BG = 'rgba(99,102,241,0.12)'
-const ACTIVE_FG = '#a5b4fc'
-const MUTED     = '#666'
-const LABEL_FG  = '#aaa'
+const BORDER    = 'rgb(var(--n6))'
+const ACTIVE_BG = 'rgb(var(--brand) / 0.12)'
+const ACTIVE_FG = 'rgb(var(--brand-soft))'
+const MUTED     = 'rgb(var(--n8))'
 
 /* ── Node metadata ───────────────────────────────────────────────── */
 const NODE_META: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
-  folder:       { icon: <Folder size={13} />,       color: '#f59e0b', label: 'Folder'       },
-  prd:          { icon: <FileText size={13} />,     color: '#818cf8', label: 'PRD'           },
-  'user-story': { icon: <BookOpen size={13} />,     color: '#4ade80', label: 'User Story'    },
-  research:     { icon: <FlaskConical size={13} />, color: '#fcd34d', label: 'Research'      },
-  roadmap:      { icon: <Map size={13} />,          color: '#60a5fa', label: 'Roadmap'       },
-  general:      { icon: <File size={13} />,         color: '#9ca3af', label: 'Note'          },
+  folder:       { icon: <Folder size={13} />,       color: 'rgb(var(--amber))', label: 'Folder'       },
+  prd:          { icon: <FileText size={13} />,     color: 'rgb(var(--brand-fg))', label: 'PRD'           },
+  'user-story': { icon: <BookOpen size={13} />,     color: 'rgb(var(--green-fg))', label: 'User Story'    },
+  research:     { icon: <FlaskConical size={13} />, color: 'rgb(var(--amber-soft))', label: 'Research'      },
+  roadmap:      { icon: <Map size={13} />,          color: 'rgb(var(--blue-fg))', label: 'Roadmap'       },
+  general:      { icon: <File size={13} />,         color: 'rgb(var(--n9))', label: 'Note'          },
 }
 
 const DOC_TYPES: DocumentType[] = ['prd', 'user-story', 'research', 'roadmap', 'general']
@@ -55,7 +52,7 @@ function TypePicker({
     <div style={{ paddingLeft: indent + 6, paddingRight: 6, paddingTop: 4, paddingBottom: 6 }}>
       <div
         className="rounded-md p-2"
-        style={{ background: '#111', border: `1px solid ${BORDER}` }}
+        style={{ background: 'rgb(var(--n1))', border: `1px solid ${BORDER}` }}
       >
         <p className="text-[9px] uppercase tracking-widest mb-2" style={{ color: MUTED }}>
           Select type
@@ -67,18 +64,7 @@ function TypePicker({
               <button
                 key={t}
                 onClick={() => onSelect(t)}
-                className="flex items-center gap-1.5 px-2 py-1.5 rounded text-xs transition-colors text-left"
-                style={{ background: '#1a1a1a', color: LABEL_FG, border: `1px solid ${BORDER}` }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = ACTIVE_BG
-                  ;(e.currentTarget as HTMLButtonElement).style.color = ACTIVE_FG
-                  ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(99,102,241,0.3)'
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = BG
-                  ;(e.currentTarget as HTMLButtonElement).style.color = LABEL_FG
-                  ;(e.currentTarget as HTMLButtonElement).style.borderColor = BORDER
-                }}
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded text-xs transition-colors text-left border bg-n3 border-n6 text-n10 hover:bg-brand/[0.12] hover:text-brand-soft hover:border-brand/30"
               >
                 <span style={{ color: m.color, flexShrink: 0 }}>{m.icon}</span>
                 <span className="truncate">{m.label}</span>
@@ -130,9 +116,9 @@ function InlineInput({
         placeholder={type === 'folder' ? 'Folder name' : meta.label + ' name'}
         className="flex-1 min-w-0 text-xs outline-none px-2 py-1 rounded"
         style={{
-          color: '#f0f0f0',
+          color: 'rgb(var(--n12))',
           background: ACTIVE_BG,
-          border: '1px solid rgba(99,102,241,0.4)',
+          border: '1px solid rgb(var(--brand) / 0.4)',
         }}
       />
     </div>
@@ -172,23 +158,20 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
   const children      = getOrderedChildren(fileNodes, node.id)
   const indent        = depth * 14
 
-  const [hovered, setHovered] = useState(false)
   const renameRef = useRef<HTMLInputElement>(null)
   useEffect(() => { if (isRenaming) renameRef.current?.focus() }, [isRenaming])
 
   return (
     <>
       <div
-        className="flex items-center rounded text-xs transition-colors cursor-pointer"
+        className={`group flex items-center rounded text-xs transition-colors cursor-pointer ${
+          isActive ? 'bg-brand/[0.12] text-brand-soft' : 'text-n10 hover:bg-white/5'
+        }`}
         style={{
           paddingLeft:  indent + 6,
           paddingRight: 6,
           height: 28,
-          background: isActive ? ACTIVE_BG : hovered ? HOVER_BG : 'transparent',
-          color:      isActive ? ACTIVE_FG : LABEL_FG,
         }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
         onClick={() => {
           if (isRenaming) return
           if (isFolder) {
@@ -231,15 +214,15 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
             onBlur={tree.onCommitRename}
             onClick={e => e.stopPropagation()}
             className="flex-1 min-w-0 text-xs outline-none px-1.5 py-0.5 rounded"
-            style={{ color: '#f0f0f0', background: ACTIVE_BG, border: '1px solid rgba(99,102,241,0.4)' }}
+            style={{ color: 'rgb(var(--n12))', background: ACTIVE_BG, border: '1px solid rgb(var(--brand) / 0.4)' }}
           />
         ) : (
           <span className="flex-1 min-w-0 truncate leading-tight">{node.name}</span>
         )}
 
         {/* Hover actions */}
-        {(hovered || showPicker) && !isRenaming && (
-          <div className="flex items-center gap-0.5 ml-1 flex-shrink-0">
+        {!isRenaming && (
+          <div className={`items-center gap-0.5 ml-1 flex-shrink-0 ${showPicker ? 'flex' : 'hidden group-hover:flex group-focus-within:flex'}`}>
             {isFolder && (
               <button
                 title="Add inside folder"
@@ -248,7 +231,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
                   tree.onSetTypePicker(showPicker ? null : node.id)
                 }}
                 className="flex items-center justify-center rounded transition-colors hover:bg-white/10"
-                style={{ width: 18, height: 18, color: showPicker ? '#818cf8' : MUTED, fontWeight: 600, fontSize: 15 }}
+                style={{ width: 18, height: 18, color: showPicker ? 'rgb(var(--brand-fg))' : MUTED, fontWeight: 600, fontSize: 15 }}
               >
                 {showPicker ? '×' : '+'}
               </button>
@@ -264,10 +247,8 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
             <button
               title="Delete"
               onClick={e => { e.stopPropagation(); tree.onDelete(node.id) }}
-              className="flex items-center justify-center rounded transition-colors hover:bg-red-500/20"
-              style={{ width: 18, height: 18, color: MUTED }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#f87171' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = MUTED   }}
+              className="flex items-center justify-center rounded transition-colors text-n8 hover:bg-danger/20 hover:text-danger-fg"
+              style={{ width: 18, height: 18 }}
             >
               <Trash2 size={11} />
             </button>
@@ -302,7 +283,7 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
           {children.length === 0 && !showPicker && tree.creating?.parentId !== node.id && (
             <p
               className="text-[11px] italic"
-              style={{ paddingLeft: (depth + 1) * 14 + 22, paddingTop: 3, paddingBottom: 3, color: '#3a3a3a' }}
+              style={{ paddingLeft: (depth + 1) * 14 + 22, paddingTop: 3, paddingBottom: 3, color: 'rgb(var(--n7))' }}
             >
               Empty folder
             </p>
@@ -390,9 +371,9 @@ export default function FileExplorer() {
         <button
           onClick={() => { setDocPickerOpen(false); setCreating({ parentId: null, type: 'folder' }) }}
           className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-white/5"
-          style={{ border: `1px solid ${BORDER}`, color: '#888' }}
+          style={{ border: `1px solid ${BORDER}`, color: 'rgb(var(--n9))' }}
         >
-          <FolderPlus size={13} style={{ color: '#f59e0b' }} />
+          <FolderPlus size={13} style={{ color: 'rgb(var(--amber))' }} />
           New Folder
         </button>
 
@@ -401,8 +382,8 @@ export default function FileExplorer() {
           onClick={() => { setCreating(null); setDocPickerOpen(v => !v) }}
           className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
           style={{
-            background: docPickerOpen ? 'rgba(99,102,241,0.2)' : '#6366f1',
-            color: '#fff',
+            background: docPickerOpen ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--brand))',
+            color: 'rgb(var(--white))',
           }}
         >
           <Plus size={13} />
@@ -433,7 +414,7 @@ export default function FileExplorer() {
         </span>
         <span
           className="text-[10px] px-1.5 py-0.5 rounded-full ml-auto"
-          style={{ background: '#2a2a2a', color: MUTED }}
+          style={{ background: 'rgb(var(--n6))', color: MUTED }}
         >
           {fileNodes.filter(n => n.type !== 'folder').length}
         </span>
@@ -457,8 +438,8 @@ export default function FileExplorer() {
 
         {rootNodes.length === 0 && !creating && !docPickerOpen && (
           <div className="px-3 py-8 text-center space-y-1">
-            <p className="text-xs" style={{ color: '#555' }}>No files yet</p>
-            <p className="text-[10px]" style={{ color: '#444' }}>
+            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>No files yet</p>
+            <p className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
               Create a folder or document above
             </p>
           </div>

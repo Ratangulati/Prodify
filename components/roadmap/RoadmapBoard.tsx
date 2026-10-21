@@ -23,17 +23,17 @@ const COLUMNS: {
   id: FeatureStatus; label: string; emoji: string
   accent: string; accentBg: string
 }[] = [
-  { id: 'Now',   label: 'Now',   emoji: '🟢', accent: '#22c55e', accentBg: 'rgba(34,197,94,0.08)'   },
-  { id: 'Next',  label: 'Next',  emoji: '🔵', accent: '#6366f1', accentBg: 'rgba(99,102,241,0.08)'  },
-  { id: 'Later', label: 'Later', emoji: '🟡', accent: '#f59e0b', accentBg: 'rgba(245,158,11,0.08)'  },
-  { id: 'Done',  label: 'Done',  emoji: '⬛', accent: '#6b7280', accentBg: 'rgba(107,114,128,0.08)' },
+  { id: 'Now',   label: 'Now',   emoji: '🟢', accent: 'rgb(var(--green))', accentBg: 'rgb(var(--green) / 0.08)'   },
+  { id: 'Next',  label: 'Next',  emoji: '🔵', accent: 'rgb(var(--brand))', accentBg: 'rgb(var(--brand) / 0.08)'  },
+  { id: 'Later', label: 'Later', emoji: '🟡', accent: 'rgb(var(--amber))', accentBg: 'rgb(var(--amber) / 0.08)'  },
+  { id: 'Done',  label: 'Done',  emoji: '⬛', accent: 'rgb(var(--n8))', accentBg: 'rgb(var(--n8) / 0.08)' },
 ]
 
 const PRIORITY: Record<FeaturePriority, { bg: string; text: string; ring: string; label: string }> = {
-  P0: { bg: 'rgba(239,68,68,0.18)',  text: '#f87171', ring: 'rgba(239,68,68,0.35)',  label: 'Critical' },
-  P1: { bg: 'rgba(249,115,22,0.18)', text: '#fb923c', ring: 'rgba(249,115,22,0.35)', label: 'High'     },
-  P2: { bg: 'rgba(234,179,8,0.18)',  text: '#fbbf24', ring: 'rgba(234,179,8,0.35)',  label: 'Medium'   },
-  P3: { bg: 'rgba(34,197,94,0.18)',  text: '#4ade80', ring: 'rgba(34,197,94,0.35)',  label: 'Low'      },
+  P0: { bg: 'rgb(var(--red) / 0.18)',  text: 'rgb(var(--red-fg))', ring: 'rgb(var(--red) / 0.35)',  label: 'Critical' },
+  P1: { bg: 'rgb(var(--orange) / 0.18)', text: 'rgb(var(--orange-fg))', ring: 'rgb(var(--orange) / 0.35)', label: 'High'     },
+  P2: { bg: 'rgb(var(--yellow) / 0.18)',  text: 'rgb(var(--amber-fg))', ring: 'rgb(var(--yellow) / 0.35)',  label: 'Medium'   },
+  P3: { bg: 'rgb(var(--green) / 0.18)',  text: 'rgb(var(--green-fg))', ring: 'rgb(var(--green) / 0.35)',  label: 'Low'      },
 }
 
 /* ── Helpers ─────────────────────────────────────────────────────── */
@@ -42,7 +42,7 @@ function getInitials(name: string) {
 }
 
 const AVATAR_COLORS = [
-  '#6366f1','#8b5cf6','#ec4899','#f97316','#22c55e','#06b6d4','#3b82f6',
+  'rgb(var(--brand))','rgb(var(--violet))','rgb(var(--pink))','rgb(var(--orange))','rgb(var(--green))','rgb(var(--cyan))','rgb(var(--blue))',
 ]
 function avatarColor(name: string) {
   let h = 0
@@ -72,9 +72,9 @@ function Avatar({ name, size = 22 }: { name: string; size?: number }) {
     return (
       <div
         className="flex items-center justify-center rounded-full flex-shrink-0"
-        style={{ width: size, height: size, background: '#27272a', border: '1px solid #3f3f46' }}
+        style={{ width: size, height: size, background: 'rgb(var(--n5))', border: '1px solid rgb(var(--n7))' }}
       >
-        <User size={size * 0.5} style={{ color: '#52525b' }} />
+        <User size={size * 0.5} style={{ color: 'rgb(var(--n8))' }} />
       </div>
     )
   }
@@ -132,10 +132,10 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
         ...style,
         opacity: isDragging ? 0.35 : 1,
         cursor: isDragging ? 'grabbing' : 'grab',
-        background: '#18181b',
-        borderColor: '#27272a',
+        background: 'rgb(var(--n3))',
+        borderColor: 'rgb(var(--n5))',
         boxShadow: isDragOverlay
-          ? '0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.4)'
+          ? '0 16px 48px rgb(var(--black) / 0.7), 0 0 0 1px rgb(var(--brand) / 0.4)'
           : 'none',
         transform: isDragOverlay && transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0) rotate(1.5deg)`
@@ -147,8 +147,8 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
       {/* Top row */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-start gap-1.5 min-w-0">
-          <GripVertical size={13} className="flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#3f3f46' }} />
-          <p className="text-xs font-medium leading-snug" style={{ color: '#e4e4e7' }}>{feature.title}</p>
+          <GripVertical size={13} className="flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'rgb(var(--n8))' }} />
+          <p className="text-xs font-medium leading-snug" style={{ color: 'rgb(var(--n12))' }}>{feature.title}</p>
         </div>
         <PriorityBadge p={feature.priority} />
       </div>
@@ -158,8 +158,8 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
         <div className="flex items-center gap-2">
           {/* RICE score */}
           <div className="flex items-center gap-1" title="RICE score">
-            <TrendingUp size={10} style={{ color: '#52525b' }} />
-            <span className="text-[10px] font-mono font-semibold" style={{ color: '#71717a' }}>
+            <TrendingUp size={10} style={{ color: 'rgb(var(--n8))' }} />
+            <span className="text-[10px] font-mono font-semibold" style={{ color: 'rgb(var(--n8))' }}>
               {feature.riceScore.toLocaleString()}
             </span>
           </div>
@@ -167,8 +167,8 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
           {/* Due date */}
           {dateStr && (
             <div className="flex items-center gap-1">
-              <Calendar size={10} style={{ color: '#52525b' }} />
-              <span className="text-[10px]" style={{ color: '#71717a' }}>{dateStr}</span>
+              <Calendar size={10} style={{ color: 'rgb(var(--n8))' }} />
+              <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>{dateStr}</span>
             </div>
           )}
         </div>
@@ -178,10 +178,7 @@ function FeatureCard({ feature, isDragOverlay, onDelete }: CardProps) {
             <button
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => { e.stopPropagation(); onDelete(feature.id) }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded"
-              style={{ color: '#3f3f46' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#ef4444' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#3f3f46' }}
+              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition p-0.5 rounded text-n8 hover:text-danger"
             >
               <Trash2 size={11} />
             </button>
@@ -226,7 +223,7 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
     <form
       onSubmit={handleSubmit}
       className="rounded-xl border p-3 mb-2"
-      style={{ background: '#18181b', borderColor: '#3f3f46' }}
+      style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n7))' }}
       onPointerDown={(e) => e.stopPropagation()}
     >
       <input
@@ -235,21 +232,21 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
         onChange={(e) => setForm({ ...form, title: e.target.value })}
         placeholder="Feature title…"
         className="w-full bg-transparent text-xs font-medium outline-none mb-2.5"
-        style={{ color: '#e4e4e7', caretColor: '#818cf8' }}
+        style={{ color: 'rgb(var(--n12))', caretColor: 'rgb(var(--brand-fg))' }}
       />
 
       <div className="grid grid-cols-2 gap-2 mb-2.5">
         {/* Priority */}
         <div>
-          <label className="block text-[10px] mb-1" style={{ color: '#52525b' }}>Priority</label>
+          <label className="block text-[10px] mb-1" style={{ color: 'rgb(var(--n8))' }}>Priority</label>
           <select
             value={form.priority}
             onChange={(e) => setForm({ ...form, priority: e.target.value as FeaturePriority })}
             className="w-full text-xs rounded-lg px-2 py-1.5 outline-none"
-            style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46' }}
+            style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))' }}
           >
             {(['P0','P1','P2','P3'] as FeaturePriority[]).map((p) => (
-              <option key={p} value={p} style={{ background: '#18181b' }}>
+              <option key={p} value={p} style={{ background: 'rgb(var(--n3))' }}>
                 {p} — {PRIORITY[p].label}
               </option>
             ))}
@@ -258,26 +255,26 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
 
         {/* Assignee */}
         <div>
-          <label className="block text-[10px] mb-1" style={{ color: '#52525b' }}>Assignee</label>
+          <label className="block text-[10px] mb-1" style={{ color: 'rgb(var(--n8))' }}>Assignee</label>
           <input
             value={form.assignee}
             onChange={(e) => setForm({ ...form, assignee: e.target.value })}
             placeholder="Name"
             className="w-full bg-transparent text-xs rounded-lg px-2 py-1.5 outline-none"
-            style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46', caretColor: '#818cf8' }}
+            style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))', caretColor: 'rgb(var(--brand-fg))' }}
           />
         </div>
       </div>
 
       {/* Due date */}
       <div className="mb-3">
-        <label className="block text-[10px] mb-1" style={{ color: '#52525b' }}>Due date</label>
+        <label className="block text-[10px] mb-1" style={{ color: 'rgb(var(--n8))' }}>Due date</label>
         <input
           type="date"
           value={form.dueDate}
           onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
           className="w-full text-xs rounded-lg px-2 py-1.5 outline-none"
-          style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46', colorScheme: 'dark' }}
+          style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))', colorScheme: 'dark' }}
         />
       </div>
 
@@ -286,7 +283,7 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
           type="submit"
           disabled={!form.title.trim()}
           className="flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-40"
-          style={{ background: '#6366f1', color: '#fff' }}
+          style={{ background: 'rgb(var(--brand))', color: 'rgb(var(--white))' }}
         >
           Add feature
         </button>
@@ -294,7 +291,7 @@ function AddFeatureForm({ status, onClose }: AddFormProps) {
           type="button"
           onClick={onClose}
           className="px-3 py-1.5 rounded-lg text-xs transition-colors"
-          style={{ background: '#27272a', color: '#a1a1aa' }}
+          style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n10))' }}
         >
           Cancel
         </button>
@@ -321,22 +318,22 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
       className="flex flex-col flex-shrink-0 rounded-xl overflow-hidden"
       style={{
         width: 200,
-        background: isOver ? col.accentBg : '#111113',
-        border: `1px solid ${isOver ? col.accent + '44' : '#1e1e22'}`,
+        background: isOver ? col.accentBg : 'rgb(var(--n1))',
+        border: `1px solid ${isOver ? `color-mix(in srgb, ${col.accent} 27%, transparent)` : 'rgb(var(--n4))'}`,
         transition: 'background 0.15s, border-color 0.15s',
       }}
     >
       {/* Column header */}
       <div
         className="flex items-center justify-between px-3 py-2.5 flex-shrink-0"
-        style={{ borderBottom: '1px solid #1e1e22' }}
+        style={{ borderBottom: '1px solid rgb(var(--n4))' }}
       >
         <div className="flex items-center gap-2">
           <span className="text-sm">{col.emoji}</span>
-          <span className="text-xs font-semibold" style={{ color: '#e4e4e7' }}>{col.label}</span>
+          <span className="text-xs font-semibold" style={{ color: 'rgb(var(--n12))' }}>{col.label}</span>
           <span
             className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-            style={{ background: '#27272a', color: '#52525b' }}
+            style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}
           >
             {features.length}
           </span>
@@ -349,10 +346,8 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
           )}
           <button
             onClick={() => setAdding(true)}
-            className="p-1 rounded transition-colors"
-            style={{ color: '#3f3f46' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = col.accent }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#3f3f46' }}
+            className="p-1 rounded transition-colors text-n8 hover:text-[var(--col-accent)]"
+            style={{ '--col-accent': col.accent } as React.CSSProperties}
             title={`Add to ${col.label}`}
           >
             <Plus size={13} />
@@ -375,7 +370,7 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
         {features.length === 0 && !adding && (
           <div
             className="flex items-center justify-center h-16 rounded-lg border border-dashed text-[11px]"
-            style={{ borderColor: '#27272a', color: '#3f3f46' }}
+            style={{ borderColor: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}
           >
             Drop here
           </div>
@@ -409,9 +404,9 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-colors"
         style={{
-          background: active ? 'rgba(99,102,241,0.12)' : '#18181b',
-          color: active ? '#818cf8' : '#52525b',
-          border: `1px solid ${active ? 'rgba(99,102,241,0.3)' : '#27272a'}`,
+          background: active ? 'rgb(var(--brand) / 0.12)' : 'rgb(var(--n3))',
+          color: active ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))',
+          border: `1px solid ${active ? 'rgb(var(--brand) / 0.3)' : 'rgb(var(--n5))'}`,
         }}
       >
         <Filter size={11} />
@@ -423,11 +418,11 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
       {open && (
         <div
           className="mt-2 rounded-xl p-3 space-y-3"
-          style={{ background: '#18181b', border: '1px solid #27272a' }}
+          style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
         >
           {/* Priority chips */}
           <div>
-            <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: '#52525b' }}>Priority</p>
+            <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Priority</p>
             <div className="flex gap-1.5 flex-wrap">
               {(['P0','P1','P2','P3'] as FeaturePriority[]).map((p) => {
                 const on = filters.priorities.includes(p)
@@ -443,8 +438,8 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
                     }}
                     className="px-2 py-0.5 rounded text-[10px] font-bold transition-all"
                     style={{
-                      background: on ? cfg.bg : '#27272a',
-                      color: on ? cfg.text : '#52525b',
+                      background: on ? cfg.bg : 'rgb(var(--n5))',
+                      color: on ? cfg.text : 'rgb(var(--n8))',
                       border: `1px solid ${on ? cfg.ring : 'transparent'}`,
                     }}
                   >
@@ -458,16 +453,16 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
           {/* Assignee */}
           {assignees.length > 0 && (
             <div>
-              <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: '#52525b' }}>Assignee</p>
+              <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Assignee</p>
               <select
                 value={filters.assignee}
                 onChange={(e) => onChange({ ...filters, assignee: e.target.value })}
                 className="w-full text-xs rounded-lg px-2 py-1.5 outline-none"
-                style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46' }}
+                style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))' }}
               >
-                <option value="" style={{ background: '#18181b' }}>All assignees</option>
+                <option value="" style={{ background: 'rgb(var(--n3))' }}>All assignees</option>
                 {assignees.map((a) => (
-                  <option key={a} value={a} style={{ background: '#18181b' }}>{a}</option>
+                  <option key={a} value={a} style={{ background: 'rgb(var(--n3))' }}>{a}</option>
                 ))}
               </select>
             </div>
@@ -475,21 +470,21 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
 
           {/* Date range */}
           <div>
-            <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: '#52525b' }}>Due date range</p>
+            <p className="text-[10px] mb-1.5 font-medium uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Due date range</p>
             <div className="flex gap-2">
               <input
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => onChange({ ...filters, dateFrom: e.target.value })}
                 className="flex-1 text-[10px] rounded-lg px-2 py-1.5 outline-none"
-                style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46', colorScheme: 'dark' }}
+                style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))', colorScheme: 'dark' }}
               />
               <input
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => onChange({ ...filters, dateTo: e.target.value })}
                 className="flex-1 text-[10px] rounded-lg px-2 py-1.5 outline-none"
-                style={{ background: '#27272a', color: '#e4e4e7', border: '1px solid #3f3f46', colorScheme: 'dark' }}
+                style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n12))', border: '1px solid rgb(var(--n7))', colorScheme: 'dark' }}
               />
             </div>
           </div>
@@ -497,10 +492,7 @@ function FilterBar({ filters, assignees, onChange }: FilterBarProps) {
           {/* Reset */}
           <button
             onClick={() => onChange({ priorities: ['P0','P1','P2','P3'], assignee: '', dateFrom: '', dateTo: '' })}
-            className="text-[10px] transition-colors"
-            style={{ color: '#52525b' }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#a1a1aa' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = '#52525b' }}
+            className="text-[10px] transition-colors text-n8 hover:text-n10"
           >
             Reset filters
           </button>
@@ -533,12 +525,12 @@ function TimelineView({ features }: { features: Feature[] }) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 py-16 px-6 text-center">
         <div className="text-3xl">🗺</div>
-        <p className="text-sm font-semibold" style={{ color: '#ddd' }}>No features yet</p>
-        <p className="text-xs leading-relaxed" style={{ color: '#555' }}>
+        <p className="text-sm font-semibold" style={{ color: 'rgb(var(--n11))' }}>No features yet</p>
+        <p className="text-xs leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
           Add features to any column to start building your roadmap.
         </p>
-        <p className="text-[10px]" style={{ color: '#444' }}>
-          Click the <strong style={{ color: '#6366f1' }}>+</strong> button in any column to add your first feature.
+        <p className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
+          Click the <strong style={{ color: 'rgb(var(--brand))' }}>+</strong> button in any column to add your first feature.
         </p>
       </div>
     )
@@ -555,26 +547,26 @@ function TimelineView({ features }: { features: Feature[] }) {
             <div
               key={qtr}
               className="flex-shrink-0 rounded-xl overflow-hidden"
-              style={{ width: 180, background: '#111113', border: '1px solid #1e1e22' }}
+              style={{ width: 180, background: 'rgb(var(--n1))', border: '1px solid rgb(var(--n4))' }}
             >
               {/* Quarter header */}
-              <div className="px-3 py-2 border-b" style={{ borderColor: '#1e1e22' }}>
+              <div className="px-3 py-2 border-b" style={{ borderColor: 'rgb(var(--n4))' }}>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-semibold" style={{ color: qtr === 'Unscheduled' ? '#52525b' : '#e4e4e7' }}>
+                  <span className="text-xs font-semibold" style={{ color: qtr === 'Unscheduled' ? 'rgb(var(--n8))' : 'rgb(var(--n12))' }}>
                     {qtr}
                   </span>
-                  <span className="text-[10px]" style={{ color: '#52525b' }}>
+                  <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
                     {qFeatures.length} feature{qFeatures.length !== 1 ? 's' : ''}
                   </span>
                 </div>
                 {/* Progress bar */}
-                <div className="h-1 rounded-full overflow-hidden" style={{ background: '#27272a' }}>
+                <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgb(var(--n5))' }}>
                   <div
                     className="h-full rounded-full transition-all"
-                    style={{ width: `${pct}%`, background: '#22c55e' }}
+                    style={{ width: `${pct}%`, background: 'rgb(var(--green))' }}
                   />
                 </div>
-                <p className="text-[9px] mt-1" style={{ color: '#52525b' }}>{pct}% done</p>
+                <p className="text-[9px] mt-1" style={{ color: 'rgb(var(--n8))' }}>{pct}% done</p>
               </div>
 
               {/* Features */}
@@ -591,11 +583,11 @@ function TimelineView({ features }: { features: Feature[] }) {
                       <div
                         key={f.id}
                         className="flex items-start gap-1.5 rounded-lg px-2 py-1.5"
-                        style={{ background: '#18181b', border: '1px solid #27272a' }}
+                        style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
                       >
                         <span className="text-[9px] mt-0.5 flex-shrink-0">{col.emoji}</span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-medium leading-snug truncate" style={{ color: '#e4e4e7' }}>
+                          <p className="text-[11px] font-medium leading-snug truncate" style={{ color: 'rgb(var(--n12))' }}>
                             {f.title}
                           </p>
                           <div className="flex items-center gap-1.5 mt-0.5">
@@ -606,7 +598,7 @@ function TimelineView({ features }: { features: Feature[] }) {
                               {f.priority}
                             </span>
                             {f.dueDate && (
-                              <span className="text-[9px]" style={{ color: '#52525b' }}>
+                              <span className="text-[9px]" style={{ color: 'rgb(var(--n8))' }}>
                                 {fmtDate(f.dueDate)}
                               </span>
                             )}
@@ -678,7 +670,7 @@ export default function RoadmapBoard() {
   }, [features, updateFeature])
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#0d0d0f' }}>
+    <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n0))' }}>
       {/* Toolbar */}
       <div className="flex-shrink-0 flex items-center justify-between gap-2 px-3 pt-3 pb-2">
         <FilterBar
@@ -690,7 +682,7 @@ export default function RoadmapBoard() {
         {/* View toggle */}
         <div
           className="flex rounded-lg overflow-hidden flex-shrink-0"
-          style={{ background: '#18181b', border: '1px solid #27272a' }}
+          style={{ background: 'rgb(var(--n3))', border: '1px solid rgb(var(--n5))' }}
         >
           {([
             { id: 'kanban',   icon: <LayoutGrid size={12} /> },
@@ -701,8 +693,8 @@ export default function RoadmapBoard() {
               onClick={() => setView(v.id)}
               className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] transition-colors"
               style={{
-                background: view === v.id ? '#6366f1' : 'transparent',
-                color:      view === v.id ? '#fff'    : '#52525b',
+                background: view === v.id ? 'rgb(var(--brand))' : 'transparent',
+                color:      view === v.id ? 'rgb(var(--white))'    : 'rgb(var(--n8))',
               }}
               title={v.id}
             >
@@ -715,7 +707,7 @@ export default function RoadmapBoard() {
       {/* Stats strip */}
       <div
         className="flex-shrink-0 flex items-center gap-3 px-3 pb-2 text-[10px]"
-        style={{ color: '#3f3f46' }}
+        style={{ color: 'rgb(var(--n8))' }}
       >
         <span>{filtered.length} features</span>
         {COLUMNS.map(c => {

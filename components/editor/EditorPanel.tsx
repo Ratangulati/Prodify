@@ -77,11 +77,11 @@ const TYPE_LABELS: Record<DocumentType, string> = {
 }
 
 const TYPE_COLORS: Record<DocumentType, { bg: string; text: string }> = {
-  prd:          { bg: 'rgba(99,102,241,0.15)', text: '#a5b4fc' },
-  'user-story': { bg: 'rgba(34,197,94,0.12)',  text: '#86efac' },
-  research:     { bg: 'rgba(245,158,11,0.12)', text: '#fcd34d' },
-  roadmap:      { bg: 'rgba(59,130,246,0.12)', text: '#93c5fd' },
-  general:      { bg: 'rgba(107,114,128,0.12)',text: '#9ca3af' },
+  prd:          { bg: 'rgb(var(--brand) / 0.15)', text: 'rgb(var(--brand-soft))' },
+  'user-story': { bg: 'rgb(var(--green) / 0.12)',  text: 'rgb(var(--green-soft))' },
+  research:     { bg: 'rgb(var(--amber) / 0.12)', text: 'rgb(var(--amber-soft))' },
+  roadmap:      { bg: 'rgb(var(--blue) / 0.12)', text: 'rgb(var(--blue-soft))' },
+  general:      { bg: 'rgb(var(--n8) / 0.12)',text: 'rgb(var(--n9))' },
 }
 
 export default function EditorPanel() {
@@ -126,11 +126,11 @@ export default function EditorPanel() {
 
   if (!doc) {
     return (
-      <div className="flex-1 flex items-center justify-center" style={{ background: '#0f0f0f' }}>
+      <div className="flex-1 flex items-center justify-center" style={{ background: 'rgb(var(--n0))' }}>
         <div className="text-center space-y-3">
           <p className="text-4xl">✦</p>
-          <p className="text-sm font-medium" style={{ color: '#555' }}>Select or create a document</p>
-          <p className="text-xs" style={{ color: '#444' }}>Use the sidebar to open a document</p>
+          <p className="text-sm font-medium" style={{ color: 'rgb(var(--n8))' }}>Select or create a document</p>
+          <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Use the sidebar to open a document</p>
         </div>
       </div>
     )
@@ -140,11 +140,11 @@ export default function EditorPanel() {
   const savedAt   = format(new Date(doc.updatedAt), 'h:mm a')
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: '#0f0f0f' }}>
+    <div className="flex-1 flex flex-col overflow-hidden" style={{ background: 'rgb(var(--n0))' }}>
       {/* Top bar */}
       <div
         className="flex items-center gap-3 px-6 py-3 border-b flex-shrink-0"
-        style={{ borderColor: '#1e1e1e', background: '#111' }}
+        style={{ borderColor: 'rgb(var(--n4))', background: 'rgb(var(--n1))' }}
       >
         {/* Title */}
         {editingTitle ? (
@@ -156,12 +156,12 @@ export default function EditorPanel() {
             onKeyDown={(e) => { if (e.key === 'Enter') commitTitle() }}
             autoFocus
             className="flex-1 min-w-0 bg-transparent text-sm font-semibold outline-none border-b"
-            style={{ color: '#f0f0f0', borderColor: '#6366f1' }}
+            style={{ color: 'rgb(var(--n12))', borderColor: 'rgb(var(--brand))' }}
           />
         ) : (
           <h1
             className="flex-1 min-w-0 text-sm font-semibold truncate cursor-text"
-            style={{ color: '#f0f0f0' }}
+            style={{ color: 'rgb(var(--n12))' }}
             onClick={() => { setTitleValue(doc.title); setEditingTitle(true) }}
             title="Click to edit"
           >
@@ -180,11 +180,11 @@ export default function EditorPanel() {
         {/* Save indicator */}
         <div className="flex items-center gap-1 flex-shrink-0 min-w-[80px]">
           {saveStatus === 'saving' ? (
-            <span className="text-[10px]" style={{ color: '#818cf8' }}>Saving…</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--brand-fg))' }}>Saving…</span>
           ) : saveStatus === 'saved' ? (
-            <span className="text-[10px]" style={{ color: '#4ade80' }}>Saved {savedAt}</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--green-fg))' }}>Saved {savedAt}</span>
           ) : (
-            <span className="text-[10px]" style={{ color: '#555' }}>Saved {savedAt}</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>Saved {savedAt}</span>
           )}
         </div>
 
@@ -192,10 +192,7 @@ export default function EditorPanel() {
         <div ref={exportRef} className="relative flex-shrink-0">
           <button
             onClick={() => setExportOpen(o => !o)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
-            style={{ background: '#1e1e1e', color: copyDone ? '#4ade80' : '#aaa', border: '1px solid #2a2a2a' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#1e1e1e' }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors border bg-n4 border-n6 hover:bg-n5 ${copyDone ? 'text-success-fg' : 'text-n10'}`}
           >
             {copyDone ? copyDone : 'Export'}
             <ChevronDown size={11} className={`transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
@@ -204,43 +201,34 @@ export default function EditorPanel() {
           {exportOpen && (
             <div
               className="absolute right-0 top-full mt-1 w-48 rounded-lg py-1 z-50"
-              style={{ background: '#1e1e1e', border: '1px solid #2e2e2e', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
+              style={{ background: 'rgb(var(--n4))', border: '1px solid rgb(var(--n6))', boxShadow: '0 8px 24px rgb(var(--black) / 0.5)' }}
             >
-              <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: '#444' }}>Copy</p>
+              <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Copy</p>
               <button
                 onClick={() => copyText(htmlToMarkdown(doc.content), 'Copied!')}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left"
-                style={{ color: '#bbb' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
-                <Copy size={12} style={{ color: '#666' }} />
+                <Copy size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Copy as Markdown
               </button>
               <button
                 onClick={() => copyText(htmlToText(doc.content), 'Copied!')}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left"
-                style={{ color: '#bbb' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
-                <Copy size={12} style={{ color: '#666' }} />
+                <Copy size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Copy as Plain Text
               </button>
 
-              <div className="my-1" style={{ borderTop: '1px solid #2a2a2a' }} />
-              <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: '#444' }}>Download</p>
+              <div className="my-1" style={{ borderTop: '1px solid rgb(var(--n6))' }} />
+              <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider" style={{ color: 'rgb(var(--n8))' }}>Download</p>
               <button
                 onClick={() => {
                   downloadBlob(htmlToMarkdown(doc.content), `${doc.title}.md`, 'text/markdown')
                   setExportOpen(false)
                 }}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left"
-                style={{ color: '#bbb' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
-                <Download size={12} style={{ color: '#666' }} />
+                <Download size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Download .md
               </button>
               <button
@@ -248,12 +236,9 @@ export default function EditorPanel() {
                   downloadBlob(htmlToText(doc.content), `${doc.title}.txt`, 'text/plain')
                   setExportOpen(false)
                 }}
-                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left"
-                style={{ color: '#bbb' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#252525' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs transition-colors text-left text-n10 hover:bg-n5 hover:text-n12"
               >
-                <Download size={12} style={{ color: '#666' }} />
+                <Download size={12} style={{ color: 'rgb(var(--n8))' }} />
                 Download .txt
               </button>
             </div>

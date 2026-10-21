@@ -468,9 +468,9 @@ export default function Editor({ docId }: { docId: string }) {
           style={{
             top: toolbar.top,
             left: toolbar.left,
-            background: '#18181b',
-            borderColor: '#2e2e32',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+            background: 'rgb(var(--n3))',
+            borderColor: 'rgb(var(--n6))',
+            boxShadow: '0 8px 32px rgb(var(--black) / 0.6)',
             pointerEvents: aiLoading ? 'none' : 'auto',
           }}
           onMouseDown={(e) => e.stopPropagation()}
@@ -479,7 +479,7 @@ export default function Editor({ docId }: { docId: string }) {
           {FMT_BUTTONS.map((btn, i) => {
             if (btn.label === '|') {
               return (
-                <div key={`div-${i}`} className="w-px h-4 mx-1" style={{ background: '#2e2e32' }} />
+                <div key={`div-${i}`} className="w-px h-4 mx-1" style={{ background: 'rgb(var(--n6))' }} />
               )
             }
             const active = btn.isActive(editor)
@@ -488,17 +488,9 @@ export default function Editor({ docId }: { docId: string }) {
                 key={btn.label}
                 title={btn.label}
                 onMouseDown={(e) => { e.preventDefault(); btn.action(editor) }}
-                className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors"
-                style={{
-                  color: active ? '#818cf8' : '#a1a1aa',
-                  background: active ? 'rgba(99,102,241,0.15)' : 'transparent',
-                }}
-                onMouseEnter={(e) => {
-                  if (!active) (e.currentTarget as HTMLButtonElement).style.background = '#27272a'
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
-                }}
+                className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
+                  active ? 'text-brand-fg bg-brand/15' : 'text-n10 hover:bg-n5'
+                }`}
               >
                 {btn.icon}
               </button>
@@ -506,8 +498,8 @@ export default function Editor({ docId }: { docId: string }) {
           })}
 
           {/* AI section divider */}
-          <div className="w-px h-4 mx-1" style={{ background: '#2e2e32' }} />
-          <span className="flex items-center gap-1 px-1.5 text-[10px] font-semibold" style={{ color: '#6366f1' }}>
+          <div className="w-px h-4 mx-1" style={{ background: 'rgb(var(--n6))' }} />
+          <span className="flex items-center gap-1 px-1.5 text-[10px] font-semibold" style={{ color: 'rgb(var(--brand))' }}>
             <Wand2 size={10} /> AI
           </span>
 
@@ -516,10 +508,7 @@ export default function Editor({ docId }: { docId: string }) {
               key={a.value}
               title={a.label}
               onClick={() => handleAI(a.value)}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs transition-colors"
-              style={{ color: aiLoading === a.value ? '#6366f1' : '#a1a1aa' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#27272a' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs transition-colors hover:bg-n5 ${aiLoading === a.value ? 'text-brand' : 'text-n10'}`}
             >
               {aiLoading === a.value
                 ? <span className="animate-spin inline-block"><Wand2 size={11} /></span>
@@ -539,14 +528,14 @@ export default function Editor({ docId }: { docId: string }) {
             top: slashPos.top,
             left: slashPos.left,
             width: 280,
-            background: '#18181b',
-            borderColor: '#2e2e32',
-            boxShadow: '0 16px 48px rgba(0,0,0,0.7)',
+            background: 'rgb(var(--n3))',
+            borderColor: 'rgb(var(--n6))',
+            boxShadow: '0 16px 48px rgb(var(--black) / 0.7)',
           }}
           onMouseDown={(e) => e.preventDefault()}
         >
-          <div className="px-3 py-2 border-b" style={{ borderColor: '#2e2e32' }}>
-            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#52525b' }}>
+          <div className="px-3 py-2 border-b" style={{ borderColor: 'rgb(var(--n6))' }}>
+            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgb(var(--n8))' }}>
               Insert template
             </span>
           </div>
@@ -558,8 +547,8 @@ export default function Editor({ docId }: { docId: string }) {
                 key={cmd.id}
                 className="flex items-center gap-3 w-full px-3 py-2.5 text-left transition-colors"
                 style={{
-                  background: active ? 'rgba(99,102,241,0.12)' : 'transparent',
-                  borderLeft: active ? '2px solid #6366f1' : '2px solid transparent',
+                  background: active ? 'rgb(var(--brand) / 0.12)' : 'transparent',
+                  borderLeft: active ? '2px solid rgb(var(--brand))' : '2px solid transparent',
                 }}
                 onMouseEnter={() => setSlashIndex(i)}
                 onClick={() => insertSlashTemplate(cmd.id)}
@@ -569,32 +558,32 @@ export default function Editor({ docId }: { docId: string }) {
                   style={{
                     width: 32,
                     height: 32,
-                    background: active ? 'rgba(99,102,241,0.2)' : '#27272a',
+                    background: active ? 'rgb(var(--brand) / 0.2)' : 'rgb(var(--n5))',
                   }}
                 >
-                  <Icon size={15} style={{ color: active ? '#818cf8' : '#71717a' }} />
+                  <Icon size={15} style={{ color: active ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium" style={{ color: active ? '#e4e4e7' : '#a1a1aa' }}>
+                  <p className="text-sm font-medium" style={{ color: active ? 'rgb(var(--n12))' : 'rgb(var(--n10))' }}>
                     {cmd.label}
                   </p>
-                  <p className="text-xs truncate" style={{ color: '#52525b' }}>
+                  <p className="text-xs truncate" style={{ color: 'rgb(var(--n8))' }}>
                     {cmd.description}
                   </p>
                 </div>
                 <span
                   className="ml-auto text-[10px] px-1.5 py-0.5 rounded font-mono flex-shrink-0"
-                  style={{ background: '#27272a', color: '#52525b' }}
+                  style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n8))' }}
                 >
                   /{cmd.id}
                 </span>
               </button>
             )
           })}
-          <div className="px-3 py-1.5 border-t flex items-center gap-3" style={{ borderColor: '#2e2e32' }}>
-            <span className="text-[10px]" style={{ color: '#3f3f46' }}>↑↓ navigate</span>
-            <span className="text-[10px]" style={{ color: '#3f3f46' }}>↵ insert</span>
-            <span className="text-[10px]" style={{ color: '#3f3f46' }}>Esc dismiss</span>
+          <div className="px-3 py-1.5 border-t flex items-center gap-3" style={{ borderColor: 'rgb(var(--n6))' }}>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>↑↓ navigate</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>↵ insert</span>
+            <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>Esc dismiss</span>
           </div>
         </div>
       )}
@@ -610,26 +599,26 @@ export default function Editor({ docId }: { docId: string }) {
       {/* ── Status bar ───────────────────────────────────────────── */}
       <div
         className="flex items-center gap-4 px-8 py-2 border-t flex-shrink-0 select-none"
-        style={{ borderColor: '#1a1a1a', background: '#0d0d0d' }}
+        style={{ borderColor: 'rgb(var(--n3))', background: 'rgb(var(--n0))' }}
       >
-        <span className="text-[11px]" style={{ color: '#3f3f46' }}>
+        <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
           {wordCount.toLocaleString()} {wordCount === 1 ? 'word' : 'words'}
         </span>
-        <span className="text-[11px]" style={{ color: '#3f3f46' }}>·</span>
-        <span className="text-[11px]" style={{ color: '#3f3f46' }}>
+        <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>·</span>
+        <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
           {readTime} min read
         </span>
         {aiLoading && (
           <>
-            <span className="text-[11px]" style={{ color: '#3f3f46' }}>·</span>
-            <span className="flex items-center gap-1.5 text-[11px]" style={{ color: '#6366f1' }}>
+            <span className="text-[11px]" style={{ color: 'rgb(var(--n8))' }}>·</span>
+            <span className="flex items-center gap-1.5 text-[11px]" style={{ color: 'rgb(var(--brand))' }}>
               <span className="animate-spin inline-block"><Wand2 size={10} /></span>
               AI writing…
             </span>
           </>
         )}
-        <span className="ml-auto text-[11px]" style={{ color: '#3f3f46' }}>
-          Type <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: '#1e1e1e', color: '#52525b', border: '1px solid #2a2a2a' }}>/</kbd> for templates
+        <span className="ml-auto text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
+          Type <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))', border: '1px solid rgb(var(--n6))' }}>/</kbd> for templates
         </span>
       </div>
     </div>
