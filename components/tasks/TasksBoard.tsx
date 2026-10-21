@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Plus, X } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import { createTask, updateTask, useTasks } from '@/lib/use-tasks'
@@ -77,6 +77,7 @@ export default function TasksBoard() {
   const [saving, setSaving]         = useState(false)
   const [openOnly, setOpenOnly]     = useState(false)
   const [openTaskId, setOpenTaskId] = useState<string | null>(null)
+  const titleRef = useRef<HTMLInputElement>(null)
 
   // New tasks link to the open PRD, unless the user unlinks it
   const activeDoc = documents.find((d) => d.id === activeDocId)
@@ -120,6 +121,7 @@ export default function TasksBoard() {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            ref={titleRef}
             onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
             placeholder="New task…"
             aria-label="New task title"
@@ -155,9 +157,15 @@ export default function TasksBoard() {
         ) : error ? (
           <p className="text-xs text-center py-8" style={{ color: 'rgb(var(--red-fg))' }}>{error}</p>
         ) : tasks.length === 0 ? (
-          <div className="text-center py-10 space-y-1">
-            <p className="text-sm font-medium" style={{ color: 'rgb(var(--n10))' }}>No tasks yet</p>
-            <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Add one above. Each task gets a key like PROD-1 for branch names.</p>
+          <div className="text-center py-10 space-y-2">
+            <h3 className="font-serif text-xl font-semibold" style={{ color: 'rgb(var(--n12))' }}>No tasks yet</h3>
+            <p className="text-xs" style={{ color: 'rgb(var(--n9))' }}>Each task gets a key like PROD-1 that links its pull requests.</p>
+            <button
+              onClick={() => titleRef.current?.focus()}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand text-on-brand hover:bg-brand-strong transition-colors"
+            >
+              <Plus size={12} aria-hidden /> Add a task
+            </button>
           </div>
         ) : visible.length === 0 ? (
           <p className="text-xs text-center py-8" style={{ color: 'rgb(var(--n8))' }}>No tasks have an open pull request.</p>

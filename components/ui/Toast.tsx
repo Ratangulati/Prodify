@@ -20,9 +20,10 @@ function ToastCard({ toast, onRemove }: { toast: ToastItem; onRemove: () => void
   return (
     <div
       role="status"
-      className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg shadow-xl"
+      className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl"
       style={{
         background: 'rgb(var(--n4))',
+        boxShadow: 'var(--elev-md)',
         border: `1px solid ${borders[toast.type]}`,
         maxWidth: 320,
         minWidth: 220,

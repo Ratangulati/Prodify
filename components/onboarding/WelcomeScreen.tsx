@@ -10,7 +10,6 @@ const CARDS = [
     icon: <FileText size={22} />,
     color: 'rgb(var(--brand))',
     bg: 'rgb(var(--brand) / 0.1)',
-    border: 'rgb(var(--brand) / 0.2)',
     title: 'Write your first PRD',
     description: 'AI helps you write a complete Product Requirements Document from a single prompt.',
     type: 'prd' as DocumentType,
@@ -21,7 +20,6 @@ const CARDS = [
     icon: <Map size={22} />,
     color: 'rgb(var(--blue))',
     bg: 'rgb(var(--blue) / 0.1)',
-    border: 'rgb(var(--blue) / 0.2)',
     title: 'Plan your roadmap',
     description: 'Drag features across Now / Next / Later to build a visual product roadmap.',
     type: 'roadmap' as DocumentType,
@@ -32,7 +30,6 @@ const CARDS = [
     icon: <FlaskConical size={22} />,
     color: 'rgb(var(--amber))',
     bg: 'rgb(var(--amber) / 0.1)',
-    border: 'rgb(var(--amber) / 0.2)',
     title: 'Analyze user research',
     description: 'Paste interview notes and let AI surface themes, quotes, and opportunities.',
     type: 'research' as DocumentType,
@@ -64,10 +61,10 @@ export default function WelcomeScreen() {
         >
           <Sparkles size={24} className="text-on-brand" />
         </div>
-        <h1 className="text-3xl font-bold leading-[1.1] tracking-[-0.022em] text-balance" style={{ color: 'rgb(var(--n12))' }}>
+        <h1 className="font-serif text-[40px] font-semibold leading-[1.15] tracking-[-0.02em] text-balance" style={{ color: 'rgb(var(--n12))' }}>
           Welcome to Prodify-AI
         </h1>
-        <p className="text-sm max-w-sm leading-relaxed" style={{ color: 'rgb(var(--n8))' }}>
+        <p className="text-[15px] max-w-sm leading-relaxed" style={{ color: 'rgb(var(--n9))' }}>
           Your AI-powered product management workspace. Get started by picking one of the quick starts below.
         </p>
       </div>
@@ -78,11 +75,8 @@ export default function WelcomeScreen() {
           <button
             key={card.type}
             onClick={() => handleCard(card)}
-            className="flex items-start gap-4 p-4 rounded-xl text-left transition-all group"
-            style={{
-              background: card.bg,
-              border: `1px solid ${card.border}`,
-            }}
+            className="flex items-start gap-4 p-4 rounded-xl text-left transition-colors group border bg-n3 border-n6 hover:border-n7"
+            style={{ boxShadow: 'var(--elev-sm)' }}
           >
             <div
               className="flex items-center justify-center rounded-lg flex-shrink-0 mt-0.5"
@@ -104,7 +98,7 @@ export default function WelcomeScreen() {
       </div>
 
       <p className="mt-8 text-[11px]" style={{ color: 'rgb(var(--n8))' }}>
-        Or use <kbd className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: 'rgb(var(--n4))', color: 'rgb(var(--n8))' }}>⌘K</kbd> to open the command palette
+        Or use <kbd className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n10))' }}>⌘K</kbd> to open the command palette
       </p>
     </div>
   )

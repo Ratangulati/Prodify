@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 import { format } from 'date-fns'
-import { ChevronDown, Copy, Download, ChevronRight, Search } from 'lucide-react'
+import { ChevronDown, Copy, Download, ChevronRight, Search, FileText, Plus } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useWorkspaceStore } from '@/lib/store'
 import { springs } from '@/lib/motion'
@@ -88,7 +88,10 @@ const TYPE_COLORS: Record<DocumentType, { bg: string; text: string }> = {
 }
 
 export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => void }) {
-  const { documents, activeDocId, updateDocument, saveStatus, fileNodes } = useWorkspaceStore()
+  const {
+    documents, activeDocId, updateDocument, saveStatus, fileNodes,
+    addDocumentFile, setActiveDoc, activeFolderId,
+  } = useWorkspaceStore()
   const doc = documents.find((d) => d.id === activeDocId)
 
   const [editingTitle, setEditingTitle] = useState(false)
@@ -130,10 +133,19 @@ export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => vo
   if (!doc) {
     return (
       <div className="flex-1 flex items-center justify-center" style={{ background: 'rgb(var(--n0))' }}>
-        <div className="text-center space-y-3">
-          <p className="text-4xl">✦</p>
-          <p className="text-sm font-medium" style={{ color: 'rgb(var(--n8))' }}>Select or create a document</p>
-          <p className="text-xs" style={{ color: 'rgb(var(--n8))' }}>Use the sidebar to open a document</p>
+        <div className="text-center max-w-xs space-y-3">
+          <FileText size={22} className="mx-auto" style={{ color: 'rgb(var(--n8))' }} aria-hidden />
+          <h2 className="font-serif text-[28px] font-semibold leading-tight tracking-[-0.015em]" style={{ color: 'rgb(var(--n12))' }}>
+            No document open
+          </h2>
+          <p className="text-sm" style={{ color: 'rgb(var(--n9))' }}>Pick one from the sidebar, or start a new one.</p>
+          <button
+            // Same as ⌘N: a new note in the current folder
+            onClick={() => setActiveDoc(addDocumentFile('general', 'Untitled Note', activeFolderId))}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium bg-brand text-on-brand hover:bg-brand-strong transition-colors"
+          >
+            <Plus size={14} aria-hidden /> New document
+          </button>
         </div>
       </div>
     )
