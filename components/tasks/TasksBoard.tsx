@@ -10,6 +10,7 @@ import { hasOpenPullRequest, type TaskDto } from '@/lib/task-dto'
 import PullRequestBadge from './PullRequestBadge'
 import TaskDetail from './TaskDetail'
 import { CopyBranchButton, STATUS_COLORS, STATUS_LABELS } from './shared'
+import Tip from '@/components/ui/Tip'
 
 /* ── Task card ────────────────────────────────────────────────────── */
 function TaskCard({
@@ -139,9 +140,11 @@ export default function TasksBoard() {
         {linkPrd && (
           <p className="flex items-center gap-1 text-[10px]" style={{ color: 'rgb(var(--n8))' }}>
             Links to PRD <span className="truncate max-w-[160px]" style={{ color: 'rgb(var(--brand-soft))' }}>{linkPrd.title}</span>
-            <button onClick={() => setSkipPrdLink(true)} title="Don't link to this PRD" aria-label="Don't link to this PRD" className="p-0.5 rounded hover:bg-overlay/5">
-              <X size={10} />
-            </button>
+            <Tip label="Don't link to this PRD">
+              <button onClick={() => setSkipPrdLink(true)} aria-label="Don't link to this PRD" className="p-0.5 rounded hover:bg-overlay/5">
+                <X size={10} />
+              </button>
+            </Tip>
           </p>
         )}
         <label className="flex items-center gap-1.5 text-[11px] cursor-pointer w-fit" style={{ color: 'rgb(var(--n10))' }}>

@@ -18,6 +18,7 @@ import { useWorkspaceStore } from '@/lib/store'
 import { SPRING_EASING } from '@/lib/motion'
 import { toast } from '@/lib/toast'
 import type { Feature, FeatureStatus, FeaturePriority } from '@/lib/types'
+import Tip from '@/components/ui/Tip'
 
 /* ── Constants ───────────────────────────────────────────────────── */
 const COLUMNS: {
@@ -344,14 +345,16 @@ function DroppableColumn({ col, features, onDelete }: ColumnProps) {
               {totalRice.toLocaleString()}
             </span>
           )}
-          <button
-            onClick={() => setAdding(true)}
-            className="p-1 rounded transition-colors text-n8 hover:text-[var(--col-accent)]"
-            style={{ '--col-accent': col.accent } as React.CSSProperties}
-            title={`Add to ${col.label}`}
-          >
-            <Plus size={13} />
-          </button>
+          <Tip label={`Add to ${col.label}`}>
+            <button
+              onClick={() => setAdding(true)}
+              className="p-1 rounded transition-colors text-n8 hover:text-[var(--col-accent)]"
+              style={{ '--col-accent': col.accent } as React.CSSProperties}
+              aria-label={`Add to ${col.label}`}
+            >
+              <Plus size={13} />
+            </button>
+          </Tip>
         </div>
       </div>
 
@@ -692,18 +695,20 @@ export default function RoadmapBoard() {
             { id: 'kanban',   icon: <LayoutGrid size={12} /> },
             { id: 'timeline', icon: <AlignLeft size={12} /> },
           ] as { id: 'kanban' | 'timeline'; icon: React.ReactNode }[]).map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setView(v.id)}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] transition-colors"
-              style={{
-                background: view === v.id ? 'rgb(var(--brand))' : 'transparent',
-                color:      view === v.id ? 'rgb(var(--on-brand))'    : 'rgb(var(--n8))',
-              }}
-              title={v.id}
-            >
-              {v.icon}
-            </button>
+            <Tip key={v.id} label={v.id === 'kanban' ? 'Board view' : 'Timeline view'}>
+              <button
+                onClick={() => setView(v.id)}
+                className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] transition-colors"
+                style={{
+                  background: view === v.id ? 'rgb(var(--brand))' : 'transparent',
+                  color:      view === v.id ? 'rgb(var(--on-brand))'    : 'rgb(var(--n8))',
+                }}
+                aria-label={v.id === 'kanban' ? 'Board view' : 'Timeline view'}
+                aria-pressed={view === v.id}
+              >
+                {v.icon}
+              </button>
+            </Tip>
           ))}
         </div>
       </div>

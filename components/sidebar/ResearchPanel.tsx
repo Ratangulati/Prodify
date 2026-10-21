@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import { toast } from '@/lib/toast'
+import Tip from '@/components/ui/Tip'
 
 /* ── Types ───────────────────────────────────────────────────────── */
 interface ParsedTheme {
@@ -411,13 +412,15 @@ ${notes}`
             </button>
           )}
           {(parsed || notes) && (
-            <button
-              onClick={handleClear}
-              className="p-1 rounded transition-colors text-n8 hover:text-danger"
-              title="Clear all"
-            >
-              <Trash2 size={12} />
-            </button>
+            <Tip label="Clear all">
+              <button
+                onClick={handleClear}
+                className="p-1 rounded transition-colors text-n8 hover:text-danger"
+                aria-label="Clear all"
+              >
+                <Trash2 size={12} />
+              </button>
+            </Tip>
           )}
         </div>
       </div>

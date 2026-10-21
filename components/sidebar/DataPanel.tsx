@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts'
+import Tip from '@/components/ui/Tip'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 type Confidence = 'high' | 'medium' | 'low'
@@ -165,22 +166,28 @@ function DataChart({ result }: { result: AnalysisResult }) {
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-medium" style={{ color: 'rgb(var(--n10))' }}>Chart Preview</p>
         <div className="flex gap-1">
-          <button
-            onClick={() => setChartView('line')}
-            className="p-1 rounded transition-colors"
-            style={{ background: chartView === 'line' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'line' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
-            title="Line chart"
-          >
-            <LineChart size={13} />
-          </button>
-          <button
-            onClick={() => setChartView('bar')}
-            className="p-1 rounded transition-colors"
-            style={{ background: chartView === 'bar' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'bar' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
-            title="Bar chart"
-          >
-            <BarChart2 size={13} />
-          </button>
+          <Tip label="Line chart">
+            <button
+              onClick={() => setChartView('line')}
+              className="p-1 rounded transition-colors"
+              style={{ background: chartView === 'line' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'line' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
+              aria-label="Line chart"
+              aria-pressed={chartView === 'line'}
+            >
+              <LineChart size={13} />
+            </button>
+          </Tip>
+          <Tip label="Bar chart">
+            <button
+              onClick={() => setChartView('bar')}
+              className="p-1 rounded transition-colors"
+              style={{ background: chartView === 'bar' ? 'rgb(var(--brand) / 0.2)' : 'transparent', color: chartView === 'bar' ? 'rgb(var(--brand-fg))' : 'rgb(var(--n8))' }}
+              aria-label="Bar chart"
+              aria-pressed={chartView === 'bar'}
+            >
+              <BarChart2 size={13} />
+            </button>
+          </Tip>
         </div>
       </div>
 

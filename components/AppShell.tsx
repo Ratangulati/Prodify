@@ -133,6 +133,7 @@ export default function AppShell() {
             <LeftSidebar
               onToggleTheme={toggleTheme}
               onOpenGitHub={() => setGithubOpen(true)}
+              onOpenShortcuts={() => setShortcutsOpen(true)}
               theme={theme}
             />
           </Panel>

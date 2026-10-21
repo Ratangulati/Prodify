@@ -8,6 +8,7 @@ import {
 import type { Theme, FeatureStatus } from '@/lib/types'
 import { useWorkspaceStore } from '@/lib/store'
 import FileExplorer from './FileExplorer'
+import Tip from '@/components/ui/Tip'
 
 const STATUS_COLORS: Record<FeatureStatus, string> = {
   Now:  'rgb(var(--green))',
@@ -19,10 +20,11 @@ const STATUS_COLORS: Record<FeatureStatus, string> = {
 interface LeftSidebarProps {
   onToggleTheme: () => void
   onOpenGitHub: () => void
+  onOpenShortcuts: () => void
   theme: Theme
 }
 
-export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: LeftSidebarProps) {
+export default function LeftSidebar({ onToggleTheme, onOpenGitHub, onOpenShortcuts, theme }: LeftSidebarProps) {
   const { features } = useWorkspaceStore()
   const [featuresOpen, setFeaturesOpen] = useState(true)
 
@@ -101,27 +103,36 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
         <p className="text-[11px] font-medium truncate flex-1" style={{ color: 'rgb(var(--n11))' }}>
           Product Manager
         </p>
-        <button
-          onClick={onOpenGitHub}
-          className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
-          style={{ color: 'rgb(var(--n8))' }}
-          title="GitHub settings"
-          aria-label="GitHub settings"
-        >
-          <Github size={13} />
-        </button>
-        <button
-          onClick={onToggleTheme}
-          className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
-          style={{ color: 'rgb(var(--n8))' }}
-          title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
-          aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-        >
-          {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
-        </button>
-        <span className="flex-shrink-0" style={{ color: 'rgb(var(--n8))' }} title="Press ? for shortcuts">
-          <Keyboard size={13} />
-        </span>
+        <Tip label="GitHub settings">
+          <button
+            onClick={onOpenGitHub}
+            className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
+            style={{ color: 'rgb(var(--n8))' }}
+            aria-label="GitHub settings"
+          >
+            <Github size={13} />
+          </button>
+        </Tip>
+        <Tip label={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}>
+          <button
+            onClick={onToggleTheme}
+            className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
+            style={{ color: 'rgb(var(--n8))' }}
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+          >
+            {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
+          </button>
+        </Tip>
+        <Tip label="Keyboard shortcuts (?)">
+          <button
+            onClick={onOpenShortcuts}
+            aria-label="Keyboard shortcuts"
+            className="p-1.5 rounded transition-colors hover:bg-overlay/10 flex-shrink-0"
+            style={{ color: 'rgb(var(--n8))' }}
+          >
+            <Keyboard size={13} />
+          </button>
+        </Tip>
       </div>
     </aside>
   )

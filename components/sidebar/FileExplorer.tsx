@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useWorkspaceStore } from '@/lib/store'
 import type { FileNode, FileNodeType, DocumentType } from '@/lib/types'
+import Tip from '@/components/ui/Tip'
 
 /* ── Design tokens (match rest of app) ──────────────────────────── */
 const BORDER    = 'rgb(var(--n6))'
@@ -234,34 +235,40 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
         {!isRenaming && (
           <div className={`items-center gap-0.5 ml-1 flex-shrink-0 ${showPicker ? 'flex' : 'hidden group-hover:flex group-focus-within:flex'}`}>
             {isFolder && (
-              <button
-                title="Add inside folder"
-                onClick={e => {
-                  e.stopPropagation()
-                  tree.onSetTypePicker(showPicker ? null : node.id)
-                }}
-                className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
-                style={{ width: 18, height: 18, color: showPicker ? 'rgb(var(--brand-fg))' : MUTED, fontWeight: 600, fontSize: 15 }}
-              >
-                {showPicker ? '×' : '+'}
-              </button>
+              <Tip label="Add inside folder">
+                <button
+                  aria-label="Add inside folder"
+                  onClick={e => {
+                    e.stopPropagation()
+                    tree.onSetTypePicker(showPicker ? null : node.id)
+                  }}
+                  className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
+                  style={{ width: 18, height: 18, color: showPicker ? 'rgb(var(--brand-fg))' : MUTED, fontWeight: 600, fontSize: 15 }}
+                >
+                  {showPicker ? '×' : '+'}
+                </button>
+              </Tip>
             )}
-            <button
-              title="Rename"
-              onClick={e => { e.stopPropagation(); tree.onStartRename(node.id, node.name) }}
-              className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
-              style={{ width: 18, height: 18, color: MUTED }}
-            >
-              <Pencil size={11} />
-            </button>
-            <button
-              title="Delete"
-              onClick={e => { e.stopPropagation(); tree.onDelete(node.id) }}
-              className="flex items-center justify-center rounded transition-colors text-n8 hover:bg-danger/20 hover:text-danger-fg"
-              style={{ width: 18, height: 18 }}
-            >
-              <Trash2 size={11} />
-            </button>
+            <Tip label="Rename">
+              <button
+                aria-label="Rename"
+                onClick={e => { e.stopPropagation(); tree.onStartRename(node.id, node.name) }}
+                className="flex items-center justify-center rounded transition-colors hover:bg-overlay/10"
+                style={{ width: 18, height: 18, color: MUTED }}
+              >
+                <Pencil size={11} />
+              </button>
+            </Tip>
+            <Tip label="Delete">
+              <button
+                aria-label="Delete"
+                onClick={e => { e.stopPropagation(); tree.onDelete(node.id) }}
+                className="flex items-center justify-center rounded transition-colors text-n8 hover:bg-danger/20 hover:text-danger-fg"
+                style={{ width: 18, height: 18 }}
+              >
+                <Trash2 size={11} />
+              </button>
+            </Tip>
           </div>
         )}
       </div>

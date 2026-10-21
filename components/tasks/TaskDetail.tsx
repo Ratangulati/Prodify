@@ -10,6 +10,7 @@ import { TASK_STATUSES, type TaskStatus } from '@/lib/tasks'
 import type { TaskDto } from '@/lib/task-dto'
 import { PR_STATE_STYLE } from './PullRequestBadge'
 import { CopyBranchButton, STATUS_LABELS } from './shared'
+import Tip from '@/components/ui/Tip'
 
 type Activity = { id: string; message: string; createdAt: string }
 
@@ -71,9 +72,11 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
     <div className="flex flex-col h-full" style={{ background: 'rgb(var(--n1))' }}>
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2.5 border-b flex-shrink-0" style={{ borderColor: 'rgb(var(--n4))' }}>
-        <button onClick={onBack} aria-label="Back to tasks" title="Back to tasks" className="p-1 rounded text-n8 hover:text-n11 hover:bg-overlay/5 transition-colors">
-          <ArrowLeft size={14} />
-        </button>
+        <Tip label="Back to tasks">
+          <button onClick={onBack} aria-label="Back to tasks" className="p-1 rounded text-n8 hover:text-n11 hover:bg-overlay/5 transition-colors">
+            <ArrowLeft size={14} />
+          </button>
+        </Tip>
         <span className="text-[11px] font-mono font-semibold" style={{ color: 'rgb(var(--brand-fg))' }}>{task.key}</span>
         <div className="ml-auto"><CopyBranchButton branch={task.branch} /></div>
       </div>
@@ -135,14 +138,15 @@ export default function TaskDetail({ task, onBack }: { task: TaskDto; onBack: ()
                         <span style={{ color: style.color }}>{style.label}</span> · updated {ago(pr.updatedAt)}
                       </p>
                     </div>
-                    <button
-                      onClick={() => handleUnlink(pr.id)}
-                      title="Unlink this pull request"
-                      aria-label={`Unlink pull request #${pr.number}`}
-                      className="p-1 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-n8 hover:text-danger-fg transition"
-                    >
-                      <Unlink size={11} />
-                    </button>
+                    <Tip label="Unlink this pull request">
+                      <button
+                        onClick={() => handleUnlink(pr.id)}
+                        aria-label={`Unlink pull request #${pr.number}`}
+                        className="p-1 rounded opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-n8 hover:text-danger-fg transition"
+                      >
+                        <Unlink size={11} />
+                      </button>
+                    </Tip>
                   </div>
                 </li>
               )

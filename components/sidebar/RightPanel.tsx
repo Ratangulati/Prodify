@@ -14,6 +14,7 @@ import PrioritizationPanel from '@/components/prioritization/PrioritizationPanel
 import ResearchPanel from './ResearchPanel'
 import DataPanel from './DataPanel'
 import TasksBoard from '@/components/tasks/TasksBoard'
+import Tip from '@/components/ui/Tip'
 
 const TABS = [
   { id: 'chat',           label: 'Chat',       icon: <MessageSquare size={14} /> },
@@ -67,24 +68,27 @@ export default function RightPanel() {
         className="flex flex-col items-center py-4 gap-4 border-l w-full h-full"
         style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))' }}
       >
-        <button
-          onClick={() => setCollapsed(false)}
-          className="p-1.5 rounded transition-colors hover:bg-overlay/5"
-          style={{ color: 'rgb(var(--n8))' }}
-          title="Expand panel"
-        >
-          <PanelRightOpen size={15} />
-        </button>
-        {TABS.map((tab) => (
+        <Tip label="Expand panel">
           <button
-            key={tab.id}
-            onClick={() => { setActiveSidebarTab(tab.id); setCollapsed(false) }}
-            className="p-1.5 rounded transition-colors"
-            style={{ color: activeTab === tab.id ? 'rgb(var(--brand))' : 'rgb(var(--n8))' }}
-            title={tab.label}
+            onClick={() => setCollapsed(false)}
+            className="p-1.5 rounded transition-colors hover:bg-overlay/5"
+            style={{ color: 'rgb(var(--n8))' }}
+            aria-label="Expand panel"
           >
-            {tab.icon}
+            <PanelRightOpen size={15} />
           </button>
+        </Tip>
+        {TABS.map((tab) => (
+          <Tip key={tab.id} label={tab.label}>
+            <button
+              onClick={() => { setActiveSidebarTab(tab.id); setCollapsed(false) }}
+              className="p-1.5 rounded transition-colors"
+              style={{ color: activeTab === tab.id ? 'rgb(var(--brand))' : 'rgb(var(--n8))' }}
+              aria-label={tab.label}
+            >
+              {tab.icon}
+            </button>
+          </Tip>
         ))}
       </div>
     )
@@ -122,14 +126,16 @@ export default function RightPanel() {
         })}
 
         {/* Collapse button */}
-        <button
-          onClick={() => setCollapsed(true)}
-          className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-overlay/5"
-          style={{ color: 'rgb(var(--n8))' }}
-          title="Collapse panel"
-        >
-          <PanelRightClose size={14} />
-        </button>
+        <Tip label="Collapse panel">
+          <button
+            onClick={() => setCollapsed(true)}
+            className="ml-auto mr-2 p-1.5 rounded transition-colors hover:bg-overlay/5"
+            style={{ color: 'rgb(var(--n8))' }}
+            aria-label="Collapse panel"
+          >
+            <PanelRightClose size={14} />
+          </button>
+        </Tip>
       </div>
 
       {/* Tab content */}

@@ -16,6 +16,7 @@ import { AIError, STREAM_ERROR_MARKER, errorFromResponse, toAIError } from '@/li
 import type { AIWorkflow, AIMessage, DocumentType } from '@/lib/types'
 import { springs } from '@/lib/motion'
 import { clearStreamingPreview, publishStreamingPreview } from '@/lib/streaming-preview'
+import Tip from '@/components/ui/Tip'
 
 /* ── Workflow tab definitions ───────────────────────────────────── */
 const WORKFLOWS: {
@@ -384,13 +385,15 @@ function CopyButton({ text }: { text: string }) {
     })
   }
   return (
-    <button
-      onClick={copy}
-      className={`p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 ${copied ? 'text-success' : 'text-n8 hover:text-n10'}`}
-      title="Copy"
-    >
-      {copied ? <Check size={13} /> : <Copy size={13} />}
-    </button>
+    <Tip label="Copy">
+      <button
+        onClick={copy}
+        className={`p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 ${copied ? 'text-success' : 'text-n8 hover:text-n10'}`}
+        aria-label="Copy"
+      >
+        {copied ? <Check size={13} /> : <Copy size={13} />}
+      </button>
+    </Tip>
   )
 }
 

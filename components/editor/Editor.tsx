@@ -24,6 +24,7 @@ import { useWorkspaceStore } from '@/lib/store'
 import { AnimatePresence, m } from 'motion/react'
 import { springs } from '@/lib/motion'
 import { useStreamingPreview } from '@/lib/streaming-preview'
+import Tip from '@/components/ui/Tip'
 
 /* ── Types ─────────────────────────────────────────────────────── */
 interface BubblePos { top: number; left: number; fromViewport?: boolean }
@@ -522,16 +523,18 @@ export default function Editor({ docId, header }: { docId: string; header?: Reac
             }
             const active = btn.isActive(editor)
             return (
-              <button
-                key={btn.label}
-                title={btn.label}
-                onMouseDown={(e) => { e.preventDefault(); btn.action(editor) }}
-                className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
-                  active ? 'text-brand-fg bg-brand/15' : 'text-n10 hover:bg-n5'
-                }`}
-              >
-                {btn.icon}
-              </button>
+              <Tip key={btn.label} label={btn.label}>
+                <button
+                  aria-label={btn.label}
+                  aria-pressed={active}
+                  onMouseDown={(e) => { e.preventDefault(); btn.action(editor) }}
+                  className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors ${
+                    active ? 'text-brand-fg bg-brand/15' : 'text-n10 hover:bg-n5'
+                  }`}
+                >
+                  {btn.icon}
+                </button>
+              </Tip>
             )
           })}
 
