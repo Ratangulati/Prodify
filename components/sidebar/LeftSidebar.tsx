@@ -33,8 +33,8 @@ export default function LeftSidebar({ onToggleTheme, onOpenGitHub, theme }: Left
 
   return (
     <aside
-      className="flex flex-col h-full w-full border-r"
-      style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))' }}
+      className="flex flex-col h-full w-full"
+      style={{ background: 'rgb(var(--n1))' }}
     >
       {/* Logo */}
       <div

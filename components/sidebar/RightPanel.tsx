@@ -92,8 +92,8 @@ export default function RightPanel() {
 
   return (
     <aside
-      className="flex flex-col w-full h-full border-l"
-      style={{ background: 'rgb(var(--n3))', borderColor: 'rgb(var(--n6))' }}
+      className="flex flex-col w-full h-full"
+      style={{ background: 'rgb(var(--n3))' }}
     >
       {/* Tab bar */}
       <div

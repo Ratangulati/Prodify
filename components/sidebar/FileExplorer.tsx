@@ -164,13 +164,13 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
   return (
     <>
       <div
-        className={`press-tint group flex items-center rounded text-xs transition-colors cursor-pointer ${
-          isActive ? 'bg-brand/[0.12] text-brand-soft' : 'text-n10 hover:bg-overlay/5'
+        className={`press-tint group flex items-center mx-1.5 rounded-lg text-[13px] transition-colors cursor-pointer ${
+          isActive ? 'bg-brand/[0.1] text-brand-fg font-medium' : 'text-n10 hover:bg-overlay/[0.06] hover:text-n12'
         }`}
         style={{
           paddingLeft:  indent + 6,
           paddingRight: 6,
-          height: 28,
+          height: 30,
         }}
         // Reachable by keyboard: Enter/Space does what a click does
         role="treeitem"

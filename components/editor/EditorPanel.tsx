@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 import { format } from 'date-fns'
-import { ChevronDown, Copy, Download } from 'lucide-react'
+import { ChevronDown, Copy, Download, ChevronRight, Search } from 'lucide-react'
 import { AnimatePresence, m } from 'motion/react'
 import { useWorkspaceStore } from '@/lib/store'
 import { springs } from '@/lib/motion'
@@ -87,8 +87,8 @@ const TYPE_COLORS: Record<DocumentType, { bg: string; text: string }> = {
   general:      { bg: 'rgb(var(--n8) / 0.12)',text: 'rgb(var(--n9))' },
 }
 
-export default function EditorPanel() {
-  const { documents, activeDocId, updateDocument, saveStatus } = useWorkspaceStore()
+export default function EditorPanel({ onOpenPalette }: { onOpenPalette: () => void }) {
+  const { documents, activeDocId, updateDocument, saveStatus, fileNodes } = useWorkspaceStore()
   const doc = documents.find((d) => d.id === activeDocId)
 
   const [editingTitle, setEditingTitle] = useState(false)
@@ -139,6 +139,10 @@ export default function EditorPanel() {
     )
   }
 
+  // The folder this document sits in, for the breadcrumb
+  const parentId   = fileNodes.find((n) => n.id === doc.id)?.parentId
+  const folderName = parentId ? fileNodes.find((n) => n.id === parentId)?.name : undefined
+
   const typeStyle = TYPE_COLORS[doc.type]
   const savedAt   = format(new Date(doc.updatedAt), 'h:mm a')
 
@@ -146,6 +150,14 @@ export default function EditorPanel() {
     <div className="relative flex-1 flex flex-col overflow-hidden" style={{ background: 'rgb(var(--n0))' }}>
       {/* Top bar — a translucent layer the document scrolls underneath */}
       <div className="material-bar absolute inset-x-0 top-0 z-30 flex items-center gap-3 px-6 py-3">
+        {/* Breadcrumb: folder › title */}
+        {folderName && (
+          <>
+            <span className="text-[13px] truncate max-w-[160px] flex-shrink-0" style={{ color: 'rgb(var(--n8))' }}>{folderName}</span>
+            <ChevronRight size={13} className="flex-shrink-0 -mx-1.5" style={{ color: 'rgb(var(--n7))' }} aria-hidden />
+          </>
+        )}
+
         {/* Title */}
         {editingTitle ? (
           <input
@@ -187,6 +199,17 @@ export default function EditorPanel() {
             <span className="text-[10px]" style={{ color: 'rgb(var(--n8))' }}>Saved {savedAt}</span>
           )}
         </div>
+
+        {/* Command palette hint */}
+        <button
+          onClick={onOpenPalette}
+          title="Search and AI workflows (⌘K)"
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors border bg-n3 border-n6 text-n8 hover:text-n11 hover:border-n7 flex-shrink-0"
+        >
+          <Search size={12} aria-hidden />
+          <span>Search</span>
+          <kbd className="text-[10px] px-1 rounded font-sans" style={{ background: 'rgb(var(--n5))', color: 'rgb(var(--n9))' }}>⌘K</kbd>
+        </button>
 
         {/* Export */}
         <div ref={exportRef} className="relative flex-shrink-0">

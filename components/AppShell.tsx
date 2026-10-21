@@ -137,19 +137,19 @@ export default function AppShell() {
             />
           </Panel>
 
-          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
-            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-brand/30 group-data-[resize-handle-active]:bg-brand/50 transition-colors" />
+          <PanelResizeHandle className="group w-px relative" style={{ background: 'rgb(var(--n6))' }}>
+            <div className="absolute inset-y-0 -left-px -right-px group-hover:bg-brand/40 group-data-[resize-handle-active]:bg-brand transition-colors" />
           </PanelResizeHandle>
 
           {/* Center editor */}
           <Panel minSize={30}>
             <div className="flex flex-col h-full overflow-hidden">
-              {noDocuments ? <WelcomeScreen /> : <EditorPanel />}
+              {noDocuments ? <WelcomeScreen /> : <EditorPanel onOpenPalette={() => setCmdPaletteOpen(true)} />}
             </div>
           </Panel>
 
-          <PanelResizeHandle className="group w-1 relative flex items-center justify-center" style={{ background: 'rgb(var(--n6))' }}>
-            <div className="absolute inset-y-0 -left-0.5 -right-0.5 group-hover:bg-brand/30 group-data-[resize-handle-active]:bg-brand/50 transition-colors" />
+          <PanelResizeHandle className="group w-px relative" style={{ background: 'rgb(var(--n6))' }}>
+            <div className="absolute inset-y-0 -left-px -right-px group-hover:bg-brand/40 group-data-[resize-handle-active]:bg-brand transition-colors" />
           </PanelResizeHandle>
 
           {/* Right panel */}
