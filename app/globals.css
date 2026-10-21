@@ -406,3 +406,61 @@
 }
 /* Blank lines render as empty paragraphs; give them the line box Tiptap gives them */
 .editor-preview p:empty { min-height: 1.7em; }
+
+/* ── Focus ───────────────────────────────────────────────────────────
+   Visible ring for keyboard users only (:focus-visible), above any
+   outline-none utility. Full-width rows draw it inset so scroll
+   containers don't clip it.                                          */
+:is(button, a[href], summary, [role="button"], [role="tab"], [role="treeitem"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid rgb(var(--brand-fg));
+  outline-offset: 2px;
+}
+:is(.press-tint, [role="treeitem"]):focus-visible { outline-offset: -2px; }
+
+/* ── Reduce Motion ───────────────────────────────────────────────────
+   Motion (MotionConfig reducedMotion="user") already turns slides and
+   scales into opacity fades. Here: no press shrink, no looping pulses
+   (indicators stay visible, just still), no animated progress.        */
+@media (prefers-reduced-motion: reduce) {
+  :is(button, [role="button"], [role="tab"], .pressable):active { scale: none !important; }
+  .writing-dot, .typing-dot, .animate-spin, .skeleton,
+  .streaming-caret > :last-child::after,
+  .streaming-caret > :is(ul, ol):last-child > li:last-child::after,
+  .streaming-caret:empty::after { animation: none !important; }
+  .typing-dot { opacity: 0.7; }
+  * { scroll-behavior: auto !important; }
+  [style*="--spring"] { transition: none !important; }
+}
+
+/* ── Reduce Transparency ─────────────────────────────────────────────
+   Glass becomes solid; the scrim gets heavier to keep separation.     */
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar {
+    background: rgb(var(--n1));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .material-panel {
+    background: rgb(var(--n2));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .overlay-scrim { background: rgb(var(--black) / 0.7); }
+}
+
+/* ── Increase Contrast ─────────────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --n6: 72 72 80;
+    --n7: 96 96 106;
+    --n8: 160 160 170;
+    --n9: 180 180 190;
+  }
+  .material-bar, .material-panel {
+    background: rgb(var(--n1));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: rgb(var(--n7));
+  }
+  .material-bar { box-shadow: inset 0 -1px 0 rgb(var(--n7)); }
+}

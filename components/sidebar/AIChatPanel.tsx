@@ -723,7 +723,8 @@ export default function AIChatPanel() {
   }
   useEffect(() => {
     stickToBottom.current = true
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    messagesEndRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' })
   }, [workflowMessages.length])
   useEffect(() => {
     const el = messagesRef.current

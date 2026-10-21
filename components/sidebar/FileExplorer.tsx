@@ -172,6 +172,16 @@ function TreeNode({ node, depth, tree }: { node: FileNode; depth: number; tree: 
           paddingRight: 6,
           height: 28,
         }}
+        // Reachable by keyboard: Enter/Space does what a click does
+        role="treeitem"
+        tabIndex={0}
+        aria-selected={isActive}
+        aria-expanded={isFolder ? isExpanded : undefined}
+        onKeyDown={e => {
+          if (e.target !== e.currentTarget || (e.key !== 'Enter' && e.key !== ' ')) return
+          e.preventDefault()
+          e.currentTarget.click()
+        }}
         onClick={() => {
           if (isRenaming) return
           if (isFolder) {
