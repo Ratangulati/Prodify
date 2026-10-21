@@ -234,7 +234,9 @@
   height: 0;
 }
 
-/* Headings — editorial serif for H1/H2 (40 / 28), sans for H3 (20).
+/* Type rule: the serif is for the document's own words (title, H1, H2)
+   and the welcome headline; everything you operate stays in Geist.
+   Headings — editorial serif for H1/H2 (40 / 28), sans for H3 (20).
    Newsreader is optically sized, so it tightens itself as it grows; the
    negative tracking just finishes the job at display sizes. */
 .editor-prose h1,

@@ -161,7 +161,7 @@ export default function TasksBoard() {
           <p className="text-xs text-center py-8" style={{ color: 'rgb(var(--red-fg))' }}>{error}</p>
         ) : tasks.length === 0 ? (
           <div className="text-center py-10 space-y-2">
-            <h3 className="font-serif text-xl font-semibold" style={{ color: 'rgb(var(--n12))' }}>No tasks yet</h3>
+            <h3 className="text-[15px] font-semibold tracking-[-0.01em]" style={{ color: 'rgb(var(--n12))' }}>No tasks yet</h3>
             <p className="text-xs" style={{ color: 'rgb(var(--n9))' }}>Each task gets a key like PROD-1 that links its pull requests.</p>
             <button
               onClick={() => titleRef.current?.focus()}
